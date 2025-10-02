@@ -1,0 +1,262 @@
+
+> clickfrontend@1.0.0 dev
+> next dev
+
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.102:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1228ms
+ ○ Compiling /contracts ...
+ ✓ Compiled /contracts in 1556ms (636 modules)
+ GET /contracts 200 in 1835ms
+ ✓ Compiled in 508ms (255 modules)
+ ✓ Compiled in 300ms (255 modules)
+ ✓ Compiled in 67ms (255 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 786ms (833 modules)
+ GET / 200 in 979ms
+ GET / 200 in 37ms
+ ✓ Compiled in 978ms (321 modules)
+ ✓ Compiled in 79ms (321 modules)
+ ✓ Compiled /contracts in 191ms (381 modules)
+ HEAD /contracts 200 in 336ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/h4shkid/ClickCreateProjects/ClickFrontEnd/.next/cache/webpack/client-development/6.pack.gz_' -> '/Users/h4shkid/ClickCreateProjects/ClickFrontEnd/.next/cache/webpack/client-development/6.pack.gz'
+ ○ Compiling /api/contracts/search ...
+ ✓ Compiled /api/contracts/search in 563ms (1496 modules)
+ GET /api/contracts/search 200 in 677ms
+ ✓ Compiled /contracts in 92ms (1484 modules)
+ GET /contracts 200 in 284ms
+ ✓ Compiled in 356ms (322 modules)
+ ✓ Compiled in 582ms (322 modules)
+ ✓ Compiled in 380ms (322 modules)
+ ✓ Compiled /contracts in 152ms (381 modules)
+ HEAD /contracts 200 in 359ms
+ GET /contracts 200 in 70ms
+ GET /contracts 200 in 46ms
+ GET /contracts 200 in 29ms
+ ✓ Compiled /api/contracts/search in 225ms (1188 modules)
+ GET /api/contracts/search?q= 200 in 357ms
+ ✓ Compiled in 496ms (322 modules)
+ ✓ Compiled in 250ms (322 modules)
+ ✓ Compiled in 99ms (322 modules)
+ ✓ Compiled in 86ms (322 modules)
+ ✓ Compiled in 115ms (322 modules)
+ ✓ Compiled in 177ms (322 modules)
+ ✓ Compiled in 7s (4984 modules)
+ ✓ Compiled in 403ms (4984 modules)
+ ✓ Compiled in 858ms (4984 modules)
+ ✓ Compiled in 1010ms (5053 modules)
+ ✓ Compiled in 604ms (5053 modules)
+ ✓ Compiled in 967ms (5053 modules)
+ ✓ Compiled in 803ms (5053 modules)
+ ✓ Compiled in 691ms (5039 modules)
+ ✓ Compiled in 6.5s (5052 modules)
+ ✓ Compiled in 1775ms (5052 modules)
+ ✓ Compiled in 965ms (5052 modules)
+ ✓ Compiled in 481ms (5052 modules)
+ ⨯ ./components/contracts/ContractDiscovery.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/h4shkid/ClickCreateProjects/ClickFrontEnd/components/contracts/ContractDiscovery.tsx[0m:421:1]
+ [2m418[0m |           />
+ [2m419[0m |         )}
+ [2m420[0m |       </div>
+ [2m421[0m |     </div>
+     : [35;1m     ^^^^^[0m
+ [2m422[0m |   )
+ [2m423[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/contracts/ContractDiscovery.tsx
+ ⨯ ./components/contracts/ContractDiscovery.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/h4shkid/ClickCreateProjects/ClickFrontEnd/components/contracts/ContractDiscovery.tsx[0m:420:1]
+ [2m417[0m |           />
+ [2m418[0m |         )}
+ [2m419[0m |       </div>
+ [2m420[0m |     </div>
+     : [35;1m     ^^^^^[0m
+ [2m421[0m |   )
+ [2m422[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/contracts/ContractDiscovery.tsx
+ ✓ Compiled in 628ms (5052 modules)
+ ✓ Compiled in 1325ms (5052 modules)
+ ✓ Compiled in 1832ms (5038 modules)
+ ✓ Compiled in 1117ms (5052 modules)
+ ✓ Compiled in 2.7s (5068 modules)
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.102:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1499ms
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.102:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1225ms
+ ○ Compiling /api/opensea/collection ...
+ ✓ Compiled /api/opensea/collection in 631ms (296 modules)
+OpenSea API failed for 0x300e7a5fb0ab08af367d5fb3915930791bb08c2b: 404 Not Found
+ GET /api/opensea/collection?address=0x300e7a5fb0ab08af367d5fb3915930791bb08c2b&chainId=1 404 in 1344ms
+ ✓ Compiled in 22ms
+ ✓ Compiled /api/opensea/collection in 62ms (102 modules)
+Fetching contract data from: https://api.opensea.io/api/v2/chain/ethereum/contract/0x300e7a5fb0ab08af367d5fb3915930791bb08c2b
+Contract data received: {
+  address: '0x300e7a5fb0ab08af367d5fb3915930791bb08c2b',
+  chain: 'ethereum',
+  collection: 'clickcreate',
+  contract_standard: 'erc1155',
+  name: 'ClickCreate'
+}
+Fetching collection data from: https://api.opensea.io/api/v2/collections/clickcreate
+Collection data received: {
+  collection: 'clickcreate',
+  name: 'ClickCreate',
+  description: 'Digital art curated by artists & experienced collectors. Join us to collect premium art by the best artists at affordable prices.',
+  image_url: 'https://i2.seadn.io/ethereum/a040c197723a419f8a8b4ef86850d880/401280ed203c1f0e93fba3fa954f54/23401280ed203c1f0e93fba3fa954f54.jpeg',
+  banner_image_url: 'https://i2.seadn.io/ethereum/a040c197723a419f8a8b4ef86850d880/bcb30e31f8cc9f618eddfbed56bd03/c3bcb30e31f8cc9f618eddfbed56bd03.jpeg?fit=inside',
+  owner: '0xf4dfb4ec3945770e41ae8bf0f6afdf186dc8a45d',
+  safelist_status: 'verified',
+  category: 'art',
+  is_disabled: false,
+  is_nsfw: false,
+  trait_offers_enabled: false,
+  collection_offers_enabled: true,
+  opensea_url: 'https://opensea.io/collection/clickcreate',
+  project_url: 'https://clickcreate.io/',
+  wiki_url: '',
+  discord_url: '',
+  telegram_url: '',
+  twitter_username: 'clickcreateio',
+  instagram_username: '',
+  contracts: [
+    {
+      address: '0x300e7a5fb0ab08af367d5fb3915930791bb08c2b',
+      chain: 'ethereum'
+    }
+  ],
+  editors: [ '0xf4dfb4ec3945770e41ae8bf0f6afdf186dc8a45d' ],
+  fees: [
+    {
+      fee: 0.5,
+      recipient: '0x0000a26b00c1f0df003000390027140000faa719',
+      required: true
+    },
+    {
+      fee: 6.9,
+      recipient: '0xf4dfb4ec3945770e41ae8bf0f6afdf186dc8a45d',
+      required: false
+    }
+  ],
+  rarity: {
+    calculated_at: '2025-09-14T22:57:55.799199',
+    max_rank: 95,
+    total_supply: 11996,
+    strategy_id: 'openrarity',
+    strategy_version: '1.0'
+  },
+  total_supply: 11996,
+  created_date: '2023-02-20',
+  payment_tokens: []
+}
+ GET /api/opensea/collection?address=0x300e7a5fb0ab08af367d5fb3915930791bb08c2b&chainId=1 200 in 96ms
+Fetching contract data from: https://api.opensea.io/api/v2/chain/ethereum/contract/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d
+Contract data received: {
+  address: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
+  chain: 'ethereum',
+  collection: 'boredapeyachtclub',
+  contract_standard: 'erc721',
+  name: 'Bored Ape Yacht Club'
+}
+Fetching collection data from: https://api.opensea.io/api/v2/collections/boredapeyachtclub
+Collection data received: {
+  collection: 'boredapeyachtclub',
+  name: 'Bored Ape Yacht Club',
+  description: 'The Bored Ape Yacht Club is a collection of 10,000 unique Bored Ape NFTs— unique digital collectibles living on the Ethereum blockchain. Your Bored Ape doubles as your Yacht Club membership card, and grants access to members-only benefits, the first of which is access to THE BATHROOM, a collaborative graffiti board. Future areas and perks can be unlocked by the community through roadmap activation. Visit www.BoredApeYachtClub.com for more details.',
+  image_url: 'https://i.seadn.io/gae/Ju9CkWtV-1Okvf45wo8UctR-M9He2PjILP0oOvxE89AyiPPGtrR3gysu1Zgy0hjd2xKIgjJJtWIc0ybj4Vd7wv8t3pxDGHoJBzDB?w=500&auto=format',
+  banner_image_url: 'https://i.seadn.io/gae/i5dYZRkVCUK97bfprQ3WXyrT9BnLSZtVKGJlKQ919uaUB0sxbngVCioaiyu9r6snqfi2aaTyIvv6DHm4m2R3y7hMajbsv14pSZK8mhs?fit=inside',
+  owner: '0xa858ddc0445d8131dac4d1de01f834ffcba52ef1',
+  safelist_status: 'verified',
+  category: 'pfps',
+  is_disabled: false,
+  is_nsfw: false,
+  trait_offers_enabled: true,
+  collection_offers_enabled: true,
+  opensea_url: 'https://opensea.io/collection/boredapeyachtclub',
+  project_url: 'http://www.boredapeyachtclub.com/',
+  wiki_url: '',
+  discord_url: 'https://discord.gg/3P5K3dzgdB',
+  telegram_url: '',
+  twitter_username: 'BoredApeYC',
+  instagram_username: '',
+  contracts: [
+    {
+      address: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
+      chain: 'ethereum'
+    }
+  ],
+  editors: [
+    '0x0000000000000000000000000000000000000000',
+    '0xc489b60e161737c64ac2ee4e85d055cfbf10bad5',
+    '0xa858ddc0445d8131dac4d1de01f834ffcba52ef1'
+  ],
+  fees: [
+    {
+      fee: 0.5,
+      recipient: '0x0000a26b00c1f0df003000390027140000faa719',
+      required: true
+    },
+    {
+      fee: 1,
+      recipient: '0xa858ddc0445d8131dac4d1de01f834ffcba52ef1',
+      required: false
+    }
+  ],
+  rarity: {
+    calculated_at: '2025-09-14T22:59:15.230050',
+    max_rank: 9998,
+    total_supply: 9998,
+    strategy_id: 'openrarity',
+    strategy_version: '1.0'
+  },
+  total_supply: 9998,
+  created_date: '2021-04-22',
+  payment_tokens: []
+}
+ GET /api/opensea/collection?address=0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d&chainId=1 200 in 564ms
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.102:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1228ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/h4shkid/ClickCreateProjects/ClickFrontEnd/.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/h4shkid/ClickCreateProjects/ClickFrontEnd/.next/cache/webpack/client-development/0.pack.gz'
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.102:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1064ms
+[?25h

@@ -1,0 +1,2088 @@
+
+> clickfrontend@1.0.0 dev
+> next dev
+
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.102:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1169ms
+ ○ Compiling / ...
+ ✓ Compiled / in 7.9s (10183 modules)
+Lit is in dev mode. Not recommended for production! See https://lit.dev/msg/dev-mode for more information.
+ GET / 200 in 8450ms
+ ✓ Compiled in 278ms (4927 modules)
+ ○ Compiling /api/contracts/[address]/sync ...
+ ✓ Compiled /api/contracts/[address]/sync in 1008ms (10461 modules)
+🔍 Contract details: Lil' Bangers (ERC721)
+📍 Using stored deployment block: 35000000
+Using Alchemy endpoint for Base blockchain sync
+📊 Real current block number: 35678529
+📍 Resuming sync from block 35677875 (previous: 35677874)
+Updating existing sync record 19 for contract Lil' Bangers
+🔄 Starting REAL blockchain sync for contract Lil' Bangers from block 35677875
+Using Alchemy endpoint for Base blockchain sync
+📊 Current blockchain block: 35678529, starting from: 35677875
+🔢 Total blocks to process: 654
+🚀 Using chain-specific chunking for chain 8453: 10 blocks per chunk
+📦 Processing blocks 35677875 to 35677884 (0% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35677875-35677884
+📦 Processing blocks 35677885 to 35677894 (2% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35677885-35677894
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35677895 to 35677904 (3% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35677895-35677904
+📦 Processing blocks 35677905 to 35677914 (5% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35677905-35677914
+📦 Processing blocks 35677915 to 35677924 (6% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35677915-35677924
+📦 Processing blocks 35677925 to 35677934 (8% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35677925-35677934
+📦 Processing blocks 35677935 to 35677944 (9% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 3 transfer events in blocks 35677935-35677944
+🕐 Fetching timestamps for 3 unique blocks
+🎯 Low volume mode: 3 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (3 blocks)
+   ✅ 3/3 successful (0 rate limited)
+📊 Block fetching completed: 3/3 blocks retrieved
+💾 Batch inserting 3 events
+📦 Processing blocks 35677945 to 35677954 (11% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35677945-35677954
+📦 Processing blocks 35677955 to 35677964 (12% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 3 transfer events in blocks 35677955-35677964
+🕐 Fetching timestamps for 3 unique blocks
+🎯 Low volume mode: 3 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (3 blocks)
+   ✅ 3/3 successful (0 rate limited)
+📊 Block fetching completed: 3/3 blocks retrieved
+💾 Batch inserting 3 events
+📦 Processing blocks 35677965 to 35677974 (14% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35677965-35677974
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35677975 to 35677984 (15% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35677975-35677984
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35677985 to 35677994 (17% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 2 transfer events in blocks 35677985-35677994
+🕐 Fetching timestamps for 2 unique blocks
+🎯 Low volume mode: 2 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (2 blocks)
+   ✅ 2/2 successful (0 rate limited)
+📊 Block fetching completed: 2/2 blocks retrieved
+💾 Batch inserting 2 events
+📦 Processing blocks 35677995 to 35678004 (18% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 2 transfer events in blocks 35677995-35678004
+🕐 Fetching timestamps for 2 unique blocks
+🎯 Low volume mode: 2 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (2 blocks)
+   ✅ 2/2 successful (0 rate limited)
+📊 Block fetching completed: 2/2 blocks retrieved
+💾 Batch inserting 2 events
+📦 Processing blocks 35678005 to 35678014 (20% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678005-35678014
+📦 Processing blocks 35678015 to 35678024 (21% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678015-35678024
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678025 to 35678034 (23% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 2 transfer events in blocks 35678025-35678034
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 2 events
+📦 Processing blocks 35678035 to 35678044 (24% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678035-35678044
+📦 Processing blocks 35678045 to 35678054 (26% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678045-35678054
+📦 Processing blocks 35678055 to 35678064 (28% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678055-35678064
+📦 Processing blocks 35678065 to 35678074 (29% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678065-35678074
+📦 Processing blocks 35678075 to 35678084 (31% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678075-35678084
+📦 Processing blocks 35678085 to 35678094 (32% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678085-35678094
+📦 Processing blocks 35678095 to 35678104 (34% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678095-35678104
+📦 Processing blocks 35678105 to 35678114 (35% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678105-35678114
+📦 Processing blocks 35678115 to 35678124 (37% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678115-35678124
+📦 Processing blocks 35678125 to 35678134 (38% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678125-35678134
+📦 Processing blocks 35678135 to 35678144 (40% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678135-35678144
+📦 Processing blocks 35678145 to 35678154 (41% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678145-35678154
+📦 Processing blocks 35678155 to 35678164 (43% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678155-35678164
+📦 Processing blocks 35678165 to 35678174 (44% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678165-35678174
+📦 Processing blocks 35678175 to 35678184 (46% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678175-35678184
+📦 Processing blocks 35678185 to 35678194 (47% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678185-35678194
+📦 Processing blocks 35678195 to 35678204 (49% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678195-35678204
+📦 Processing blocks 35678205 to 35678214 (50% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678205-35678214
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678215 to 35678224 (52% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678215-35678224
+📦 Processing blocks 35678225 to 35678234 (54% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678225-35678234
+📦 Processing blocks 35678235 to 35678244 (55% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678235-35678244
+📦 Processing blocks 35678245 to 35678254 (57% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678245-35678254
+📦 Processing blocks 35678255 to 35678264 (58% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678255-35678264
+📦 Processing blocks 35678265 to 35678274 (60% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678265-35678274
+📦 Processing blocks 35678275 to 35678284 (61% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678275-35678284
+📦 Processing blocks 35678285 to 35678294 (63% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678285-35678294
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678295 to 35678304 (64% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678295-35678304
+📦 Processing blocks 35678305 to 35678314 (66% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678305-35678314
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678315 to 35678324 (67% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678315-35678324
+📦 Processing blocks 35678325 to 35678334 (69% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678325-35678334
+📦 Processing blocks 35678335 to 35678344 (70% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678335-35678344
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678345 to 35678354 (72% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 5 transfer events in blocks 35678345-35678354
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 5 events
+📦 Processing blocks 35678355 to 35678364 (73% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678355-35678364
+📦 Processing blocks 35678365 to 35678374 (75% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678365-35678374
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678375 to 35678384 (76% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678375-35678384
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678385 to 35678394 (78% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678385-35678394
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678395 to 35678404 (80% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678395-35678404
+📦 Processing blocks 35678405 to 35678414 (81% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678405-35678414
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678415 to 35678424 (83% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 2 transfer events in blocks 35678415-35678424
+🕐 Fetching timestamps for 2 unique blocks
+🎯 Low volume mode: 2 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (2 blocks)
+   ✅ 2/2 successful (0 rate limited)
+📊 Block fetching completed: 2/2 blocks retrieved
+💾 Batch inserting 2 events
+📦 Processing blocks 35678425 to 35678434 (84% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678425-35678434
+📦 Processing blocks 35678435 to 35678444 (86% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678435-35678444
+📦 Processing blocks 35678445 to 35678454 (87% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678445-35678454
+📦 Processing blocks 35678455 to 35678464 (89% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678455-35678464
+📦 Processing blocks 35678465 to 35678474 (90% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678465-35678474
+📦 Processing blocks 35678475 to 35678484 (92% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678475-35678484
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678485 to 35678494 (93% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678485-35678494
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678495 to 35678504 (95% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678495-35678504
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📦 Processing blocks 35678505 to 35678514 (96% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 0 transfer events in blocks 35678505-35678514
+📦 Processing blocks 35678515 to 35678524 (98% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 3 transfer events in blocks 35678515-35678524
+🕐 Fetching timestamps for 2 unique blocks
+🎯 Low volume mode: 2 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (2 blocks)
+   ✅ 2/2 successful (0 rate limited)
+📊 Block fetching completed: 2/2 blocks retrieved
+💾 Batch inserting 3 events
+📦 Processing blocks 35678525 to 35678529 (99% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678525-35678529
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📊 Processed 655 blocks and found 38 real transfer events
+🧮 Calculating real holder balances...
+🏷️ Found 20 currently owned tokens
+💾 Batch updating 20 holder states
+✅ REAL blockchain sync completed for Lil' Bangers!
+📊 Summary: 38 events, 20 holder states, 655 blocks processed
+ POST /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 13579ms
+Using Alchemy endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 111ms
+ ○ Compiling /api/contracts/[address]/snapshot/current ...
+ ✓ Compiled /api/contracts/[address]/snapshot/current in 623ms (10464 modules)
+🎯 Full season mode: season1 - finding COMPLETE holders (must own all 50 tokens)
+🎯 Checking for complete ownership of tokens: 2,3,4,5,6...
+🎯 Complete season query: must own all 50 tokens
+🔍 SQL Query: 
+            SELECT 
+              address as holder_address,
+              SUM(CAST(balance AS INTEGER)) as balance,
+              COUNT(DISTINCT token_id) as owned_tokens
+            FROM current_state 
+            WHERE contract_address = ? COLLATE NOCASE
+            AND token_id IN (2,3,4...)
+            AND CAST(balance AS INTEGER) > 0
+            GROUP BY address
+            HAVING COUNT(DISTINCT token_id) = ?
+            ORDER BY SUM(CAST(balance AS INTEGER)) DESC
+            LIMIT 50
+          
+🔢 Parameters: address=0x300e7a5fb0ab08af367d5fb3915930791bb08c2b, tokenParams=50 items
+🔍 Full season query params: [
+  '0x300e7a5fb0ab08af367d5fb3915930791bb08c2b',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+  '15',
+  '16',
+  '17',
+  '18',
+  '19',
+  '20',
+  '21',
+  '22',
+  '23',
+  '24',
+  '25',
+  '26',
+  '27',
+  '28',
+  '29',
+  '30',
+  '31',
+  '32',
+  '33',
+  '34',
+  '35',
+  '36',
+  '37',
+  '38',
+  '39',
+  '40',
+  '41',
+  '42',
+  '43',
+  '44',
+  '45',
+  '46',
+  '47',
+  '48',
+  '49',
+  '50',
+  '51',
+  50
+]
+📊 Full season query returned 34 holders
+ GET /api/contracts/0x300e7a5fb0ab08af367d5fb3915930791bb08c2b/snapshot/current?fullSeason=true&season=season1 200 in 892ms
+Using Alchemy endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 367ms
+   Reload env: .env.local
+ ✓ Compiled in 3.1s (4950 modules)
+ ✓ Compiled in 232ms (4928 modules)
+ ✓ Compiled in 272ms (4928 modules)
+ ✓ Compiled /api/contracts/[address]/sync in 432ms (415 modules)
+🔍 Contract details: Lil' Bangers (ERC721)
+📍 Using stored deployment block: 35000000
+Using QuickNode Premium endpoint for Base blockchain sync
+📊 Real current block number: 35678626
+📍 Resuming sync from block 35678530 (previous: 35678529)
+Updating existing sync record 19 for contract Lil' Bangers
+🔄 Starting REAL blockchain sync for contract Lil' Bangers from block 35678530
+Using QuickNode Premium endpoint for Base blockchain sync
+📊 Current blockchain block: 35678626, starting from: 35678530
+🔢 Total blocks to process: 96
+🚀 Using chain-specific chunking for chain 8453: 1000 blocks per chunk
+📦 Processing blocks 35678530 to 35678626 (0% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 2 transfer events in blocks 35678530-35678626
+🕐 Fetching timestamps for 2 unique blocks
+🎯 Low volume mode: 2 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (2 blocks)
+   ✅ 2/2 successful (0 rate limited)
+📊 Block fetching completed: 2/2 blocks retrieved
+💾 Batch inserting 2 events
+📊 Processed 97 blocks and found 2 real transfer events
+🧮 Calculating real holder balances...
+🏷️ Found 20 currently owned tokens
+💾 Batch updating 20 holder states
+✅ REAL blockchain sync completed for Lil' Bangers!
+📊 Summary: 2 events, 20 holder states, 97 blocks processed
+ POST /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 1646ms
+ ✓ Compiled in 14ms
+ ✓ Compiled in 422ms (4928 modules)
+   Reload env: .env.local
+ ✓ Compiled in 197ms (4914 modules)
+   Reload env: .env.local
+ ✓ Compiled in 208ms (4914 modules)
+ ✓ Compiled /api/contracts/[address]/sync in 168ms (415 modules)
+🔍 Contract details: Lil' Bangers (ERC721)
+⚠️  No deployment block found for contract, detecting automatically...
+❌ Deployment detection failed: ReferenceError: provider is not defined
+    at POST (app/api/contracts/[address]/sync/route.ts:400:104)
+  398 |       
+  399 |       try {
+> 400 |         const detector = new (await import('@/lib/blockchain/deployment-detector')).DeploymentDetector(provider, contract.chain_id)
+      |                                                                                                        ^
+  401 |         const deploymentInfo = await detector.detectDeploymentBlock(address)
+  402 |         
+  403 |         if (deploymentInfo) {
+⚠️  Using fallback deployment block: 16000000
+Using QuickNode Premium endpoint for Base blockchain sync
+📊 Real current block number: 35678756
+📍 Resuming sync from block 35678627 (previous: 35678626)
+Updating existing sync record 19 for contract Lil' Bangers
+🔄 Starting REAL blockchain sync for contract Lil' Bangers from block 35678627
+Using QuickNode Premium endpoint for Base blockchain sync
+📊 Current blockchain block: 35678756, starting from: 35678627
+🔢 Total blocks to process: 129
+🚀 Using chain-specific chunking for chain 8453: 1000 blocks per chunk
+📦 Processing blocks 35678627 to 35678756 (0% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 4 transfer events in blocks 35678627-35678756
+🕐 Fetching timestamps for 4 unique blocks
+🎯 Low volume mode: 4 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (4 blocks)
+   ✅ 4/4 successful (0 rate limited)
+📊 Block fetching completed: 4/4 blocks retrieved
+💾 Batch inserting 4 events
+📊 Processed 130 blocks and found 4 real transfer events
+🧮 Calculating real holder balances...
+🏷️ Found 21 currently owned tokens
+💾 Batch updating 21 holder states
+✅ REAL blockchain sync completed for Lil' Bangers!
+📊 Summary: 4 events, 21 holder states, 130 blocks processed
+ POST /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 1023ms
+ ✓ Compiled in 406ms (5343 modules)
+🔍 Contract details: Lil' Bangers (ERC721)
+Using QuickNode Premium endpoint for Base blockchain sync
+📊 Real current block number: 35678780
+⚠️  No deployment block found for contract, detecting automatically...
+🔍 Detecting deployment block for contract: 0x1260f90e0b1c482b38b88f26dee17c57615d670b
+🌐 Calling Basescan API for contract creation info...
+(node:3708) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Basescan API returned no creation data
+🔎 Starting binary search for contract deployment...
+✅ Binary search detected deployment at block 33642811
+✅ Auto-detected deployment block: 33642811 (method: binary-search)
+💾 Updated database with deployment block 33642811
+📍 Resuming sync from block 35678757 (previous: 35678756)
+Updating existing sync record 19 for contract Lil' Bangers
+🔄 Starting REAL blockchain sync for contract Lil' Bangers from block 35678757
+Using QuickNode Premium endpoint for Base blockchain sync
+📊 Current blockchain block: 35678782, starting from: 35678757
+🔢 Total blocks to process: 25
+🚀 Using chain-specific chunking for chain 8453: 1000 blocks per chunk
+📦 Processing blocks 35678757 to 35678782 (0% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 1 transfer events in blocks 35678757-35678782
+🕐 Fetching timestamps for 1 unique blocks
+🎯 Low volume mode: 1 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (1 blocks)
+   ✅ 1/1 successful (0 rate limited)
+📊 Block fetching completed: 1/1 blocks retrieved
+💾 Batch inserting 1 events
+📊 Processed 26 blocks and found 1 real transfer events
+🧮 Calculating real holder balances...
+🏷️ Found 21 currently owned tokens
+💾 Batch updating 21 holder states
+✅ REAL blockchain sync completed for Lil' Bangers!
+📊 Summary: 1 events, 21 holder states, 26 blocks processed
+ POST /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 3335ms
+ ✓ Compiled in 12ms
+ ✓ Compiled /api/contracts/[address]/sync in 152ms (415 modules)
+🔍 Contract details: Lil' Bangers (ERC721)
+Using QuickNode Premium endpoint for Base blockchain sync
+📊 Real current block number: 35678869
+⚠️  No deployment block found for contract, detecting automatically...
+🔍 Detecting deployment block for contract: 0x1260f90e0b1c482b38b88f26dee17c57615d670b
+🌐 Calling Etherscan API v2 for contract creation info (chain 8453)...
+✅ Explorer detected deployment at block 33642811
+✅ Auto-detected deployment block: 33642811 (method: etherscan)
+💾 Updated database with deployment block 33642811
+📍 Resuming sync from block 35678783 (previous: 35678782)
+Updating existing sync record 19 for contract Lil' Bangers
+🔄 Starting REAL blockchain sync for contract Lil' Bangers from block 35678783
+Using QuickNode Premium endpoint for Base blockchain sync
+📊 Current blockchain block: 35678869, starting from: 35678783
+🔢 Total blocks to process: 86
+🚀 Using chain-specific chunking for chain 8453: 1000 blocks per chunk
+📦 Processing blocks 35678783 to 35678869 (0% complete)
+🎯 Fetching ERC-721 transfer events
+📋 Found 13 transfer events in blocks 35678783-35678869
+🕐 Fetching timestamps for 12 unique blocks
+🎯 Low volume mode: 12 blocks (15/100ms = ~25 req/sec)
+🕐 Fetching blocks batch 1/1 (12 blocks)
+   ✅ 12/12 successful (0 rate limited)
+📊 Block fetching completed: 12/12 blocks retrieved
+💾 Batch inserting 13 events
+📊 Processed 87 blocks and found 13 real transfer events
+🧮 Calculating real holder balances...
+🏷️ Found 23 currently owned tokens
+💾 Batch updating 23 holder states
+✅ REAL blockchain sync completed for Lil' Bangers!
+📊 Summary: 13 events, 23 holder states, 87 blocks processed
+ POST /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 1920ms
+ ○ Compiling /collections/[address]/snapshot ...
+ ✓ Compiled /collections/[address]/snapshot in 4.4s (10289 modules)
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 2 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 2 times.
+Multiple versions of Lit loaded. Loading multiple versions is not recommended. See https://lit.dev/msg/multiple-versions for more information.
+ GET /collections/0x1260f90e0b1c482b38b88f26dee17c57615d670b/snapshot 200 in 5453ms
+ HEAD /collections/0x1260f90e0b1c482b38b88f26dee17c57615d670b/snapshot 200 in 54ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /_not-found in 479ms (10294 modules)
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 3 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 3 times.
+ GET /c 404 in 923ms
+ HEAD /c 404 in 29ms
+ ○ Compiling /api/auth/session ...
+ ✓ Compiled /api/auth/session in 716ms (10381 modules)
+ GET /api/auth/session 200 in 800ms
+ ○ Compiling /my-collections ...
+ ✓ Compiled /my-collections in 645ms (10583 modules)
+ GET /my-collections 200 in 740ms
+ GET /api/auth/session 200 in 25ms
+ ○ Compiling /api/users/contracts ...
+ ✓ Compiled /api/users/contracts in 910ms (10586 modules)
+ GET /api/users/contracts?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 958ms
+ GET /api/auth/session 200 in 934ms
+ GET /api/users/contracts?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 5ms
+ ⚠ The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.
+ ○ Compiling /api/users/contracts/[contractId] ...
+ ✓ Compiled /api/users/contracts/[contractId] in 648ms (10588 modules)
+✅ Contract Lil' Bangers removed by user 0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC
+ DELETE /api/users/contracts/14?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 970ms
+ ○ Compiling /api/contracts/register ...
+ ✓ Compiled /api/contracts/register in 1442ms (11659 modules)
+Using QuickNode for chain 1: https://light-summer-valley.quiknode.pro/6348d42e78e6ab6cc3d33b68c6958810956f8a30
+Using Alchemy for chain 137: https://polygon-mainnet.g.alchemy.com/v2/-1WT_JdMjr4B4tANla8PIeuaiQytxq2S
+Using Alchemy for chain 42161: https://arb-mainnet.g.alchemy.com/v2/-1WT_JdMjr4B4tANla8PIeuaiQytxq2S
+Using Alchemy for chain 8453: https://base-mainnet.g.alchemy.com/v2/-1WT_JdMjr4B4tANla8PIeuaiQytxq2S
+🔍 Detecting contract 0x1260f90e0b1c482b38b88f26dee17c57615d670b on chain 8453
+🖼️ Fetching OpenSea metadata for 0x1260f90e0b1c482b38b88f26dee17c57615d670b
+✅ OpenSea metadata found: Lil' Bangers
+✅ Contract Lil Bangers registered successfully
+ POST /api/contracts/register 200 in 4667ms
+ GET /collections/0x1260f90e0b1c482b38b88f26dee17c57615d670b/snapshot 200 in 61ms
+ ○ Compiling /api/contracts/[address]/sync ...
+ ✓ Compiled /api/contracts/[address]/sync in 1318ms (11951 modules)
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b 200 in 1635ms
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 1638ms
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b 200 in 8ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 79ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 102ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 82ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 102ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 92ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 102ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 89ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 87ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 108ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 81ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 91ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 102ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 108ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 89ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 91ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 91ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 90ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 112ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 102ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 90ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 101ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 106ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 103ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 90ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 102ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 117ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 102ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 84ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 87ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 87ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 90ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 103ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 103ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 88ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 105ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 92ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 101ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 93ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 254ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 214ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 257ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 211ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 265ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 227ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 273ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 279ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 263ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 226ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 290ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 226ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 266ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 208ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 262ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 219ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 275ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 237ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 280ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 217ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 269ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 294ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 258ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 297ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 269ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 224ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 291ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 232ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 261ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 215ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 275ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 248ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 385ms
+Using QuickNode Premium endpoint for Base blockchain sync
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+Could not fetch current block number: [Error: getaddrinfo ENOTFOUND light-summer-valley.base-mainnet.quiknode.pro] {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'light-summer-valley.base-mainnet.quiknode.pro'
+}
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 55ms
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+Using QuickNode Premium endpoint for Base blockchain sync
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+Could not fetch current block number: [Error: getaddrinfo ENOTFOUND light-summer-valley.base-mainnet.quiknode.pro] {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'light-summer-valley.base-mainnet.quiknode.pro'
+}
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 43ms
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+Using QuickNode Premium endpoint for Base blockchain sync
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+Could not fetch current block number: [Error: getaddrinfo ENOTFOUND light-summer-valley.base-mainnet.quiknode.pro] {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'light-summer-valley.base-mainnet.quiknode.pro'
+}
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 36ms
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 1587ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 813ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 4176ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 552ms
+Using QuickNode Premium endpoint for Base blockchain sync
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+Could not fetch current block number: [Error: getaddrinfo ENOTFOUND light-summer-valley.base-mainnet.quiknode.pro] {
+  errno: -3008,
+  code: 'ENOTFOUND',
+  syscall: 'getaddrinfo',
+  hostname: 'light-summer-valley.base-mainnet.quiknode.pro'
+}
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 68ms
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 263ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 298ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 379ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 509ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 327ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 572ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 234ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 363ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 297ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 251ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 131ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 96ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 100ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 100ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 95ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 105ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 101ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 100ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 90ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 91ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 107ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 102ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 135ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 113ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 92ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 94ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 99ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 91ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 97ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 90ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 98ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 267ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 215ms
+ ○ Compiling /collections/[address] ...
+ ✓ Compiled /collections/[address] in 3.1s (10815 modules)
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 3030ms
+Using QuickNode Premium endpoint for Base blockchain sync
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 200 in 85ms
+ GET /collections/0x1260f90e0b1c482b38b88f26dee17c57615d670b 200 in 3907ms
+ GET /collections/0x1260f90e0b1c482b38b88f26dee17c57615d670b 200 in 16ms
+ ✓ Compiled /api/contracts/[address] in 344ms (5807 modules)
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b 200 in 393ms
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b 200 in 9ms
+ ○ Compiling /api/contracts/[address]/analytics/summary ...
+ ✓ Compiled /api/contracts/[address]/analytics/summary in 518ms (10889 modules)
+✅ Database initialized successfully
+✅ Database initialized successfully
+✅ Database initialized successfully
+Contract analytics error: TypeError: Do not know how to serialize a BigInt
+    at JSON.stringify (<anonymous>)
+    at GET (app/api/contracts/[address]/analytics/summary/route.ts:259:25)
+  257 |     }
+  258 |
+> 259 |     return NextResponse.json({
+      |                         ^
+  260 |       success: true,
+  261 |       analytics: {
+  262 |         contract: {
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/analytics/summary 500 in 879ms
+✅ Database initialized successfully
+Contract analytics error: TypeError: Do not know how to serialize a BigInt
+    at JSON.stringify (<anonymous>)
+    at GET (app/api/contracts/[address]/analytics/summary/route.ts:259:25)
+  257 |     }
+  258 |
+> 259 |     return NextResponse.json({
+      |                         ^
+  260 |       success: true,
+  261 |       analytics: {
+  262 |         contract: {
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/analytics/summary 500 in 49ms
+✅ Database initialized successfully
+ GET /my-collections 200 in 80ms
+ ✓ Compiled /api/users/contracts in 411ms (5812 modules)
+ ✓ Compiled (5814 modules)
+ GET /api/users/contracts?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 1258ms
+ GET /api/auth/session 200 in 1262ms
+ GET /api/users/contracts?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 6ms
+ GET /api/auth/session 200 in 8ms
+ ✓ Compiled /api/users/contracts/[contractId] in 332ms (5816 modules)
+✅ Contract Lil' Bangers removed by user 0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC
+ DELETE /api/users/contracts/15?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 377ms
+ ✓ Compiled / in 484ms (5829 modules)
+ GET / 200 in 552ms
+ GET / 200 in 31ms
+ ✓ Compiled in 1949ms (5416 modules)
+ ✓ Compiled in 3.9s (5093 modules)
+ ✓ Compiled in 360ms (5093 modules)
+   Reload env: .env.local
+ ✓ Compiled in 9s (10531 modules)
+ ○ Compiling /api/contracts/[address]/sync ...
+ ✓ Compiled /api/contracts/[address]/sync in 928ms (5729 modules)
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0x300e7a5fb0ab08af367d5fb3915930791bb08c2b/sync 200 in 1610ms
+ ○ Compiling /profile ...
+ ✓ Compiled /profile in 1244ms (10825 modules)
+ GET /profile 200 in 1341ms
+ ✓ Compiled /api/auth/session in 398ms (5809 modules)
+ GET /api/auth/session 200 in 444ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/contracts/0x1260f90e0b1c482b38b88f26dee17c57615d670b/sync 404 in 63ms
+ GET /my-collections 200 in 84ms
+ GET /api/auth/session 200 in 26ms
+ ○ Compiling /api/users/contracts ...
+ ✓ Compiled /api/users/contracts in 1058ms (5506 modules)
+ GET /api/users/contracts?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 1392ms
+ GET /api/auth/session 200 in 1370ms
+ GET /api/users/contracts?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 3ms
+ ○ Compiling / ...
+ ✓ Compiled / in 559ms (5519 modules)
+ GET / 200 in 624ms
+ ✓ Compiled in 2.4s (10502 modules)
+ ✓ Compiled in 380ms (5100 modules)
+ ✓ Compiled in 579ms (5100 modules)
+ ✓ Compiled in 305ms (5100 modules)
+ ○ Compiling /api/utils/date-to-block ...
+ ✓ Compiled /api/utils/date-to-block in 1481ms (10695 modules)
+📅 Date to block conversion:
+   Target date: 2024-01-01T00:00:00.000Z
+   Current block: 23392152 (2025-09-18T19:48:35.000Z)
+   Estimated block: 18879010
+   Time difference: 54157715 seconds (626 days)
+ GET /api/utils/date-to-block?date=2024-01-01 200 in 1955ms
+ ○ Compiling /api/snapshot/historical ...
+ ✓ Compiled /api/snapshot/historical in 771ms (10705 modules)
+✅ Database initialized successfully
+✅ Database initialized successfully
+📅 Date to block conversion:
+   Target date: 2024-01-01T00:00:00.000Z
+   Current block: 23392153 (2025-09-18T19:48:47.000Z)
+   Estimated block: 18879010
+   Time difference: 54157727 seconds (626 days)
+📅 Converted date 2024-01-01 to block 18879010 (actual: 2023-12-27T19:16:11.000Z)
+📸 Generating historical snapshot at block 18879010...
+  Replaying events up to block 18879010...
+✅ Generated 1 historical snapshot(s)
+ GET /api/snapshot/historical?date=2024-01-01&limit=5 200 in 1142ms
+📅 Date to block conversion:
+   Target date: 2024-06-01T00:00:00.000Z
+   Current block: 23392154 (2025-09-18T19:48:59.000Z)
+   Estimated block: 19973410
+   Time difference: 41024939 seconds (474 days)
+📅 Date to block conversion:
+   Target date: 2024-07-01T00:00:00.000Z
+   Current block: 23392154 (2025-09-18T19:48:59.000Z)
+   Estimated block: 20189410
+   Time difference: 38432939 seconds (444 days)
+ POST /api/utils/date-to-block 200 in 290ms
+ ✓ Compiled in 1214ms (10705 modules)
+ ✓ Compiled /api/snapshot/date-range in 485ms (10705 modules)
+✅ Database initialized successfully
+✅ Database initialized successfully
+📅 Date to block conversion:
+   Target date: 2024-06-01T00:00:00.000Z
+   Current block: 23392158 (2025-09-18T19:49:47.000Z)
+   Estimated block: 19973410
+   Time difference: 41024987 seconds (474 days)
+📅 Date to block conversion:
+   Target date: 2024-06-15T00:00:00.000Z
+   Current block: 23392158 (2025-09-18T19:49:47.000Z)
+   Estimated block: 20074210
+   Time difference: 39815387 seconds (460 days)
+📅 Date range snapshot:
+   Requested: 2024-06-01 to 2024-06-15
+   Blocks: 19973410 to 20074210
+   Actual: 2024-05-29T05:23:59.000Z to 2024-06-12T07:19:23.000Z
+📸 Generating historical snapshot at block 19973410...
+  Replaying events up to block 19973410...
+✅ Generated 1 historical snapshot(s)
+📸 Generating historical snapshot at block 20074210...
+  Replaying events up to block 20074210...
+✅ Generated 1 historical snapshot(s)
+ POST /api/snapshot/date-range 200 in 876ms
+ ✓ Compiled /api/snapshot/historical in 364ms (5621 modules)
+✅ Database initialized successfully
+✅ Database initialized successfully
+📅 Date to block conversion:
+   Target date: 2024-12-01T00:00:00.000Z
+   Current block: 23392159 (2025-09-18T19:49:59.000Z)
+   Estimated block: 21291010
+   Time difference: 25213799 seconds (291 days)
+📅 Converted date 2024-12-01 to block 21291010 (actual: 2024-11-29T04:36:23.000Z)
+📸 Generating historical snapshot at block 21291010...
+  Replaying events up to block 21291010...
+✅ Generated 1 historical snapshot(s)
+ GET /api/snapshot/historical?date=2024-12-01&limit=3 200 in 712ms
+ ○ Compiling / ...
+ ✓ Compiled / in 658ms (5632 modules)
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 4 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 4 times.
+ GET / 200 in 1304ms
+ HEAD / 200 in 39ms
+ ○ Compiling /api/auth/session ...
+ ✓ Compiled /api/auth/session in 571ms (5702 modules)
+ GET /api/auth/session 200 in 609ms
+ ○ Compiling /snapshot ...
+ ✓ Compiled /snapshot in 1369ms (10797 modules)
+ GET /snapshot 200 in 1459ms
+ GET /api/auth/session 200 in 29ms
+ ✓ Compiled /api/contracts/[address]/sync in 451ms (5830 modules)
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/auth/session 200 in 1061ms
+ GET /api/contracts/0x300e7a5fb0ab08af367d5fb3915930791bb08c2b/sync 200 in 1242ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0x300e7a5fb0ab08af367d5fb3915930791bb08c2b/sync 200 in 73ms
+ GET /my-collections 200 in 67ms
+ GET /api/auth/session 200 in 14ms
+ ○ Compiling /api/users/contracts ...
+ ✓ Compiled /api/users/contracts in 755ms (5833 modules)
+ GET /api/users/contracts?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 1120ms
+ GET /api/auth/session 200 in 1110ms
+ GET /api/users/contracts?walletAddress=0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC 200 in 4ms
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 83ms
+ ✓ Compiled /api/contracts/[address] in 385ms (5835 modules)
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4 200 in 797ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4 200 in 12ms
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 1156ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 92ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 120ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 114ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 94ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 105ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 117ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 99ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 117ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 106ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 96ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 95ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 108ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 110ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 106ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 113ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 102ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 190ms
+ ✓ Compiled in 438ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 86ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 100ms
+ ✓ Compiled in 233ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 21ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 95ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 111ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 96ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 98ms
+ ✓ Compiled in 263ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 19ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 106ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 97ms
+ ✓ Compiled in 331ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 20ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 106ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 100ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 96ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 99ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 97ms
+ ✓ Compiled in 282ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 42ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 104ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 103ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 94ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 97ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 92ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 110ms
+ ✓ Compiled in 1920ms (10851 modules)
+ ✓ Compiled in 0ms (5748 modules)
+ ✓ Compiled in 0ms (5748 modules)
+ ✓ Compiled in 0ms (5748 modules)
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 1685ms
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 3187ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 143ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 95ms
+ ✓ Compiled in 1270ms (10851 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 61ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 380ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 101ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 105ms
+ ✓ Compiled in 950ms (10851 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 86ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 303ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 101ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 115ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 125ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 100ms
+ ✓ Compiled in 329ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 19ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 117ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 115ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 110ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 101ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 113ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 102ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 104ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 110ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 105ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 98ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 101ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 109ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 99ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 98ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 103ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 101ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 103ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 102ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 101ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 109ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 100ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 100ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 104ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 100ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 105ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 101ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 104ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 97ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 102ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 103ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 108ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 108ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 119ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 96ms
+ ✓ Compiled in 1006ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 21ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 96ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 99ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 101ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 99ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 95ms
+ ✓ Compiled in 417ms (5103 modules)
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 23ms
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 103ms
+ ✓ Compiled in 231ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 19ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 154ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 99ms
+ ✓ Compiled in 265ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 20ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 117ms
+ ✓ Compiled in 379ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 28ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 131ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 96ms
+ ✓ Compiled in 227ms (5103 modules)
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 59ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 123ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 106ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 115ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 115ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+Using QuickNode endpoint for Ethereum blockchain sync
+ GET /api/contracts/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/sync 200 in 116ms
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 5 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 5 times.
+ GET /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 656ms
+ HEAD /collections/0xb8ea78fcacef50d41375e44e6814ebba36bb33c4/snapshot 200 in 53ms
+ ○ Compiling /_not-found ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /_not-found in 2.4s (10856 modules)
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 6 times.
+WalletConnect Core is already initialized. This is probably a mistake and can lead to unexpected behavior. Init() was called 6 times.
+ GET / 404 in 3006ms
+ GET / 200 in 56ms
+ GET / 200 in 112ms
+ ✓ Compiled in 2.3s (5103 modules)
+ ✓ Compiled in 801ms (5103 modules)
+ ✓ Compiled in 1162ms (5103 modules)
+ ✓ Compiled in 709ms (5103 modules)
+ ✓ Compiled in 727ms (5103 modules)
+ ✓ Compiled in 294ms (5103 modules)
+ ✓ Compiled in 539ms (5103 modules)
+ ✓ Compiled in 464ms (5103 modules)
+ ✓ Compiled in 277ms (5103 modules)
+ ✓ Compiled in 1595ms (10538 modules)
+ ✓ Compiled in 1702ms (10538 modules)
+ ✓ Compiled in 1388ms (10538 modules)
+ ○ Compiling /api/utils/date-to-block ...
+[?25h
