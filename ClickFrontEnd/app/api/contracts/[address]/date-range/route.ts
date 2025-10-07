@@ -21,9 +21,9 @@ export async function GET(
 
     // Get contract from database
     const contract = db.prepare(`
-      SELECT id, name, symbol, contract_type, deployment_block FROM contracts 
+      SELECT id, name, symbol, contract_type, deployment_block FROM contracts
       WHERE address = ? COLLATE NOCASE
-    `).get(address.toLowerCase())
+    `).get(address.toLowerCase()) as any
 
     if (!contract) {
       return NextResponse.json({
