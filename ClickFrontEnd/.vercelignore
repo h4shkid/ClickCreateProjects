@@ -1,0 +1,47 @@
+# Archive directories
+_archive/
+**/duplicate-snapshot-pages/
+
+# Scripts (keep only essential ones)
+scripts/
+
+# Development files
+*.md
+!README.md
+CLAUDE.md
+VALIDATION_GUIDE.md
+TEST_COLLECTION_SNAPSHOTS.md
+
+# Database files (will be replaced with Vercel Postgres)
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Build artifacts
+.next/
+.turbo/
+node_modules/.cache/
+
+# Environment
+.env.local
+.env.development
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx

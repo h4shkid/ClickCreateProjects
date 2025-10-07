@@ -28,6 +28,7 @@ interface UserCollection {
 export default function MyCollectionsPage() {
   const { isAuthenticated, isLoading } = useAuth()
   const { isConnected, address } = useAccount()
+  const [mounted, setMounted] = useState(false)
   const [collections, setCollections] = useState<UserCollection[]>([])
   const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -35,11 +36,16 @@ export default function MyCollectionsPage() {
   const [tooltipContent, setTooltipContent] = useState<string | null>(null)
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
 
+  // Handle hydration - wait for client-side mount
   useEffect(() => {
-    if (isConnected && address) {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (mounted && isConnected && address) {
       fetchCollections()
     }
-  }, [isConnected, address])
+  }, [mounted, isConnected, address])
 
   const fetchCollections = async () => {
     if (!address) return
@@ -116,7 +122,8 @@ export default function MyCollectionsPage() {
     (collection.address?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   )
 
-  if (isLoading) {
+  // Show loading during hydration
+  if (!mounted || isLoading) {
     return (
       <div className="min-h-screen pt-24 px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">

@@ -6,6 +6,7 @@ import {
   base,
 } from 'wagmi/chains'
 import { defineChain } from 'viem'
+import { createStorage } from 'wagmi'
 
 // Define Shape chain
 const shape = defineChain({
@@ -35,9 +36,22 @@ const shape = defineChain({
   iconBackground: '#000000',
 })
 
-export const wagmiConfig = getDefaultConfig({
-  appName: 'ClickFrontEnd NFT Analytics',
-  projectId: 'ab0ba184122cc8c74ac00c9b82f5e863',
-  chains: [mainnet, polygon, arbitrum, base, shape],
-  ssr: true, // If your dApp uses server side rendering (SSR)
-})
+// Lazy initialization to prevent double initialization during HMR
+let configInstance: ReturnType<typeof getDefaultConfig> | null = null
+
+function getWagmiConfig() {
+  if (!configInstance) {
+    configInstance = getDefaultConfig({
+      appName: 'ClickFrontEnd NFT Analytics',
+      projectId: 'ab0ba184122cc8c74ac00c9b82f5e863',
+      chains: [mainnet, polygon, arbitrum, base, shape],
+      ssr: true,
+      storage: createStorage({
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+      }),
+    })
+  }
+  return configInstance
+}
+
+export const wagmiConfig = getWagmiConfig()

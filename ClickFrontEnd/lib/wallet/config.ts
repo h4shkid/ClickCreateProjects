@@ -1,22 +1,25 @@
 // Wallet integration configuration using Reown AppKit (formerly Web3Modal)
-import { createAppKit } from '@reown/appkit'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+// DISABLED: Using RainbowKit instead to avoid WalletConnect initialization conflicts
+// NOTE: Only keeping imports needed for utility functions at the end of this file
 import { mainnet, polygon, arbitrum, base } from 'viem/chains'
-import { createConfig, http, WagmiProvider } from 'wagmi'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createSIWEConfig } from '@reown/appkit-siwe'
+// import { createAppKit } from '@reown/appkit'
+// import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+// import { createConfig, http, WagmiProvider } from 'wagmi'
+// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+// import { createSIWEConfig } from '@reown/appkit-siwe'
 
 // Project configuration
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id'
+// const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id'
 
-// Wagmi adapter
-const wagmiAdapter = new WagmiAdapter({
-  networks: [mainnet, polygon, arbitrum, base],
-  projectId,
-  ssr: true
-})
+// Wagmi adapter (DISABLED)
+// const wagmiAdapter = new WagmiAdapter({
+//   networks: [mainnet, polygon, arbitrum, base],
+//   projectId,
+//   ssr: true
+// })
 
-// SIWE (Sign-In with Ethereum) configuration
+// SIWE (Sign-In with Ethereum) configuration (DISABLED)
+/*
 const siweConfig = createSIWEConfig({
   // This function will be called when the user signs in
   createMessage: ({ nonce, address, chainId }) => {
@@ -77,46 +80,48 @@ By signing this message, you agree to our Terms of Service and Privacy Policy.`
     }
   }
 })
+*/
 
-// Create the AppKit modal
-export const appKit = createAppKit({
-  adapters: [wagmiAdapter],
-  networks: [mainnet, polygon, arbitrum, base],
-  defaultNetwork: mainnet,
-  projectId,
-  siweConfig,
-  metadata: {
-    name: 'Multi-Contract NFT Analytics',
-    description: 'Universal NFT analytics platform for any ERC-721/ERC-1155 collection',
-    url: typeof window !== 'undefined' ? window.location.origin : 'https://localhost:3000',
-    icons: ['/favicon.ico']
-  },
-  features: {
-    analytics: true, // Enable analytics
-    email: false, // Disable email auth for Web3-only experience
-    socials: [] // Disable social auth for Web3-only experience
-  },
-  themeMode: 'dark',
-  themeVariables: {
-    '--w3m-color-mix': '#FF6B35',
-    '--w3m-color-mix-strength': 20,
-    '--w3m-accent': '#FF6B35',
-    '--w3m-border-radius-master': '8px'
-  }
-})
+// Create the AppKit modal (DISABLED - using RainbowKit instead)
+// This config is kept for reference but not initialized to avoid conflicts
+// export const appKit = createAppKit({
+//   adapters: [wagmiAdapter],
+//   networks: [mainnet, polygon, arbitrum, base],
+//   defaultNetwork: mainnet,
+//   projectId,
+//   siweConfig,
+//   metadata: {
+//     name: 'Multi-Contract NFT Analytics',
+//     description: 'Universal NFT analytics platform for any ERC-721/ERC-1155 collection',
+//     url: typeof window !== 'undefined' ? window.location.origin : 'https://localhost:3000',
+//     icons: ['/favicon.ico']
+//   },
+//   features: {
+//     analytics: true, // Enable analytics
+//     email: false, // Disable email auth for Web3-only experience
+//     socials: [] // Disable social auth for Web3-only experience
+//   },
+//   themeMode: 'dark',
+//   themeVariables: {
+//     '--w3m-color-mix': '#FF6B35',
+//     '--w3m-color-mix-strength': 20,
+//     '--w3m-accent': '#FF6B35',
+//     '--w3m-border-radius-master': '8px'
+//   }
+// })
 
-// Export wagmi config
-export const wagmiConfig = wagmiAdapter.wagmiConfig
+// Export wagmi config (DISABLED - using RainbowKit config instead from lib/wagmi/config.ts)
+// export const wagmiConfig = wagmiAdapter.wagmiConfig
 
-// Export QueryClient for React Query
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000, // 1 minute
-      retry: 2
-    }
-  }
-})
+// Export QueryClient for React Query (DISABLED - using WalletProvider's QueryClient instead)
+// export const queryClient = new QueryClient({
+//   defaultOptions: {
+//     queries: {
+//       staleTime: 60 * 1000, // 1 minute
+//       retry: 2
+//     }
+//   }
+// })
 
 // Supported wallet types
 export const SUPPORTED_WALLETS = [

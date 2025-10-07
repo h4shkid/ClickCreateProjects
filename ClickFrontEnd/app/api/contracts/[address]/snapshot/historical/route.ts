@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import Database from 'better-sqlite3'
 import path from 'path'
 import { createDateToBlockConverter } from '@/lib/utils/date-to-block'
-import DataValidator from '@/lib/validation/data-validator'
 
 const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
 db.pragma('journal_mode = WAL')
@@ -159,73 +158,136 @@ export async function GET(
       }, { status: 400 })
     }
 
+    // Parse token IDs if provided
+    const tokenIdList: string[] = []
+    if (tokenId) {
+      tokenIdList.push(tokenId)
+    } else if (tokenIds) {
+      tokenIdList.push(...tokenIds.split(',').map(id => id.trim()))
+    }
+
+    console.log(`🎯 Token filtering: ${tokenIdList.length > 0 ? `${tokenIdList.length} tokens, exactMatch=${exactMatch}` : 'all tokens'}`)
+
     // Query real historical blockchain data by reconstructing state at the specified block
     let holders: any[] = []
     let hasRealData = false
-    
+
     try {
-      // Get all events up to the specified block number
-      const eventsQuery = `
-        SELECT DISTINCT to_address as holder_address
-        FROM events 
-        WHERE contract_address = ? COLLATE NOCASE
-        AND block_number <= ?
-        AND to_address != '0x0000000000000000000000000000000000000000'
-      `
-      
-      const holderAddresses = db.prepare(eventsQuery).all(address.toLowerCase(), targetBlock)
-      
-      if (holderAddresses && holderAddresses.length > 0) {
-        hasRealData = true
-        
-        // Calculate balance for each holder at the specified block
-        for (const holderData of holderAddresses) {
-          const holderAddress = holderData.holder_address
-          
-          // Count tokens received minus tokens sent up to the block number
-          const balanceQuery = `
-            SELECT 
-              COALESCE(received.count, 0) - COALESCE(sent.count, 0) as balance
-            FROM (
-              SELECT COUNT(*) as count 
-              FROM events 
-              WHERE contract_address = ? COLLATE NOCASE 
-              AND to_address = ? COLLATE NOCASE
-              AND block_number <= ?
-            ) received
-            LEFT JOIN (
-              SELECT COUNT(*) as count 
-              FROM events 
-              WHERE contract_address = ? COLLATE NOCASE 
-              AND from_address = ? COLLATE NOCASE
-              AND from_address != '0x0000000000000000000000000000000000000000'
-              AND block_number <= ?
-            ) sent ON 1=1
-          `
-          
-          const balance = db.prepare(balanceQuery).get(
-            address.toLowerCase(), 
-            holderAddress, 
-            targetBlock,
-            address.toLowerCase(), 
-            holderAddress,
-            targetBlock
+      // Use optimized single-query approach to calculate all balances at once
+      let balanceQuery: string
+      let balanceParams: any[]
+
+      if (tokenIdList.length > 0) {
+        // Calculate balances for specific tokens only
+        const placeholders = tokenIdList.map(() => '?').join(', ')
+        balanceQuery = `
+          SELECT
+            holder_address,
+            SUM(balance) as balance
+          FROM (
+            SELECT
+              to_address as holder_address,
+              COUNT(*) as balance
+            FROM events
+            WHERE contract_address = ? COLLATE NOCASE
+            AND block_number <= ?
+            AND token_id IN (${placeholders})
+            AND to_address != '0x0000000000000000000000000000000000000000'
+            GROUP BY to_address
+
+            UNION ALL
+
+            SELECT
+              from_address as holder_address,
+              -COUNT(*) as balance
+            FROM events
+            WHERE contract_address = ? COLLATE NOCASE
+            AND block_number <= ?
+            AND token_id IN (${placeholders})
+            AND from_address != '0x0000000000000000000000000000000000000000'
+            GROUP BY from_address
           )
-          
-          if (balance && balance.balance > 0) {
-            holders.push({
-              holderAddress: holderAddress,
-              balance: balance.balance.toString(),
-              percentage: 0, // Will calculate after we have all holders
-              rank: 0 // Will set after sorting
-            })
-          }
+          GROUP BY holder_address
+          HAVING SUM(balance) > 0
+          ORDER BY SUM(balance) DESC
+        `
+        balanceParams = [
+          address.toLowerCase(),
+          targetBlock,
+          ...tokenIdList,
+          address.toLowerCase(),
+          targetBlock,
+          ...tokenIdList
+        ]
+      } else {
+        // Calculate balances for all tokens
+        balanceQuery = `
+          SELECT
+            holder_address,
+            SUM(balance) as balance
+          FROM (
+            SELECT
+              to_address as holder_address,
+              COUNT(*) as balance
+            FROM events
+            WHERE contract_address = ? COLLATE NOCASE
+            AND block_number <= ?
+            AND to_address != '0x0000000000000000000000000000000000000000'
+            GROUP BY to_address
+
+            UNION ALL
+
+            SELECT
+              from_address as holder_address,
+              -COUNT(*) as balance
+            FROM events
+            WHERE contract_address = ? COLLATE NOCASE
+            AND block_number <= ?
+            AND from_address != '0x0000000000000000000000000000000000000000'
+            GROUP BY from_address
+          )
+          GROUP BY holder_address
+          HAVING SUM(balance) > 0
+          ORDER BY SUM(balance) DESC
+        `
+        balanceParams = [
+          address.toLowerCase(),
+          targetBlock,
+          address.toLowerCase(),
+          targetBlock
+        ]
+      }
+
+      const holderBalances = db.prepare(balanceQuery).all(...balanceParams)
+
+      if (holderBalances && holderBalances.length > 0) {
+        hasRealData = true
+
+        // Convert to holder format
+        holders = holderBalances.map((row: any) => ({
+          holderAddress: row.holder_address,
+          balance: row.balance.toString(),
+          percentage: 0, // Will calculate after filtering
+          rank: 0 // Will set after sorting
+        }))
+
+        // Apply exact match filtering if requested
+        if (exactMatch && tokenIdList.length > 0) {
+          // Filter holders to only those who have EXACTLY the requested tokens (no more, no less)
+          holders = holders.filter(holder => {
+            const balance = parseInt(holder.balance)
+            return balance === tokenIdList.length
+          })
+          console.log(`✅ Exact match: ${holders.length} holders with exactly ${tokenIdList.length} tokens`)
+        } else if (!exactMatch && tokenIdList.length > 0) {
+          // For non-exact match, include anyone with at least 1 of the requested tokens (already filtered by query)
+          console.log(`✅ Any match: ${holders.length} holders with at least one of the ${tokenIdList.length} tokens`)
         }
-        
+
         // Sort by balance descending and calculate percentages
         holders.sort((a, b) => parseInt(b.balance) - parseInt(a.balance))
         const totalSupply = holders.reduce((sum, h) => sum + parseInt(h.balance), 0)
-        
+
         holders = holders.map((holder, index) => ({
           ...holder,
           percentage: totalSupply > 0 ? (parseInt(holder.balance) / totalSupply) * 100 : 0,
@@ -248,51 +310,7 @@ export async function GET(
 
     const totalSupply = holders.reduce((sum, h) => sum + parseInt(h.balance), 0)
 
-    // Add validation logging for data accuracy verification
-    let validationInfo = null
-    try {
-      const validator = new DataValidator()
-      
-      // Run quick validation checks
-      const balanceValidation = await validator.validateHolderBalances(address, targetBlock)
-      const snapshotValidation = await validator.validateSnapshotAccuracy(address, targetBlock, { 
-        metadata: { blockNumber: targetBlock, timestamp: actualDate ? actualDate.toISOString() : new Date().toISOString() }
-      })
-      
-      validationInfo = {
-        dataIntegrity: {
-          isValid: balanceValidation.isValid && snapshotValidation.isValid,
-          balanceErrors: balanceValidation.errors.length,
-          balanceWarnings: balanceValidation.warnings.length,
-          snapshotErrors: snapshotValidation.errors.length,
-          snapshotWarnings: snapshotValidation.warnings.length,
-          totalSupplyValidated: balanceValidation.details.totalCalculatedSupply === totalSupply,
-          timestampValidated: Math.abs(
-            (actualDate ? actualDate.getTime() / 1000 : Date.now() / 1000) - 
-            (snapshotValidation.details.blockInfo?.timestamp || 0)
-          ) < 86400 // Within 1 day
-        },
-        lastValidated: new Date().toISOString()
-      }
-      
-      validator.close()
-      
-      console.log(`✅ Validation complete for block ${targetBlock}:`, {
-        balanceValid: balanceValidation.isValid,
-        snapshotValid: snapshotValidation.isValid,
-        totalSupplyMatch: validationInfo.dataIntegrity.totalSupplyValidated
-      })
-      
-    } catch (validationError) {
-      console.warn('⚠️ Validation failed:', validationError)
-      validationInfo = {
-        dataIntegrity: {
-          isValid: false,
-          validationError: validationError instanceof Error ? validationError.message : 'Unknown validation error'
-        },
-        lastValidated: new Date().toISOString()
-      }
-    }
+    console.log(`✅ Snapshot generated for block ${targetBlock}: ${holders.length} holders, ${totalSupply} total supply`)
 
     const response = {
       snapshot: holders,
@@ -310,8 +328,7 @@ export async function GET(
           requestedDate: date || timestamp,
           actualBlockDate: actualDate.toISOString(),
           accuracy: '±12 seconds per block'
-        } : undefined,
-        validation: validationInfo
+        } : undefined
       },
       totalHolders: holders.length,
       blockNumber: targetBlock,

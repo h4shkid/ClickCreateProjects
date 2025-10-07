@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import '@rainbow-me/rainbowkit/styles.css'
 import {
   RainbowKitProvider,
@@ -12,15 +13,26 @@ import {
 } from '@tanstack/react-query'
 import { wagmiConfig } from '../wagmi/config'
 
-const queryClient = new QueryClient()
-
 export function WalletProvider({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Create a client instance per component mount to avoid SSR issues
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        // Disable automatic refetching to prevent hydration issues
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        staleTime: 1000 * 60 * 60, // 1 hour
+      },
+    },
+  }))
+
   return (
-    <WagmiProvider config={wagmiConfig}>
+    <WagmiProvider config={wagmiConfig} reconnectOnMount={true}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           theme={darkTheme({

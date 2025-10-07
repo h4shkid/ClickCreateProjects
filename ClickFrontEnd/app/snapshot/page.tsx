@@ -147,9 +147,9 @@ export default function SnapshotPage() {
       
       console.log('📡 Calling API with params:', params)
       console.log('Full season mode:', fullSeasonMode, 'Selected season:', selectedSeason)
-      const response = await axios.get(endpoint, { 
+      const response = await axios.get(endpoint, {
         params,
-        timeout: 30000 // 30 second timeout
+        timeout: 180000 // 3 minute timeout for historical snapshots (can take 1-2 minutes)
       })
       console.log('📥 API Response:', response.data)
       
@@ -518,17 +518,17 @@ export default function SnapshotPage() {
 
   return (
     <div className="min-h-screen pt-24 px-6 lg:px-8">
-      <div className="container mx-auto max-w-7xl">
+      <div className="container mx-auto max-w-5xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <div className="mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Internal <span className="gradient-text">Snapshot Tool</span>
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base text-muted-foreground mb-4">
             Generate current or historical holder snapshots for internal collection analysis
           </p>
-          <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-            <div className="flex items-center gap-3">
+          <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+            <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-sm text-muted-foreground">
                 Collection: <span className="font-mono text-xs">{INTERNAL_COLLECTION_ADDRESS}</span>
@@ -539,19 +539,19 @@ export default function SnapshotPage() {
 
         {/* Sync Status Card */}
         {syncInfo && (
-          <div className="card-glass mb-6 bg-primary/5 border-primary/20">
+          <div className="card-glass mb-4 bg-primary/5 border-primary/20 p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Blockchain Sync Status</p>
-                <p className="text-lg font-medium">
-                  Last synced block: {syncInfo.lastSyncedBlock?.toLocaleString() || 'Never'}
+                <p className="text-base font-medium">
+                  Last synced: {syncInfo.lastSyncedBlock?.toLocaleString() || 'Never'}
                 </p>
                 {syncInfo.currentBlockNumber && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    Current block: {syncInfo.currentBlockNumber.toLocaleString()}
+                    Current: {syncInfo.currentBlockNumber.toLocaleString()}
                     {syncInfo.lastSyncedBlock && syncInfo.currentBlockNumber > syncInfo.lastSyncedBlock && (
                       <span className="text-yellow-400 ml-2">
-                        ({(syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock).toLocaleString()} blocks behind)
+                        ({(syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock).toLocaleString()} behind)
                       </span>
                     )}
                   </p>
@@ -562,29 +562,29 @@ export default function SnapshotPage() {
                   </p>
                 )}
               </div>
-              <div className={`px-3 py-1 rounded-full text-xs font-medium ${ 
+              <div className={`px-3 py-1 rounded-full text-xs font-medium ${
                 syncInfo.isSynced ? 'bg-green-500/20 text-green-400' :
                 syncInfo.status === 'syncing' ? 'bg-yellow-500/20 text-yellow-400' :
                 'bg-orange-500/20 text-orange-400'
               }`}>
                 {syncInfo.isSynced ? 'Up to date' :
                  syncInfo.status === 'syncing' ? 'Syncing...' :
-                 'Auto-sync on snapshot'}
+                 'Auto-sync'}
               </div>
             </div>
           </div>
         )}
 
         {/* Controls */}
-        <div className="card-glass mb-8">
-          <div className="grid md:grid-cols-2 gap-6">
+        <div className="card-glass mb-6 p-5">
+          <div className="space-y-4">
             {/* Snapshot Type */}
             <div>
               <label className="block text-sm font-medium mb-2">Snapshot Type</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setSnapshotType('current')}
-                  className={`py-2 px-4 rounded-lg font-medium transition-all ${
+                  className={`py-2 px-4 rounded-lg text-base font-medium transition-all ${
                     snapshotType === 'current'
                       ? 'bg-primary text-background'
                       : 'bg-card border border-border hover:border-primary/50'
@@ -594,7 +594,7 @@ export default function SnapshotPage() {
                 </button>
                 <button
                   onClick={() => setSnapshotType('historical')}
-                  className={`py-2 px-4 rounded-lg font-medium transition-all ${
+                  className={`py-2 px-4 rounded-lg text-base font-medium transition-all ${
                     snapshotType === 'historical'
                       ? 'bg-primary text-background'
                       : 'bg-card border border-border hover:border-primary/50'
@@ -608,9 +608,9 @@ export default function SnapshotPage() {
             {/* Token IDs */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Token IDs (comma-separated, optional)
+                Token IDs (optional)
               </label>
-              
+
               {/* Full Season Mode Toggle */}
               <div className="flex items-center gap-2 mb-2">
                 <input
@@ -626,25 +626,25 @@ export default function SnapshotPage() {
                   className="rounded border-primary/30 text-primary focus:ring-primary"
                 />
                 <label htmlFor="fullSeasonMode" className="text-xs font-medium">
-                  Full Season Holders Only (holders who own every NFT in the season)
+                  Full Season Holders Only
                 </label>
               </div>
-              
+
               {/* Season Quick Select Buttons */}
-              <div className="flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-3">
                 {SEASON_GROUPS.filter(s => s.name.startsWith('season') && !s.name.includes('all')).map((season) => (
                   <button
                     key={season.name}
                     onClick={() => {
                       if (fullSeasonMode) {
                         setSelectedSeason(season.name)
-                        setTokenIds('') // Clear token IDs when using full season mode
+                        setTokenIds('')
                       } else {
                         setTokenIds(formatTokenIdsForInput(season.tokenIds))
                         setSelectedSeason('')
                       }
                     }}
-                    className={`px-3 py-1 text-xs rounded-lg border transition-all ${
+                    className={`px-3 py-1 text-xs rounded border transition-all ${
                       fullSeasonMode && selectedSeason === season.name
                         ? 'bg-primary text-background border-primary'
                         : 'border-primary/30 hover:bg-primary/10 hover:border-primary'
@@ -654,14 +654,14 @@ export default function SnapshotPage() {
                     {season.displayName}
                   </button>
                 ))}
-                
+
                 {!fullSeasonMode && (
                   <>
                     {SEASON_GROUPS.filter(s => !s.name.startsWith('season') || s.name.includes('all')).map((season) => (
                       <button
                         key={season.name}
                         onClick={() => setTokenIds(formatTokenIdsForInput(season.tokenIds))}
-                        className="px-3 py-1 text-xs rounded-lg border border-muted/30 hover:bg-muted/10 hover:border-muted transition-all"
+                        className="px-3 py-1 text-xs rounded border border-muted/30 hover:bg-muted/10 hover:border-muted transition-all"
                         title={season.description}
                       >
                         {season.displayName}
@@ -669,39 +669,38 @@ export default function SnapshotPage() {
                     ))}
                   </>
                 )}
-                
+
                 <button
                   onClick={() => {
                     setTokenIds('')
                     setSelectedSeason('')
                   }}
-                  className="px-3 py-1 text-xs rounded-lg border border-border hover:bg-card hover:border-primary/30 transition-all"
+                  className="px-3 py-1 text-xs rounded border border-border hover:bg-card hover:border-primary/30 transition-all"
                 >
                   Clear
                 </button>
               </div>
-              
+
               <input
                 type="text"
                 value={tokenIds}
                 onChange={(e) => {
                   setTokenIds(e.target.value)
-                  // Reset exact match when tokens change
                   if (e.target.value !== tokenIds) {
                     setExactMatch(null)
                   }
                 }}
                 placeholder="e.g., 1, 2, 3"
-                className="w-full input-glass mb-3"
+                className="w-full input-glass mb-3 text-base"
               />
               
               {/* Exact Match Selection - MANDATORY */}
               {tokenIds && !fullSeasonMode && (
                 <div className="p-4 bg-primary/10 border border-primary/30 rounded-lg">
                   <label className="block text-sm font-medium mb-3">
-                    Exact Match <span className="text-primary">*</span> (Required)
+                    Exact Match <span className="text-primary">*</span>
                   </label>
-                  
+
                   <div className="space-y-3">
                     <label className="flex items-start gap-3 cursor-pointer">
                       <input
@@ -710,18 +709,16 @@ export default function SnapshotPage() {
                         value="yes"
                         checked={exactMatch === true}
                         onChange={() => setExactMatch(true)}
-                        className="mt-1 text-primary focus:ring-primary"
+                        className="mt-0.5 text-primary focus:ring-primary"
                       />
                       <div>
-                        <div className="font-medium">YES - Exact Match</div>
+                        <div className="text-sm font-medium">YES - Exact Match</div>
                         <div className="text-xs text-muted-foreground">
-                          Only wallets that hold EXACTLY the queried tokens (no more, no less).
-                          <br />
-                          Example: Query &quot;1,2,3&quot; → Returns only wallets with tokens 1,2,3
+                          Only wallets with EXACTLY the queried tokens
                         </div>
                       </div>
                     </label>
-                    
+
                     <label className="flex items-start gap-3 cursor-pointer">
                       <input
                         type="radio"
@@ -729,22 +726,20 @@ export default function SnapshotPage() {
                         value="no"
                         checked={exactMatch === false}
                         onChange={() => setExactMatch(false)}
-                        className="mt-1 text-primary focus:ring-primary"
+                        className="mt-0.5 text-primary focus:ring-primary"
                       />
                       <div>
-                        <div className="font-medium">NO - Any Match</div>
+                        <div className="text-sm font-medium">NO - Any Match</div>
                         <div className="text-xs text-muted-foreground">
-                          Wallets holding ANY token in the queried list.
-                          <br />
-                          Example: Query &quot;1,2,3&quot; → Returns wallets with 1, or 1,2, or 2,3, etc.
+                          Wallets holding ANY token in the list
                         </div>
                       </div>
                     </label>
                   </div>
-                  
+
                   {exactMatch === null && (
                     <div className="mt-2 text-xs text-orange-400">
-                      ⚠️ Please select an option to continue
+                      ⚠️ Please select an option
                     </div>
                   )}
                 </div>
@@ -755,7 +750,7 @@ export default function SnapshotPage() {
             {snapshotType === 'historical' && (
               <div className="space-y-4">
                 {/* Date Mode Toggle */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 text-sm">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
@@ -768,7 +763,7 @@ export default function SnapshotPage() {
                       }}
                       className="text-primary focus:ring-primary"
                     />
-                    <span className="text-sm font-medium">Single Date</span>
+                    <span className="font-medium">Single Date</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -783,7 +778,7 @@ export default function SnapshotPage() {
                       }}
                       className="text-primary focus:ring-primary"
                     />
-                    <span className="text-sm font-medium">Date Range Comparison</span>
+                    <span className="font-medium">Date Range</span>
                   </label>
                 </div>
 
@@ -799,102 +794,90 @@ export default function SnapshotPage() {
                       min={dateRange?.minDate}
                       max={dateRange?.maxDate}
                       onChange={(e) => setSnapshotDate(e.target.value)}
-                      className="w-full input-glass"
+                      className="w-full input-glass text-base"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      The system will automatically find the closest blockchain block for this date.
-                      {dateRange && (
-                        <span className="block mt-1 text-primary">
-                          Available data: {dateRange.minDate} to {dateRange.maxDate}
-                        </span>
-                      )}
-                    </p>
+                    {dateRange && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Available: {dateRange.minDate} to {dateRange.maxDate}
+                      </p>
+                    )}
                   </div>
                 )}
 
                 {/* Date Range Inputs */}
                 {dateMode === 'range' && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Start Date
-                      </label>
-                      <input
-                        type="date"
-                        value={startDate}
-                        min={dateRange?.minDate}
-                        max={dateRange?.maxDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="w-full input-glass"
-                      />
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Start Date
+                        </label>
+                        <input
+                          type="date"
+                          value={startDate}
+                          min={dateRange?.minDate}
+                          max={dateRange?.maxDate}
+                          onChange={(e) => setStartDate(e.target.value)}
+                          className="w-full input-glass text-base"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          End Date
+                        </label>
+                        <input
+                          type="date"
+                          value={endDate}
+                          min={startDate || dateRange?.minDate}
+                          max={dateRange?.maxDate}
+                          onChange={(e) => setEndDate(e.target.value)}
+                          className="w-full input-glass text-base"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        End Date
-                      </label>
-                      <input
-                        type="date"
-                        value={endDate}
-                        min={startDate || dateRange?.minDate}
-                        max={dateRange?.maxDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="w-full input-glass"
-                      />
-                    </div>
-                  </div>
-                )}
-                
-                {dateMode === 'range' && (
-                  <p className="text-xs text-muted-foreground">
-                    Compare holders between two dates. Shows new holders, removed holders, and balance changes.
                     {dateRange && (
-                      <span className="block mt-1 text-primary">
-                        Available data: {dateRange.minDate} to {dateRange.maxDate}
-                      </span>
+                      <p className="text-xs text-muted-foreground">
+                        Available: {dateRange.minDate} to {dateRange.maxDate}
+                      </p>
                     )}
-                  </p>
+                  </>
                 )}
               </div>
             )}
 
-            {/* Sync Status */}
-            <div>
-              <label className="block text-sm font-medium mb-2">Blockchain Sync</label>
+            {/* Generate and Sync Buttons */}
+            <div className="flex gap-3 pt-2">
               <button
                 onClick={syncBlockchain}
                 disabled={syncStatus.syncing}
-                className="btn-secondary w-full flex items-center justify-center gap-2"
+                className="btn-secondary flex-1 flex items-center justify-center gap-2 text-base"
               >
-                <RefreshCw className={`w-4 h-4 ${syncStatus.syncing ? 'animate-spin' : ''}`} />
-                {syncStatus.syncing ? `Syncing... ${syncStatus.progress}%` : 'Sync Blockchain'}
+                <RefreshCw className={`w-5 h-5 ${syncStatus.syncing ? 'animate-spin' : ''}`} />
+                {syncStatus.syncing ? `${syncStatus.progress}%` : 'Sync Blockchain'}
+              </button>
+              <button
+                onClick={generateSnapshot}
+                disabled={loading}
+                className="btn-primary flex-1 flex items-center justify-center gap-2 text-base"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-5 h-5" />
+                    Generate Snapshot
+                  </>
+                )}
               </button>
             </div>
           </div>
 
-          {/* Generate Button */}
-          <div className="mt-6 flex gap-4">
-            <button
-              onClick={generateSnapshot}
-              disabled={loading}
-              className="btn-primary flex-1 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Search className="w-4 h-4" />
-                  Generate Snapshot
-                </>
-              )}
-            </button>
-          </div>
-
           {/* Error Display */}
           {error && (
-            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
               {error}
             </div>
           )}
@@ -904,42 +887,42 @@ export default function SnapshotPage() {
         {snapshotData && (
           <>
             {/* Statistics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="card-glass">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <div className="card-glass bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
                   <Users className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Holders</p>
+                    <p className="text-xs text-muted-foreground">Total Holders</p>
                     <p className="text-xl font-bold">{snapshotData.totalHolders.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
-              
-              <div className="card-glass">
+
+              <div className="card-glass bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
                   <Hash className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Block Number</p>
+                    <p className="text-xs text-muted-foreground">Block Number</p>
                     <p className="text-xl font-bold">{snapshotData.blockNumber.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
-              
-              <div className="card-glass">
+
+              <div className="card-glass bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
                   <TrendingUp className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Supply</p>
+                    <p className="text-xs text-muted-foreground">Total Supply</p>
                     <p className="text-xl font-bold">{parseFloat(snapshotData.totalSupply).toFixed(0)}</p>
                   </div>
                 </div>
               </div>
-              
-              <div className="card-glass">
+
+              <div className="card-glass bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
                   <Calendar className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Timestamp</p>
+                    <p className="text-xs text-muted-foreground">Timestamp</p>
                     <p className="text-xl font-bold">
                       {new Date(snapshotData.timestamp).toLocaleDateString()}
                     </p>
@@ -949,17 +932,17 @@ export default function SnapshotPage() {
             </div>
 
             {/* Export and Validation Buttons */}
-            <div className="flex gap-4 mb-8 flex-wrap">
+            <div className="flex gap-3 mb-6 flex-wrap">
               <button
                 onClick={() => exportData('csv')}
-                className="btn-secondary flex items-center gap-2"
+                className="btn-secondary flex items-center gap-2 text-base"
               >
                 <Download className="w-4 h-4" />
                 Export CSV
               </button>
               <button
                 onClick={() => exportData('json')}
-                className="btn-secondary flex items-center gap-2"
+                className="btn-secondary flex items-center gap-2 text-base"
               >
                 <Download className="w-4 h-4" />
                 Export JSON
@@ -967,7 +950,7 @@ export default function SnapshotPage() {
               <button
                 onClick={validateSnapshot}
                 disabled={validationLoading || !snapshotData}
-                className="btn-outline flex items-center gap-2 disabled:opacity-50"
+                className="btn-outline flex items-center gap-2 disabled:opacity-50 text-base"
               >
                 {validationLoading ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -980,118 +963,105 @@ export default function SnapshotPage() {
 
             {/* Validation Results */}
             {validationInfo && (
-              <div className={`card-glass mb-8 ${
+              <div className={`card-glass mb-6 p-5 ${
                 validationInfo.isValid ? 'border-green-500/50' : 'border-red-500/50'
               }`}>
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      validationInfo.isValid ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                    }`}>
-                      {validationInfo.isValid ? '✓' : '⚠'}
-                    </div>
-                    <h3 className="text-lg font-semibold">
-                      Data Validation {validationInfo.isValid ? 'Passed' : 'Issues Found'}
-                    </h3>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    validationInfo.isValid ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {validationInfo.isValid ? '✓' : '⚠'}
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div className="bg-background/30 rounded-lg p-4">
-                      <div className="text-sm text-muted-foreground">Total Errors</div>
-                      <div className="text-2xl font-bold text-red-400">
-                        {validationInfo.summary?.totalErrors || 0}
-                      </div>
-                    </div>
-                    <div className="bg-background/30 rounded-lg p-4">
-                      <div className="text-sm text-muted-foreground">Total Warnings</div>
-                      <div className="text-2xl font-bold text-yellow-400">
-                        {validationInfo.summary?.totalWarnings || 0}
-                      </div>
-                    </div>
-                    <div className="bg-background/30 rounded-lg p-4">
-                      <div className="text-sm text-muted-foreground">Health Status</div>
-                      <div className={`text-2xl font-bold ${
-                        validationInfo.summary?.overallHealth === 'GOOD' ? 'text-green-400' :
-                        validationInfo.summary?.overallHealth === 'FAIR' ? 'text-yellow-400' : 'text-red-400'
-                      }`}>
-                        {validationInfo.summary?.overallHealth || 'UNKNOWN'}
-                      </div>
-                    </div>
-                  </div>
-
-                  {(validationInfo.errors?.length > 0 || validationInfo.warnings?.length > 0) && (
-                    <div className="space-y-3">
-                      {validationInfo.errors?.length > 0 && (
-                        <div>
-                          <h4 className="font-medium text-red-400 mb-2">Errors:</h4>
-                          <ul className="list-disc list-inside space-y-1 text-sm text-red-300">
-                            {validationInfo.errors.slice(0, 5).map((error: string, index: number) => (
-                              <li key={index}>{error}</li>
-                            ))}
-                            {validationInfo.errors.length > 5 && (
-                              <li className="text-muted-foreground">
-                                ... and {validationInfo.errors.length - 5} more errors
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {validationInfo.warnings?.length > 0 && (
-                        <div>
-                          <h4 className="font-medium text-yellow-400 mb-2">Warnings:</h4>
-                          <ul className="list-disc list-inside space-y-1 text-sm text-yellow-300">
-                            {validationInfo.warnings.slice(0, 5).map((warning: string, index: number) => (
-                              <li key={index}>{warning}</li>
-                            ))}
-                            {validationInfo.warnings.length > 5 && (
-                              <li className="text-muted-foreground">
-                                ... and {validationInfo.warnings.length - 5} more warnings
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {validationInfo.details && (
-                    <div className="mt-4 text-sm text-muted-foreground">
-                      <div>Validation performed on: {new Date(validationInfo.lastValidated || Date.now()).toLocaleString()}</div>
-                      {validationInfo.details.totalHolders && (
-                        <div>Total holders validated: {validationInfo.details.totalHolders}</div>
-                      )}
-                    </div>
-                  )}
+                  <h3 className="text-base font-semibold">
+                    Data Validation {validationInfo.isValid ? 'Passed' : 'Issues Found'}
+                  </h3>
                 </div>
+
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="bg-background/30 rounded-lg p-3">
+                    <div className="text-xs text-muted-foreground">Errors</div>
+                    <div className="text-xl font-bold text-red-400">
+                      {validationInfo.summary?.totalErrors || 0}
+                    </div>
+                  </div>
+                  <div className="bg-background/30 rounded-lg p-3">
+                    <div className="text-xs text-muted-foreground">Warnings</div>
+                    <div className="text-xl font-bold text-yellow-400">
+                      {validationInfo.summary?.totalWarnings || 0}
+                    </div>
+                  </div>
+                  <div className="bg-background/30 rounded-lg p-3">
+                    <div className="text-xs text-muted-foreground">Health</div>
+                    <div className={`text-xl font-bold ${
+                      validationInfo.summary?.overallHealth === 'GOOD' ? 'text-green-400' :
+                      validationInfo.summary?.overallHealth === 'FAIR' ? 'text-yellow-400' : 'text-red-400'
+                    }`}>
+                      {validationInfo.summary?.overallHealth || 'UNKNOWN'}
+                    </div>
+                  </div>
+                </div>
+
+                {(validationInfo.errors?.length > 0 || validationInfo.warnings?.length > 0) && (
+                  <div className="space-y-3">
+                    {validationInfo.errors?.length > 0 && (
+                      <div>
+                        <h4 className="font-medium text-red-400 mb-2 text-sm">Errors:</h4>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-red-300">
+                          {validationInfo.errors.slice(0, 5).map((error: string, index: number) => (
+                            <li key={index}>{error}</li>
+                          ))}
+                          {validationInfo.errors.length > 5 && (
+                            <li className="text-muted-foreground">
+                              ... and {validationInfo.errors.length - 5} more
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                    {validationInfo.warnings?.length > 0 && (
+                      <div>
+                        <h4 className="font-medium text-yellow-400 mb-2 text-sm">Warnings:</h4>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-yellow-300">
+                          {validationInfo.warnings.slice(0, 5).map((warning: string, index: number) => (
+                            <li key={index}>{warning}</li>
+                          ))}
+                          {validationInfo.warnings.length > 5 && (
+                            <li className="text-muted-foreground">
+                              ... and {validationInfo.warnings.length - 5} more
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
             {/* Holders Table */}
             <div className="card-glass overflow-hidden">
-              <div className="p-6 border-b border-border flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Holders ({snapshotData.totalHolders || snapshotData.holders.length})</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      setShowAllHolders(!showAllHolders)
-                      setCurrentPage(1)
-                    }}
-                    className="btn-secondary text-sm"
-                  >
-                    {showAllHolders ? 'Show Top 20' : 'Show All'}
-                  </button>
-                </div>
+              <div className="p-5 border-b border-border flex justify-between items-center">
+                <h2 className="text-base font-semibold">Holders ({snapshotData.totalHolders || snapshotData.holders.length})</h2>
+                <button
+                  onClick={() => {
+                    setShowAllHolders(!showAllHolders)
+                    setCurrentPage(1)
+                  }}
+                  className="btn-secondary text-sm px-4 py-2"
+                >
+                  {showAllHolders ? 'Show Top 20' : 'Show All'}
+                </button>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">Rank</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">Address</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-muted-foreground">Balance</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-muted-foreground">Percentage</th>
-                      <th className="px-6 py-3 text-center text-sm font-medium text-muted-foreground">Actions</th>
+                      <th className="px-5 py-3 text-left text-sm font-medium text-muted-foreground">Rank</th>
+                      <th className="px-5 py-3 text-left text-sm font-medium text-muted-foreground">Address</th>
+                      <th className="px-5 py-3 text-right text-sm font-medium text-muted-foreground">Balance</th>
+                      <th className="px-5 py-3 text-right text-sm font-medium text-muted-foreground">Percentage</th>
+                      <th className="px-5 py-3 text-center text-sm font-medium text-muted-foreground">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1102,19 +1072,19 @@ export default function SnapshotPage() {
                       
                       return displayHolders.map((holder, index) => (
                         <tr key={`${holder.address}-${index}`} className="border-b border-border/50 hover:bg-card/50 transition-colors">
-                          <td className="px-6 py-4 text-sm">
+                          <td className="px-5 py-4 text-sm">
                             <span className="text-primary font-medium">#{holder.rank || start + index + 1}</span>
                           </td>
-                          <td className="px-6 py-4 text-sm font-mono">
+                          <td className="px-5 py-4 text-sm font-mono">
                             {holder.address || 'Invalid Address'}
                           </td>
-                          <td className="px-6 py-4 text-sm text-right font-medium">
+                          <td className="px-5 py-4 text-sm text-right font-medium">
                             {holder.balance ? parseFloat(holder.balance).toLocaleString() : '0'}
                           </td>
-                          <td className="px-6 py-4 text-sm text-right">
+                          <td className="px-5 py-4 text-sm text-right">
                             <span className="text-primary">{holder.percentage ? holder.percentage.toFixed(4) : '0.0000'}%</span>
                           </td>
-                          <td className="px-6 py-4 text-sm text-center">
+                          <td className="px-5 py-4 text-sm text-center">
                             <button
                               onClick={() => {
                                 navigator.clipboard.writeText(holder.address)
@@ -1141,17 +1111,17 @@ export default function SnapshotPage() {
                       <button
                         onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
-                        className="px-3 py-1 rounded-lg bg-card border border-border hover:border-primary/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        className="px-3 py-1.5 text-sm rounded bg-card border border-border hover:border-primary/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                       >
                         Previous
                       </button>
-                      <span className="px-3 py-1 text-sm">
+                      <span className="px-3 py-1.5 text-sm">
                         Page {currentPage} of {Math.ceil(snapshotData.holders.length / holdersPerPage)}
                       </span>
                       <button
                         onClick={() => setCurrentPage(prev => Math.min(Math.ceil(snapshotData.holders.length / holdersPerPage), prev + 1))}
                         disabled={currentPage === Math.ceil(snapshotData.holders.length / holdersPerPage)}
-                        className="px-3 py-1 rounded-lg bg-card border border-border hover:border-primary/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        className="px-3 py-1.5 text-sm rounded bg-card border border-border hover:border-primary/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                       >
                         Next
                       </button>

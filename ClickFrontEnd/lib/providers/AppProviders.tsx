@@ -1,23 +1,25 @@
 'use client'
 
 import React, { ReactNode } from 'react'
-import { WagmiProvider } from 'wagmi'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { wagmiConfig, queryClient } from '@/lib/wallet/config'
+// DISABLED: Using WalletProvider with RainbowKit instead
+// import { WagmiProvider } from 'wagmi'
+// import { QueryClientProvider } from '@tanstack/react-query'
+// import { wagmiConfig, queryClient } from '@/lib/wallet/config'
 
 interface AppProvidersProps {
   children: ReactNode
 }
 
-export function AppProviders({ children }: AppProvidersProps) {
-  return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    </WagmiProvider>
-  )
-}
+// DISABLED: Using WalletProvider with RainbowKit instead
+// export function AppProviders({ children }: AppProvidersProps) {
+//   return (
+//     <WagmiProvider config={wagmiConfig}>
+//       <QueryClientProvider client={queryClient}>
+//         {children}
+//       </QueryClientProvider>
+//     </WagmiProvider>
+//   )
+// }
 
 // HOC for pages that require authentication
 export function withAuth<P extends object>(Component: React.ComponentType<P>) {

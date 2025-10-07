@@ -6,6 +6,46 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **ClickFrontEnd** - A universal multi-contract NFT analytics platform built with Next.js 15, TypeScript, and Tailwind CSS. Originally designed for a single ClickCreate collection, it has been transformed into a comprehensive platform supporting any ERC-721/ERC-1155 contract across multiple blockchains. The application features wallet-based authentication, user profiles, shared blockchain data caching, and sophisticated contract discovery with OpenSea integration.
 
+## 🔴 CRITICAL: INTERNAL vs PUBLIC SNAPSHOT ACCESS - READ THIS FIRST! 🔴
+
+**The snapshot page has TWO different access levels:**
+
+### 1. **INTERNAL SNAPSHOT ACCESS** (Restricted - ClickCreate Team Only)
+- **Page**: `/collections/[address]/snapshot`
+- **Access Control**: Only accessible by authorized wallet (`0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC`)
+- **Purpose**: Internal use for ClickCreate team to generate advanced snapshots for ANY collection
+- **Advanced Features** (only available to internal wallet):
+  - Full Season mode (holders with ALL tokens in a season)
+  - Season quick-select buttons (Season 1, 2, 3, All Seasons, SubPasses Only, Entire Collection)
+  - Advanced token filtering with exact match options
+  - Historical snapshots with date range comparison
+  - Blockchain sync controls
+  - Data validation tools
+- **UI**: Compact single-column layout (max-w-4xl) with all advanced controls
+- **Recently Updated**: Redesigned to be more compact and easier to use
+
+### 2. **PUBLIC SNAPSHOT ACCESS** (User-facing)
+- **Page**: Same route `/collections/[address]/snapshot`
+- **Access Control**: Available to ALL authenticated users for collections in "My Collections"
+- **Entry Point**: Users click "Snapshot" button from their collection cards in "My Collections" page
+- **Purpose**: Allow users to generate basic snapshots for collections they've added to their profile
+- **Features** (standard users see):
+  - Same page as internal but WITHOUT wallet restriction check
+  - All features available but intended for simpler public use
+  - Users can only snapshot collections they've added to "My Collections"
+
+### Key Distinction:
+- **SAME PAGE** (`/collections/[address]/snapshot`) serves BOTH purposes
+- **INTERNAL ACCESS**: Bypasses "My Collections" requirement, shows to authorized wallet only
+- **PUBLIC ACCESS**: Users access via "My Collections" → click collection → "Snapshot" button
+- When user mentions "internal snapshot" = they mean the wallet-restricted version I just redesigned
+- When user mentions "public snapshot" or "My Collections snapshot" = they mean user-accessible version
+
+**When working on snapshot features, ALWAYS clarify if changes should affect:**
+- ✅ Internal access only (authorized wallet)
+- ✅ Public access only (all users)
+- ✅ Both (the entire snapshot page)
+
 ## Essential Commands
 
 ```bash

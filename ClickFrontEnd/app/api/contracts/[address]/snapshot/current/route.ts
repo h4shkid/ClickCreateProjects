@@ -18,6 +18,7 @@ export async function GET(
     const exactMatch = searchParams.get('exactMatch') === 'true'
     const fullSeason = searchParams.get('fullSeason') === 'true'
     const season = searchParams.get('season')
+    const limit = parseInt(searchParams.get('limit') || '50') // Default to 50 for UI, but allow unlimited for exports
 
     if (!address) {
       return NextResponse.json({
@@ -103,7 +104,7 @@ export async function GET(
             GROUP BY address
             HAVING COUNT(DISTINCT token_id) = ?
             ORDER BY SUM(CAST(balance AS INTEGER)) DESC
-            LIMIT 50
+            ${limit > 0 ? `LIMIT ${limit}` : ''}
           `
           
           console.log(`🎯 Complete season query: must own all ${expectedTokenCount} tokens`)
@@ -120,7 +121,7 @@ export async function GET(
           GROUP BY address
           HAVING SUM(CAST(balance AS INTEGER)) > 0
           ORDER BY SUM(CAST(balance AS INTEGER)) DESC
-          LIMIT 50
+          ${limit > 0 ? `LIMIT ${limit}` : ''}
         `
       }
       

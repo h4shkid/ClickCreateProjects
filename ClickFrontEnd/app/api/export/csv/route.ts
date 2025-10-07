@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const tokenId = searchParams.get('tokenId');
     const tokenIds = searchParams.get('tokenIds');
     const blockNumber = searchParams.get('blockNumber');
-    const limit = parseInt(searchParams.get('limit') || '10000');
+    const limit = parseInt(searchParams.get('limit') || '1000000'); // Default to 1 million (no practical limit)
     const fullSeasonMode = searchParams.get('fullSeason') === 'true';
     const seasonName = searchParams.get('season');
     const exactMatch = searchParams.get('exactMatch');
@@ -81,27 +81,42 @@ export async function GET(request: NextRequest) {
         
         // Extract holders from the response
         const holders = result.data.snapshot || result.data.holders || [];
-        
+
+        // Check if this is the ClickCreate collection (only one that should have number_of_sets)
+        const CLICKCREATE_COLLECTION_ADDRESS = '0x300e7a5fb0ab08af367d5fb3915930791bb08c2b';
+        const isClickCreateCollection = contractAddress?.toLowerCase() === CLICKCREATE_COLLECTION_ADDRESS.toLowerCase();
+
+        // Define headers based on collection type
+        const csvHeaders = isClickCreateCollection
+          ? ['wallet_id', 'number_of_sets', 'total_tokens_held', 'token_ids_held', 'snapshot_time', 'token_id_list']
+          : ['wallet_id', 'total_tokens_held', 'token_ids_held', 'snapshot_time', 'token_id_list'];
+
         if (holders.length === 0) {
           // Return empty CSV with headers only
-          const csvHeaders = ['wallet_id', 'number_of_sets', 'total_tokens_held', 'token_ids_held', 'snapshot_time', 'token_id_list'];
           csvData = csvHeaders.join(',');
         } else {
-          const csvHeaders = ['wallet_id', 'number_of_sets', 'total_tokens_held', 'token_ids_held', 'snapshot_time', 'token_id_list'];
           const timestamp = result.data.metadata?.timestamp || new Date().toISOString();
-          const tokenIdListStr = result.data.metadata?.tokenIdList?.join(';') || 
-                                result.data.metadata?.queryTokens?.join(';') || 
+          const tokenIdListStr = result.data.metadata?.tokenIdList?.join(';') ||
+                                result.data.metadata?.queryTokens?.join(';') ||
                                 tokenIds || tokenId || 'all';
-          
-          const csvRows = holders.map((holder: any) => ({
-            wallet_id: holder.holderAddress || holder.address,
-            number_of_sets: holder.numberOfSets || 0,
-            total_tokens_held: holder.totalTokensHeld || holder.balance || 0,
-            token_ids_held: holder.tokensOwned ? holder.tokensOwned.join(';') : holder.tokenIds?.join(';') || '',
-            snapshot_time: timestamp,
-            token_id_list: tokenIdListStr
-          }));
-          
+
+          const csvRows = holders.map((holder: any) => {
+            const row: any = {
+              wallet_id: holder.holderAddress || holder.address,
+              total_tokens_held: holder.totalTokensHeld || holder.balance || 0,
+              token_ids_held: holder.tokensOwned ? holder.tokensOwned.join(';') : holder.tokenIds?.join(';') || '',
+              snapshot_time: timestamp,
+              token_id_list: tokenIdListStr
+            };
+
+            // Only include number_of_sets for ClickCreate collection
+            if (isClickCreateCollection) {
+              row.number_of_sets = holder.numberOfSets || 0;
+            }
+
+            return row;
+          });
+
           csvData = convertToCSV(csvRows, csvHeaders);
         }
         
