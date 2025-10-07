@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# database exports (too large for GitHub, used only for local migration)
+/migrations/data-export/
