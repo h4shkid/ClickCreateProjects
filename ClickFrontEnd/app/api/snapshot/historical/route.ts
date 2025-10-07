@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
           targetBlock = await converter.dateToBlock(targetDate);
           actualDate = await converter.blockToDate(targetBlock);
         }
-      } catch (error) {
+      } catch (error: any) {
         return NextResponse.json({
           success: false,
           error: error instanceof Error ? error.message : 'Failed to convert date to block number'

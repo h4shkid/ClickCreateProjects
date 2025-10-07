@@ -96,7 +96,7 @@ export async function GET(
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Validation API error:', error)
     return NextResponse.json({
       success: false,
@@ -143,7 +143,7 @@ export async function POST(
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('CSV validation API error:', error)
     return NextResponse.json({
       success: false,

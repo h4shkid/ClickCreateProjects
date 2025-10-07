@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
           }
         }
       }
-    } catch (openSeaError) {
+    } catch (openSeaError: any) {
       console.log(`⚠️ OpenSea metadata fetch failed:`, openSeaError)
       // Continue without OpenSea data
     }
@@ -300,7 +300,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Contract registration error:', error)
     return NextResponse.json({
       success: false,

@@ -102,7 +102,7 @@ export async function GET(
         // Generate comparison between start and end dates
         return await generateDateRangeSnapshot(address, startBlock, endBlock, actualStartDate, actualEndDate, { startDate, endDate })
 
-      } catch (error) {
+      } catch (error: any) {
         return NextResponse.json({
           success: false,
           error: error instanceof Error ? error.message : 'Failed to process date range'
@@ -143,7 +143,7 @@ export async function GET(
           targetBlock = await createDateToBlockConverter().dateToBlock(targetDate)
           actualDate = await createDateToBlockConverter().blockToDate(targetBlock)
         }
-      } catch (error) {
+      } catch (error: any) {
         return NextResponse.json({
           success: false,
           error: error instanceof Error ? error.message : 'Failed to convert date to block number'
@@ -295,7 +295,7 @@ export async function GET(
         }))
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching historical data:', error)
       hasRealData = false
     }
@@ -345,7 +345,7 @@ export async function GET(
       data: response
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Historical snapshot error:', error)
     return NextResponse.json({
       success: false,

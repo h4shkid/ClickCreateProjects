@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
                 }
               })
             }
-          } catch (collectionError) {
+          } catch (collectionError: any) {
             console.log('Collection fetch failed, using contract data:', collectionError)
           }
         }
@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
       } else {
         console.log(`Contract API failed: ${contractResponse.status} ${contractResponse.statusText}`)
       }
-    } catch (contractError) {
+    } catch (contractError: any) {
       console.log('Contract fetch failed:', contractError)
     }
 
@@ -157,7 +157,7 @@ export async function GET(request: NextRequest) {
           }
         }
       }
-    } catch (nftError) {
+    } catch (nftError: any) {
       console.log('NFT endpoint fallback failed:', nftError)
     }
     
@@ -167,9 +167,9 @@ export async function GET(request: NextRequest) {
       error: 'Collection not found on OpenSea'
     }, { status: 404 })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('OpenSea API error:', error)
-    
+
     return NextResponse.json({
       success: false,
       error: 'Failed to fetch collection data'

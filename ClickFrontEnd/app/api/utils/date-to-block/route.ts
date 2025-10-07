@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Date to block conversion error:', error)
     return NextResponse.json({
       success: false,
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Date range conversion error:', error)
     return NextResponse.json({
       success: false,

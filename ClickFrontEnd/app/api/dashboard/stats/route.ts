@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       const contractsQuery = `SELECT COUNT(*) as count FROM contracts`
       const contractsResult = db.prepare(contractsQuery).get() as { count: number }
       totalContracts = contractsResult.count
-    } catch (error) {
+    } catch (error: any) {
       console.log('📋 Contracts table not found, trying legacy approach')
       
       // Fallback: count distinct contract addresses from events
@@ -36,17 +36,17 @@ export async function GET(request: NextRequest) {
         const legacyResult = db.prepare(legacyQuery).get() as { count: number }
         totalContracts = legacyResult.count
         console.log(`📊 Found ${totalContracts} contracts from events data`)
-      } catch (legacyError) {
+      } catch (legacyError: any) {
         totalContracts = 0
       }
     }
-    
+
     // Get total users (from user_profiles table)
     try {
       const usersQuery = `SELECT COUNT(*) as count FROM user_profiles`
       const usersResult = db.prepare(usersQuery).get() as { count: number }
       totalUsers = usersResult.count
-    } catch (error) {
+    } catch (error: any) {
       console.log('👤 User profiles table not found, using 0')
       totalUsers = 0
     }
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       const snapshotsQuery = `SELECT COUNT(*) as count FROM user_snapshots`
       const snapshotsResult = db.prepare(snapshotsQuery).get() as { count: number }
       totalSnapshots = snapshotsResult.count
-    } catch (error) {
+    } catch (error: any) {
       console.log('📸 User snapshots table not found, trying legacy approach')
       
       // Fallback: estimate snapshots from existing data if available
@@ -66,25 +66,25 @@ export async function GET(request: NextRequest) {
         const eventsResult = db.prepare(eventsQuery).get() as { count: number }
         totalSnapshots = Math.min(eventsResult.count, 10) // Conservative estimate
         console.log(`📊 Estimated ${totalSnapshots} snapshots from events data`)
-      } catch (legacyError) {
+      } catch (legacyError: any) {
         totalSnapshots = 0
       }
     }
-    
+
     const stats: DashboardStats = {
       totalContracts,
       totalUsers,
       totalSnapshots
     }
-    
+
     console.log('✅ Dashboard stats fetched:', stats)
-    
+
     return NextResponse.json({
       success: true,
       data: stats
     })
-    
-  } catch (error) {
+
+  } catch (error: any) {
     console.error('❌ Dashboard stats error:', error)
     
     // Return fallback stats if database isn't available
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
     if (db) {
       try {
         db.close()
-      } catch (closeError) {
+      } catch (closeError: any) {
         console.error('Error closing database:', closeError)
       }
     }

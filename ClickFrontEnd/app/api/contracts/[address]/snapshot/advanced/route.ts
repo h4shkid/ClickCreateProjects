@@ -39,7 +39,7 @@ export async function GET(
     // Fallback to simple hybrid snapshot
     return handleSimpleHybrid(address, searchParams)
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Advanced snapshot error:', error)
     return NextResponse.json({
       success: false,
@@ -291,7 +291,7 @@ export async function POST(
       error: 'Invalid request body. Provide either presetId or query object'
     }, { status: 400 })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Advanced snapshot POST error:', error)
     return NextResponse.json({
       success: false,

@@ -42,9 +42,9 @@ async function fetchBlocksWithRateLimit(provider: ethers.JsonRpcProvider, blockN
   // OPTIMIZED FOR QUICKNODE BUILD PLAN: 50 requests/second
   // Target: 40-45 req/sec to leave safety margin
   // Strategy: Larger batches with shorter delays for maximum throughput
-  
-  let BATCH_SIZE: number
-  let DELAY_MS: number
+
+  let BATCH_SIZE: number = 15
+  let DELAY_MS: number = 100
   
   if (blockNumbers.length >= 200) {
     // High volume: Use large batches with minimal delay
@@ -84,7 +84,7 @@ async function fetchBlocksWithRateLimit(provider: ethers.JsonRpcProvider, blockN
           try {
             const block = await provider.getBlock(blockNum)
             return block
-          } catch (err) {
+          } catch (err: any) {
             if (err.message.includes('request limit') || err.message.includes('rate limit')) {
               rateLimitErrors++
               console.warn(`🚫 Rate limited: block ${blockNum} (attempt ${attempt + 1}/3)`)
@@ -151,7 +151,7 @@ async function fetchBlocksWithRateLimit(provider: ethers.JsonRpcProvider, blockN
         await sleep(DELAY_MS)
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ Batch error:`, error.message)
       consecutiveErrors++
       // Add fallback timestamps for failed batch
@@ -212,7 +212,7 @@ export async function GET(
         ORDER BY created_at DESC
         LIMIT 1
       `).get(contract.id) as any
-    } catch (error) {
+    } catch (error: any) {
       // Fallback query without progress_percentage for older database schemas
       console.warn('progress_percentage column not found, using fallback query')
       syncStatus = db.prepare(`
@@ -247,7 +247,7 @@ export async function GET(
       if (eventStats) {
         stats = eventStats
       }
-    } catch (error) {
+    } catch (error: any) {
       // Events table might not exist, use defaults
       console.log('Events table not found, using default stats')
     }
@@ -257,7 +257,7 @@ export async function GET(
     try {
       const provider = createProvider(contract.chain_id)
       currentBlockNumber = await provider.getBlockNumber()
-    } catch (error) {
+    } catch (error: any) {
       console.warn('Could not fetch current block number:', error)
       currentBlockNumber = 21000000 // Fallback only if RPC fails
     }
@@ -303,7 +303,7 @@ export async function GET(
       data: response
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Sync status error:', error)
     return NextResponse.json({
       success: false,
@@ -384,7 +384,7 @@ export async function POST(
             deploymentBlock = 16000000
             console.log(`⚠️  Could not detect deployment block, using conservative fallback: ${deploymentBlock}`)
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error('❌ Deployment detection failed:', error)
           deploymentBlock = 16000000 // Conservative fallback
           console.log(`⚠️  Using fallback deployment block: ${deploymentBlock}`)
@@ -392,7 +392,7 @@ export async function POST(
       } else {
         console.log(`📍 Using stored deployment block: ${deploymentBlock}`)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.warn('Could not fetch current block, using fallback:', error)
     }
 
@@ -449,7 +449,7 @@ export async function POST(
         
         const result = insertSyncStatus.run(contract.id, startFromBlock, currentBlock, startFromBlock)
         syncId = result.lastInsertRowid as number
-      } catch (dbError) {
+      } catch (dbError: any) {
         console.error('Could not insert sync status:', dbError)
         return NextResponse.json({
           success: false,
@@ -640,13 +640,13 @@ export async function POST(
                   
                   console.log(`📦 Processed ERC-1155 batch transfer: ${tokenIds.length} tokens`)
                   
-                } catch (decodeError) {
+                } catch (decodeError: any) {
                   console.warn(`❌ Failed to decode batch transfer, skipping:`, decodeError.message)
                   // Skip problematic batch transfers rather than creating fake Token ID 0
                 }
               }
               
-            } catch (decodeError) {
+            } catch (decodeError: any) {
               console.warn(`Failed to decode log:`, decodeError)
             }
           }
@@ -672,7 +672,7 @@ export async function POST(
                   progress_percentage = ?
               WHERE id = ?
             `).run(toBlock, eventsInserted, Math.min(finalProgressPercent, 100), syncId)
-          } catch (updateError) {
+          } catch (updateError: any) {
             // Fallback update without progress_percentage
             console.warn('progress_percentage column not found in update, using fallback')
             db.prepare(`
@@ -683,7 +683,7 @@ export async function POST(
             `).run(toBlock, eventsInserted, syncId)
           }
           
-        } catch (chunkError) {
+        } catch (chunkError: any) {
           console.error(`Error processing chunk ${fromBlock}-${toBlock}:`, chunkError)
           // Wait before retrying if rate limited
           if (chunkError.message?.includes('request limit') || chunkError.message?.includes('rate limit')) {
@@ -832,7 +832,7 @@ export async function POST(
           rebuildStateTransaction()
         }
         
-      } catch (balanceError) {
+      } catch (balanceError: any) {
         console.error('Error calculating balances:', balanceError)
       }
       
@@ -848,7 +848,7 @@ export async function POST(
               progress_percentage = 100
           WHERE id = ?
         `).run(currentBlock, eventsInserted, eventsInserted, syncId)
-      } catch (completionError) {
+      } catch (completionError: any) {
         // Fallback completion update without progress_percentage
         console.warn('progress_percentage column not found in completion, using fallback')
         db.prepare(`
@@ -865,7 +865,7 @@ export async function POST(
       console.log(`✅ REAL blockchain sync completed for ${contract.name}!`)
       console.log(`📊 Summary: ${eventsInserted} events, ${statesUpdated} holder states, ${processedBlocks} blocks processed`)
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to complete REAL blockchain sync:', error)
       
       // Mark sync as failed
@@ -897,7 +897,7 @@ export async function POST(
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Sync initiation error:', error)
     return NextResponse.json({
       success: false,

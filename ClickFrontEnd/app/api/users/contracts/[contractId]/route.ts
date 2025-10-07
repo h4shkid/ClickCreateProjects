@@ -101,7 +101,7 @@ export async function DELETE(
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Contract removal error:', error)
     return NextResponse.json({
       success: false,

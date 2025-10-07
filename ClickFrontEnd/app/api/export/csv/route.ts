@@ -38,6 +38,8 @@ export async function GET(request: NextRequest) {
 
     let csvData = '';
     let filename = '';
+    let holders: any[] = [];
+    let result: any = null;
 
     switch (type) {
       case 'snapshot': {
@@ -67,7 +69,7 @@ export async function GET(request: NextRequest) {
         }
         
         const response = await fetch(snapshotUrl);
-        const result = await response.json();
+        result = await response.json();
         
         if (!result.success || !result.data) {
           return NextResponse.json(
@@ -80,7 +82,7 @@ export async function GET(request: NextRequest) {
         }
         
         // Extract holders from the response
-        const holders = result.data.snapshot || result.data.holders || [];
+        holders = result.data.snapshot || result.data.holders || [];
 
         // Check if this is the ClickCreate collection (only one that should have number_of_sets)
         const CLICKCREATE_COLLECTION_ADDRESS = '0x300e7a5fb0ab08af367d5fb3915930791bb08c2b';
@@ -241,13 +243,13 @@ export async function GET(request: NextRequest) {
 
     // Validate CSV data before returning (optional - can be disabled for performance)
     const includeValidation = searchParams.get('validate') === 'true'
-    let validationInfo = null
-    
+    let validationInfo: any = null
+
     if (includeValidation && type === 'snapshot') {
       try {
         console.log('🔍 Running CSV export validation...')
         const validator = new DataValidator()
-        
+
         // Get the original snapshot data for comparison
         const snapshotData = {
           holders: holders,
@@ -304,7 +306,7 @@ export async function GET(request: NextRequest) {
           csvData = validationComments.join('\n') + csvData
         }
         
-      } catch (validationError) {
+      } catch (validationError: any) {
         console.warn('⚠️ CSV validation failed:', validationError)
         // Add warning comment to CSV
         const warningComment = `# Warning: CSV validation failed - ${validationError instanceof Error ? validationError.message : 'Unknown error'}\n`

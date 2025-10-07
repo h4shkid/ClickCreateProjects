@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('User contracts fetch error:', error)
     return NextResponse.json({
       success: false,
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('User contract action error:', error)
     return NextResponse.json({
       success: false,

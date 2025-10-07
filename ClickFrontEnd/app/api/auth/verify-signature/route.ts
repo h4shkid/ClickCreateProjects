@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
 
     return response
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Signature verification error:', error)
     return NextResponse.json({
       success: false,

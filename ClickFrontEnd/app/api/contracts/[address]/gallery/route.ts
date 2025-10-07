@@ -99,7 +99,7 @@ export async function GET(
       if (row.attributes) {
         try {
           attributes = JSON.parse(row.attributes);
-        } catch (e) {
+        } catch (e: any) {
           console.warn(`Failed to parse attributes for token ${row.token_id}`);
         }
       }

@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Profile fetch error:', error)
     return NextResponse.json({
       success: false,
@@ -224,7 +224,7 @@ export async function PUT(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Profile update error:', error)
     return NextResponse.json({
       success: false,

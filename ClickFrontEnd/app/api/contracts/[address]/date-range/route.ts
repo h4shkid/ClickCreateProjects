@@ -82,7 +82,7 @@ export async function GET(
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Date range query error:', error)
     return NextResponse.json({
       success: false,

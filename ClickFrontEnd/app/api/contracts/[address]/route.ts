@@ -74,7 +74,7 @@ export async function GET(
           lastAnalysis: analyticsData.analysis_date
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // Analytics table might not exist
     }
 
@@ -103,7 +103,7 @@ export async function GET(
       analytics
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Contract fetch error:', error)
     return NextResponse.json({
       success: false,
@@ -213,7 +213,7 @@ export async function PUT(
       contract: updatedContract
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Contract update error:', error)
     return NextResponse.json({
       success: false,

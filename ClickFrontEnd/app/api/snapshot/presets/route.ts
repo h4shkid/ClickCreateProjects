@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Snapshot presets API error:', error)
     return NextResponse.json({
       success: false,

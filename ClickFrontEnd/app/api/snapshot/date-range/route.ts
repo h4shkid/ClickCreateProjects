@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
       data: responseData
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Date range snapshot error:', error)
     return NextResponse.json({
       success: false,

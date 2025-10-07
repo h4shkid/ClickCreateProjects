@@ -144,7 +144,7 @@ export async function GET(
           // Regular query
           realHolders = db.prepare(query).all(address.toLowerCase(), ...tokenParams) as any
         }
-      } catch (sqlError) {
+      } catch (sqlError: any) {
         console.error('🚫 SQL Error:', (sqlError as any)?.message || sqlError)
         console.error('🚫 Query:', query)
         console.error('🚫 Token filter:', tokenFilter)
@@ -215,7 +215,7 @@ export async function GET(
           }))
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log('No real blockchain data found, using demo data')
     }
 
@@ -329,7 +329,7 @@ export async function GET(
       data: response
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Current snapshot error:', error)
     return NextResponse.json({
       success: false,

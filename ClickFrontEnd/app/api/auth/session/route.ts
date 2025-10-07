@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Session verification error:', error)
     return NextResponse.json({
       success: false,
