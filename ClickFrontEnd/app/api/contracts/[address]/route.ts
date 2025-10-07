@@ -23,7 +23,7 @@ export async function GET(
 
     // Get contract info from database
     const contract = db.prepare(`
-      SELECT 
+      SELECT
         id,
         address,
         name,
@@ -42,9 +42,9 @@ export async function GET(
         created_at as createdAt,
         updated_at as updatedAt,
         added_by_user_id as addedByUserId
-      FROM contracts 
+      FROM contracts
       WHERE address = ? COLLATE NOCASE
-    `).get(address.toLowerCase())
+    `).get(address.toLowerCase()) as any
 
     if (!contract) {
       return NextResponse.json({
