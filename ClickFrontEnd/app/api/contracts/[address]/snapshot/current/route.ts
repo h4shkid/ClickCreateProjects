@@ -145,11 +145,11 @@ export async function GET(
           realHolders = db.prepare(query).all(address.toLowerCase(), ...tokenParams) as any
         }
       } catch (sqlError) {
-        console.error('🚫 SQL Error:', sqlError.message)
+        console.error('🚫 SQL Error:', (sqlError as any)?.message || sqlError)
         console.error('🚫 Query:', query)
         console.error('🚫 Token filter:', tokenFilter)
         console.error('🚫 Token params:', tokenParams)
-        throw new Error(`Database query failed: ${sqlError.message}`)
+        throw new Error(`Database query failed: ${(sqlError as any)?.message || 'Unknown error'}`)
       }
       
       if (realHolders) {
