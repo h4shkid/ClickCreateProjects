@@ -157,8 +157,8 @@ export async function GET(
         
         if (realHolders.length > 0) {
           // Get total supply and total holders count from database
-        let totalStatsQuery
-        let totalStatsParams
+        let totalStatsQuery: string = ''
+        let totalStatsParams: any[] = []
         
         if (fullSeason && season) {
           // For full season mode: count only complete holders
@@ -205,9 +205,9 @@ export async function GET(
         
         const totalStats = db.prepare(totalStatsQuery).all(...totalStatsParams)[0] as any
 
-        const totalSupply = totalStats?.total_supply || realHolders.reduce((sum, h) => sum + parseInt(h.balance), 0)
+        const totalSupply = totalStats?.total_supply || realHolders.reduce((sum: number, h: any) => sum + parseInt(h.balance), 0)
         
-          holders = realHolders.map((holder, index) => ({
+          holders = realHolders.map((holder: any, index: number) => ({
             holderAddress: holder.holder_address,
             balance: holder.balance,
             percentage: totalSupply > 0 ? (parseInt(holder.balance) / totalSupply) * 100 : 0,
@@ -234,25 +234,25 @@ export async function GET(
     
     if (hasRealData) {
       // Get total stats from database
-      let totalStatsQuery
-      let totalStatsParams
-      
+      let totalStatsQuery: string = ''
+      let totalStatsParams: any[] = []
+
       if (fullSeason && season) {
         // For full season mode: count only complete holders
         const { getSeasonGroup } = await import('@/lib/constants/season-tokens')
         const seasonGroup = getSeasonGroup(season)
-        
+
         if (seasonGroup) {
           const expectedTokenCount = seasonGroup.tokenIds.length
           const placeholders = seasonGroup.tokenIds.map(() => '?').join(',')
-          
+
           totalStatsQuery = `
-            SELECT 
+            SELECT
               COUNT(DISTINCT address) as total_holders,
               SUM(balance_sum) as total_supply
             FROM (
               SELECT address, SUM(CAST(balance AS INTEGER)) as balance_sum
-              FROM current_state 
+              FROM current_state
               WHERE contract_address = ? COLLATE NOCASE
               AND token_id IN (${placeholders})
               AND CAST(balance AS INTEGER) > 0
@@ -265,12 +265,12 @@ export async function GET(
       } else {
         // Regular stats query
         totalStatsQuery = `
-          SELECT 
+          SELECT
             COUNT(DISTINCT address) as total_holders,
             SUM(balance_sum) as total_supply
           FROM (
             SELECT address, SUM(CAST(balance AS INTEGER)) as balance_sum
-            FROM current_state 
+            FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
             ${tokenFilter}
             GROUP BY address
@@ -279,8 +279,8 @@ export async function GET(
         `
         totalStatsParams = [address.toLowerCase(), ...tokenParams]
       }
-      
-      const totalStats = db.prepare(totalStatsQuery).all(...totalStatsParams)[0] as any
+
+      const totalStats = totalStatsQuery ? db.prepare(totalStatsQuery).all(...totalStatsParams)[0] as any : null
 
       // Get the latest block number from sync status
       const syncStatus = db.prepare(`
@@ -298,7 +298,7 @@ export async function GET(
       totalHolders = totalStats?.total_holders || 0
       realBlockNumber = syncStatus?.current_block || syncStatus?.end_block || 0
     } else {
-      totalSupply = holders.reduce((sum, h) => sum + parseInt(h.balance), 0)
+      totalSupply = holders.reduce((sum: number, h) => sum + parseInt(h.balance), 0)
       totalHolders = holders.length
     }
 

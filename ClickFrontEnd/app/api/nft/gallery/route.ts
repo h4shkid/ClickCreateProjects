@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
 
     // Process results for gallery
     const galleryItems = await Promise.all(
-      rows.map(async (row) => {
+      rows.map(async (row: any) => {
         const metadata = row.metadata_json ? JSON.parse(row.metadata_json) : {};
         
         // Check for local image files

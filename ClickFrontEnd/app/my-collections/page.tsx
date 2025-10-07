@@ -311,9 +311,9 @@ export default function MyCollectionsPage() {
                 {collection.description && (
                   <div className="px-6 pb-4">
                     <div className="bg-background/30 backdrop-blur-sm rounded-lg p-3 border border-border/30">
-                      <p 
+                      <p
                         className="text-sm text-muted-foreground leading-relaxed line-clamp-2 cursor-help"
-                        onMouseEnter={(e) => handleMouseEnter(e, collection.description)}
+                        onMouseEnter={(e) => handleMouseEnter(e, collection.description || '')}
                         onMouseLeave={handleMouseLeave}
                       >
                         {collection.description}

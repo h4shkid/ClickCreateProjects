@@ -91,7 +91,7 @@ export async function GET(
     const rows = stmt.all(...queryParams) as any[];
 
     // Process results for gallery
-    const tokens = rows.map((row) => {
+    const tokens = rows.map((row: any) => {
       const metadata = row.metadata_json ? JSON.parse(row.metadata_json) : {};
       
       // Parse attributes if they exist

@@ -19,8 +19,8 @@ export interface DatabaseAdapter {
 
 export interface PreparedStatement {
   get(...params: any[]): any
-  all(...params: any[]): any[]
-  run(...params: any[]): { changes: number; lastInsertRowid: number | bigint }
+  all(...params: any[]): any[] | Promise<any[]>
+  run(...params: any[]): { changes: number; lastInsertRowid: number | bigint } | Promise<{ changes: number; lastInsertRowid: number | bigint }>
 }
 
 class SQLiteAdapter implements DatabaseAdapter {

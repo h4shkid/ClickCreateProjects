@@ -95,7 +95,7 @@ export async function GET(
     const events = db.prepare(query).all(...sqlParams) as any[];
 
     // Format events for display
-    const formattedEvents = events.map(event => {
+    const formattedEvents = events.map((event: any) => {
       // Determine event icon/type for UI
       let displayType = event.event_type;
       if (event.from_address === '0x0000000000000000000000000000000000000000') {
@@ -202,12 +202,12 @@ export async function GET(
       events: formattedEvents,
       stats: {
         ...stats,
-        eventTypes: eventTypeBreakdown.map(et => ({
+        eventTypes: eventTypeBreakdown.map((et: any) => ({
           type: et.event_type,
           total: et.count,
           last24h: et.count_24h
         })),
-        recentBlocks: recentBlocks.map(rb => ({
+        recentBlocks: recentBlocks.map((rb: any) => ({
           blockNumber: rb.block_number,
           eventCount: rb.event_count,
           timestamp: new Date(rb.block_timestamp * 1000).toISOString()

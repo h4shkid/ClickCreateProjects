@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        collections: contracts.map(contract => ({
+        collections: contracts.map((contract: any) => ({
           id: contract.id.toString(),
           address: contract.address,
           name: contract.name || 'Unknown Collection',

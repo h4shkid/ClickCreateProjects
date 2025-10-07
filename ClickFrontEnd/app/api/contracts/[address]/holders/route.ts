@@ -100,7 +100,7 @@ export async function GET(
 
     // Check if addresses are contracts by looking for contract creation or code
     // This is a simplified check - in production you'd query the blockchain
-    const holdersWithMetadata = holders.map((holder, index) => {
+    const holdersWithMetadata = holders.map((holder: any, index: number) => {
       const balance = BigInt(holder.total_balance);
       const percentage = totalSupply > BigInt(0) 
         ? Number((balance * BigInt(10000)) / totalSupply) / 100
@@ -190,10 +190,10 @@ export async function GET(
       BigInt(b.balance) > BigInt(a.balance) ? 1 : -1
     );
 
-    const top10Holdings = sortedByBalance.slice(0, 10).reduce((sum, holder) => 
+    const top10Holdings = sortedByBalance.slice(0, 10).reduce((sum: bigint, holder) =>
       sum + BigInt(holder.balance), BigInt(0)
     );
-    const top100Holdings = sortedByBalance.slice(0, 100).reduce((sum, holder) => 
+    const top100Holdings = sortedByBalance.slice(0, 100).reduce((sum: bigint, holder) =>
       sum + BigInt(holder.balance), BigInt(0)
     );
 

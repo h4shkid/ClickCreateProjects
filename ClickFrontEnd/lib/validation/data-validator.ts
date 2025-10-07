@@ -12,6 +12,7 @@ interface ValidationResult {
   errors: string[]
   warnings: string[]
   details: Record<string, any>
+  summary?: any
 }
 
 interface BlockRange {

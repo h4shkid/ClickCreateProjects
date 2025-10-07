@@ -4,8 +4,8 @@ import DataValidator from '@/lib/validation/data-validator';
 
 function convertToCSV(data: any[], headers: string[]): string {
   const csvHeaders = headers.join(',');
-  const csvRows = data.map(row => 
-    headers.map(header => {
+  const csvRows = data.map((row: any) =>
+    headers.map((header: any) => {
       const value = row[header];
       // Escape values containing commas or quotes
       if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {

@@ -500,10 +500,10 @@ export class ContractDetector {
 
       // Use safe test parameters
       const testArgs = inputs.map(type => {
-        if (type === 'uint256') return 1n
+        if (type === 'uint256') return BigInt(1)
         if (type === 'address') return '0x0000000000000000000000000000000000000001'
         if (type === 'address[]') return ['0x0000000000000000000000000000000000000001']
-        if (type === 'uint256[]') return [1n]
+        if (type === 'uint256[]') return [BigInt(1)]
         return null
       })
 
@@ -610,27 +610,27 @@ export class ContractDetector {
     try {
       // Binary search for deployment block
       const latestBlock = await client.getBlockNumber()
-      let low = 0n
+      let low = BigInt(0)
       let high = latestBlock
       let deploymentBlock: bigint | undefined
 
       // Simplified binary search (max 20 iterations to avoid too many RPC calls)
       for (let i = 0; i < 20 && low <= high; i++) {
-        const mid = (low + high) / 2n
-        
+        const mid = (low + high) / BigInt(2)
+
         try {
-          const code = await client.getBytecode({ 
-            address, 
-            blockNumber: mid 
+          const code = await client.getBytecode({
+            address,
+            blockNumber: mid
           })
-          
+
           if (code && code !== '0x') {
             // Contract exists at this block, search earlier
             deploymentBlock = mid
-            high = mid - 1n
+            high = mid - BigInt(1)
           } else {
             // Contract doesn't exist, search later
-            low = mid + 1n
+            low = mid + BigInt(1)
           }
         } catch (error) {
           // If we can't get block, break

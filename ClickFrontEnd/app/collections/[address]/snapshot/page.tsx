@@ -647,7 +647,7 @@ export default function CollectionSnapshotPage() {
                   </button>
                   <button
                     onClick={() => {
-                      setTokenIds(formatTokenIdsForInput([...Array(96)].map((_, i) => i + 1)))
+                      setTokenIds(formatTokenIdsForInput([...Array(96)].map((_: any, i: number) => (i + 1).toString())))
                     }}
                     className="px-2.5 py-1 text-xs rounded border border-primary/30 hover:bg-primary/10 hover:border-primary transition-all"
                   >

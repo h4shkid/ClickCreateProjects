@@ -270,13 +270,13 @@ export class SnapshotGenerator {
       
       // Process from address (decrease balance)
       if (event.from_address.toLowerCase() !== zeroAddress) {
-        const fromBalance = balances.get(event.from_address) || 0n;
+        const fromBalance = balances.get(event.from_address) || BigInt(0);
         balances.set(event.from_address, fromBalance - amount);
       }
-      
+
       // Process to address (increase balance)
       if (event.to_address.toLowerCase() !== zeroAddress) {
-        const toBalance = balances.get(event.to_address) || 0n;
+        const toBalance = balances.get(event.to_address) || BigInt(0);
         balances.set(event.to_address, toBalance + amount);
       }
     }
@@ -285,7 +285,7 @@ export class SnapshotGenerator {
     const holders: SnapshotHolder[] = [];
     
     for (const [address, balance] of balances) {
-      if (options.includeZeroBalances || balance > 0n) {
+      if (options.includeZeroBalances || balance > BigInt(0)) {
         if (!options.minBalance || balance >= BigInt(options.minBalance)) {
           holders.push({
             holderAddress: address,
@@ -318,7 +318,7 @@ export class SnapshotGenerator {
    * Calculate total supply from holders
    */
   private calculateTotalSupply(holders: SnapshotHolder[]): string {
-    let total = 0n;
+    let total = BigInt(0);
     for (const holder of holders) {
       total += BigInt(holder.balance);
     }
@@ -334,8 +334,8 @@ export class SnapshotGenerator {
     return holders.map((holder, index) => ({
       ...holder,
       rank: index + 1,
-      percentage: total > 0n 
-        ? Number((BigInt(holder.balance) * 10000n) / total) / 100
+      percentage: total > BigInt(0)
+        ? Number((BigInt(holder.balance) * BigInt(10000)) / total) / 100
         : 0
     }));
   }
@@ -527,13 +527,13 @@ export class SnapshotGenerator {
    */
   private generateCacheKey(options: SnapshotOptions): string {
     const data = JSON.stringify({
-      tokenIds: options.tokenIds.sort(),
+      tokenIds: options.tokenIds?.sort() || [],
       blockNumber: options.blockNumber,
       includeZeroBalances: options.includeZeroBalances,
       minBalance: options.minBalance,
       limit: options.limit
     });
-    
+
     return crypto.createHash('sha256').update(data).digest('hex');
   }
 
@@ -612,25 +612,25 @@ export class SnapshotGenerator {
       change: string;
     }>;
   } {
-    const holders1 = new Map(snapshot1.holders.map(h => [h.address, h.balance]));
-    const holders2 = new Map(snapshot2.holders.map(h => [h.address, h.balance]));
-    
+    const holders1 = new Map(snapshot1.holders.map(h => [h.holderAddress, h.balance]));
+    const holders2 = new Map(snapshot2.holders.map(h => [h.holderAddress, h.balance]));
+
     const holdersAdded = snapshot2.holders
-      .filter(h => !holders1.has(h.address))
-      .map(h => h.address);
-    
+      .filter(h => !holders1.has(h.holderAddress))
+      .map(h => h.holderAddress);
+
     const holdersRemoved = snapshot1.holders
-      .filter(h => !holders2.has(h.address))
-      .map(h => h.address);
+      .filter(h => !holders2.has(h.holderAddress))
+      .map(h => h.holderAddress);
     
     const balanceChanges: any[] = [];
     
     for (const holder of snapshot2.holders) {
-      const oldBalance = holders1.get(holder.address);
+      const oldBalance = holders1.get(holder.holderAddress);
       if (oldBalance && oldBalance !== holder.balance) {
         const change = (BigInt(holder.balance) - BigInt(oldBalance)).toString();
         balanceChanges.push({
-          address: holder.address,
+          address: holder.holderAddress,
           oldBalance,
           newBalance: holder.balance,
           change

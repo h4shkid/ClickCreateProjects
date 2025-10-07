@@ -109,7 +109,7 @@ export async function GET(
     const totalCount = (db.prepare(countQuery).get(...countParams) as any).count;
 
     // Format snapshots for response
-    const formattedSnapshots = snapshots.map(snapshot => ({
+    const formattedSnapshots = snapshots.map((snapshot: any) => ({
       id: snapshot.id,
       name: snapshot.snapshot_name || `${snapshot.snapshot_type === 'current' ? 'Current' : 'Historical'} Snapshot`,
       description: snapshot.description,

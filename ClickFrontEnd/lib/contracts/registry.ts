@@ -121,7 +121,7 @@ export class ContractRegistry {
           chainId
         }),
         userId
-      )
+      ) as { id: number }
 
       const contractId = result.id
 
@@ -186,7 +186,7 @@ export class ContractRegistry {
       SELECT * FROM contracts WHERE address = ? AND is_active = 1
     `)
 
-    const result = query.get(address.toLowerCase())
+    const result = query.get(address.toLowerCase()) as RegisteredContract | undefined
     return result || null
   }
 
@@ -198,7 +198,7 @@ export class ContractRegistry {
       SELECT * FROM contracts WHERE id = ? AND is_active = 1
     `)
 
-    const result = query.get(id)
+    const result = query.get(id) as RegisteredContract | undefined
     return result || null
   }
 
@@ -303,7 +303,7 @@ export class ContractRegistry {
     `)
 
     const countParams = queryParams.slice(0, -2) // Remove limit and offset
-    const { total: totalCount } = countQuery.get(...countParams)
+    const { total: totalCount } = countQuery.get(...countParams) as { total: number }
 
     return {
       contracts: contracts.map(this.formatContract),

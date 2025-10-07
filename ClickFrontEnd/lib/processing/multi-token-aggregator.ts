@@ -59,15 +59,15 @@ export class MultiTokenAggregator {
     
     for (const snapshot of snapshots) {
       for (const holder of snapshot.holders) {
-        if (!holderMap.has(holder.address)) {
-          holderMap.set(holder.address, {
-            address: holder.address,
+        if (!holderMap.has(holder.holderAddress)) {
+          holderMap.set(holder.holderAddress, {
+            address: holder.holderAddress,
             tokens: [],
             totalTokens: 0
           });
         }
-        
-        const aggregatedHolder = holderMap.get(holder.address)!;
+
+        const aggregatedHolder = holderMap.get(holder.holderAddress)!;
         aggregatedHolder.tokens.push({
           tokenId: snapshot.tokenId,
           balance: holder.balance
@@ -120,10 +120,10 @@ export class MultiTokenAggregator {
     
     for (const snapshot of snapshots) {
       for (const holder of snapshot.holders) {
-        if (!holderTokens.has(holder.address)) {
-          holderTokens.set(holder.address, []);
+        if (!holderTokens.has(holder.holderAddress)) {
+          holderTokens.set(holder.holderAddress, []);
         }
-        holderTokens.get(holder.address)!.push({
+        holderTokens.get(holder.holderAddress)!.push({
           tokenId: snapshot.tokenId,
           balance: holder.balance
         });
@@ -177,13 +177,13 @@ export class MultiTokenAggregator {
     for (const tokenSnapshot of snapshot.tokenSnapshots) {
       const balances = tokenSnapshot.holders.map(h => BigInt(h.balance));
       const totalSupply = BigInt(tokenSnapshot.totalSupply);
-      
-      if (totalSupply === 0n) continue;
-      
+
+      if (totalSupply === BigInt(0)) continue;
+
       // Gini coefficient (simplified)
       const sortedBalances = [...balances].sort((a, b) => Number(a - b));
-      let cumulativeSum = 0n;
-      let giniSum = 0n;
+      let cumulativeSum = BigInt(0);
+      let giniSum = BigInt(0);
       
       for (let i = 0; i < sortedBalances.length; i++) {
         cumulativeSum += sortedBalances[i];
@@ -199,7 +199,7 @@ export class MultiTokenAggregator {
       // Herfindahl-Hirschman Index
       let hhi = 0;
       for (const balance of balances) {
-        const share = Number(balance * 10000n / totalSupply) / 10000;
+        const share = Number(balance * BigInt(10000) / totalSupply) / 10000;
         hhi += share * share;
       }
       totalHHI += hhi;
@@ -258,7 +258,7 @@ export class MultiTokenAggregator {
     tokenDistribution: Array<{ tokenId: string; holders: number; percentage: number }>;
   } {
     const uniqueHolders = new Set<string>();
-    let totalSupply = 0n;
+    let totalSupply = BigInt(0);
     let totalHolders = 0;
     
     let mostHeld = { tokenId: '', holders: 0 };
@@ -266,7 +266,7 @@ export class MultiTokenAggregator {
     const tokenDistribution: Array<{ tokenId: string; holders: number; percentage: number }> = [];
     
     for (const snapshot of snapshots) {
-      snapshot.holders.forEach(h => uniqueHolders.add(h.address));
+      snapshot.holders.forEach(h => uniqueHolders.add(h.holderAddress));
       totalSupply += BigInt(snapshot.totalSupply);
       totalHolders += snapshot.holderCount;
       

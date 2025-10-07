@@ -178,7 +178,7 @@ export async function PUT(
     }
 
     // Build update query
-    const setClause = Object.keys(filteredUpdates).map(key => `${key} = ?`).join(', ')
+    const setClause = Object.keys(filteredUpdates).map((key: any) => `${key} = ?`).join(', ')
     const values = Object.values(filteredUpdates)
     values.push(address.toLowerCase())
 

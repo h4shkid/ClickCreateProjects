@@ -229,13 +229,9 @@ export default function SnapshotPage() {
       if (formattedData.holders && formattedData.holders.length > 0) {
         console.log('✅ Snapshot data received:', formattedData)
         setSnapshotData(formattedData)
-        
-        // Check if snapshot includes validation info and display it
-        if (formattedData.metadata?.validation) {
-          setValidationInfo(formattedData.metadata.validation)
-          console.log('📊 Auto-displaying validation info from snapshot')
-        }
-        
+
+        // Note: Validation info can be generated manually using the "Validate Data" button
+
         // Refresh date range after successful snapshot (in case new data was processed)
         await refreshDateRange()
       } else {

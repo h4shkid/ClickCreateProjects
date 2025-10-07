@@ -200,7 +200,7 @@ export async function GET(request: NextRequest) {
 
     if (timeSeries.length > 0) {
       const recent = timeSeries.slice(0, 7);
-      growth.newHolders7d = recent.reduce((sum, day) => sum + day.unique_to, 0);
+      growth.newHolders7d = recent.reduce((sum: number, day) => sum + day.unique_to, 0);
       if (timeSeries.length > 0) {
         growth.newHolders24h = timeSeries[0].unique_to;
         growth.activeAddresses24h = timeSeries[0].unique_from + timeSeries[0].unique_to;
@@ -228,7 +228,7 @@ export async function GET(request: NextRequest) {
           lastEvent: eventStats.last_event
         },
         distribution,
-        topHolders: topHolders.map(h => ({
+        topHolders: topHolders.map((h: any) => ({
           address: h.address,
           balance: h.balance.toString(),
           tokenCount: h.token_count,

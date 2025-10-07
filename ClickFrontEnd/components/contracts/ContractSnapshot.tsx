@@ -189,8 +189,8 @@ export function ContractSnapshot({ contractAddress }: ContractSnapshotProps) {
           validationInfo,
           ...(isDateRange && {
             dateRange: {
-              startDate: snapshotForm.startDate,
-              endDate: snapshotForm.endDate
+              startDate: snapshotForm.startDate || '',
+              endDate: snapshotForm.endDate || ''
             }
           })
         }
@@ -524,7 +524,7 @@ export function ContractSnapshot({ contractAddress }: ContractSnapshotProps) {
             disabled={
               generatingSnapshot ||
               (snapshotForm.type === 'historical' && !snapshotForm.date && (!snapshotForm.startDate || !snapshotForm.endDate)) ||
-              (tokenIds.trim() && exactMatch === null) // Disable if token IDs provided but match type not selected
+              (!!tokenIds.trim() && exactMatch === null) // Disable if token IDs provided but match type not selected
             }
             className="w-full px-4 py-2 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white rounded-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
           >

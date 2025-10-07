@@ -524,19 +524,19 @@ export class AbiManager {
    */
   getMinimalAbi(contractType: 'ERC721' | 'ERC1155'): AbiItem[] {
     if (contractType === 'ERC721') {
-      return ERC721_ABI.filter(item => 
-        item.type === 'event' || 
+      return ERC721_ABI.filter(item =>
+        item.type === 'event' ||
         (item.type === 'function' && [
           'balanceOf', 'ownerOf', 'tokenURI', 'name', 'symbol', 'totalSupply'
         ].includes(item.name))
-      ) as AbiItem[]
+      ) as any as AbiItem[]
     } else {
       return ERC1155_ABI.filter(item =>
         item.type === 'event' ||
         (item.type === 'function' && [
           'balanceOf', 'balanceOfBatch', 'uri'
         ].includes(item.name))
-      ) as AbiItem[]
+      ) as any as AbiItem[]
     }
   }
 
@@ -545,7 +545,7 @@ export class AbiManager {
    */
   mergeAbis(standardType: 'ERC721' | 'ERC1155', customAbi: AbiItem[]): AbiItem[] {
     const standardAbi = standardType === 'ERC721' ? ERC721_ABI : ERC1155_ABI
-    const merged = [...standardAbi as AbiItem[]]
+    const merged = [...standardAbi as any as AbiItem[]]
 
     // Add custom functions and events that don't conflict
     for (const customItem of customAbi) {
@@ -597,15 +597,15 @@ export class AbiManager {
     }
 
     // Check standard ABIs
-    const erc721Func = ERC721_ABI.find(item => 
+    const erc721Func = ERC721_ABI.find(item =>
       item.type === 'function' && item.name === functionName
-    ) as AbiFunction
+    ) as any as AbiFunction
 
     if (erc721Func) return erc721Func
 
-    const erc1155Func = ERC1155_ABI.find(item => 
+    const erc1155Func = ERC1155_ABI.find(item =>
       item.type === 'function' && item.name === functionName
-    ) as AbiFunction
+    ) as any as AbiFunction
 
     return erc1155Func || null
   }
@@ -624,15 +624,15 @@ export class AbiManager {
     }
 
     // Check standard ABIs
-    const erc721Event = ERC721_ABI.find(item => 
+    const erc721Event = ERC721_ABI.find(item =>
       item.type === 'event' && item.name === eventName
-    ) as AbiEvent
+    ) as any as AbiEvent
 
     if (erc721Event) return erc721Event
 
-    const erc1155Event = ERC1155_ABI.find(item => 
+    const erc1155Event = ERC1155_ABI.find(item =>
       item.type === 'event' && item.name === eventName
-    ) as AbiEvent
+    ) as any as AbiEvent
 
     return erc1155Event || null
   }

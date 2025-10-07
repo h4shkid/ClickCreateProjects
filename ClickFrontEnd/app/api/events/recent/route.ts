@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     const events = stmt.all(...params) as any[];
 
     // Format events for display
-    const formattedEvents = events.map(event => ({
+    const formattedEvents = events.map((event: any) => ({
       id: event.transaction_hash + '_' + event.log_index,
       type: event.event_type,
       tokenId: event.token_id,

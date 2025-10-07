@@ -155,14 +155,14 @@ export async function PUT(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const setClause = updateFields.map(field => `${field} = ?`).join(', ')
+    const setClause = updateFields.map((field: any) => `${field} = ?`).join(', ')
     const updateQuery = `
       UPDATE user_profiles 
       SET ${setClause}, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `
 
-    const updateValues = [...updateFields.map(field => sanitizedUpdates[field]), user.userId]
+    const updateValues = [...updateFields.map((field: any) => sanitizedUpdates[field]), user.userId]
     
     const updateResult = db.prepare(updateQuery).run(...updateValues)
 

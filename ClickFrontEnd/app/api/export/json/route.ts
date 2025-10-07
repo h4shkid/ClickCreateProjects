@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
               metadata: metadata.length
             }
           },
-          currentState: currentState.map(s => ({
+          currentState: currentState.map((s: any) => ({
             holderAddress: s.address,
             tokenId: s.token_id,
             balance: s.balance,
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
             amount: e.amount,
             operator: e.operator
           })),
-          metadata: metadata.map(m => ({
+          metadata: metadata.map((m: any) => ({
             tokenId: m.token_id,
             name: m.name,
             description: m.description,

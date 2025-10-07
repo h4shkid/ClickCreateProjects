@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
     const stats = db.prepare(statsQuery).get(...statsParams) as any;
 
     // Format transfers
-    const formattedTransfers = transfers.map(t => ({
+    const formattedTransfers = transfers.map((t: any) => ({
       transactionHash: t.transaction_hash,
       blockNumber: t.block_number,
       timestamp: t.block_timestamp,

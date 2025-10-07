@@ -108,8 +108,8 @@ export async function POST(request: NextRequest) {
     // If comparison requested, calculate changes
     if (comparison) {
       // Create maps for easy lookup
-      const startMap = new Map(startData.holders.map(h => [h.holderAddress, h]))
-      const endMap = new Map(endData.holders.map(h => [h.holderAddress, h]))
+      const startMap = new Map(startData.holders.map((h: any) => [h.holderAddress, h]))
+      const endMap = new Map(endData.holders.map((h: any) => [h.holderAddress, h]))
       
       // Find new and removed holders
       const newHolders = endData.holders.filter(h => !startMap.has(h.holderAddress))

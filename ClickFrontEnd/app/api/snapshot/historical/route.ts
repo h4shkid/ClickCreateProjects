@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
 
     // Generate multiple historical snapshots
     const snapshots = [];
-    const blocks = blockNumbers || timestamps.map((t: string) => {
+    const blocks = blockNumbers || timestamps.map((t: any) => {
       // Convert timestamp to approximate block number
       const targetTime = new Date(t).getTime() / 1000;
       const currentBlock = 18500000;
@@ -215,8 +215,8 @@ export async function POST(request: NextRequest) {
         const curr = snapshots[i];
         
         // Create maps for easy lookup
-        const prevMap = new Map(prev.snapshot.map(h => [h.holderAddress, h]));
-        const currMap = new Map(curr.snapshot.map(h => [h.holderAddress, h]));
+        const prevMap = new Map(prev.snapshot.map((h: any) => [h.holderAddress, h]));
+        const currMap = new Map(curr.snapshot.map((h: any) => [h.holderAddress, h]));
         
         // Find new holders
         const newHolders = curr.snapshot.filter(h => !prevMap.has(h.holderAddress));

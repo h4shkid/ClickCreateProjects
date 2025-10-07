@@ -81,7 +81,7 @@ export class DeploymentDetector {
           return {
             blockNumber: receipt.blockNumber,
             transactionHash: txHash,
-            method: explorerConfig.name.toLowerCase()
+            method: explorerConfig.name.toLowerCase() as 'etherscan' | 'binary-search' | 'cached'
           }
         }
       } else {
@@ -158,14 +158,17 @@ export class DeploymentDetector {
           if (block && block.transactions) {
             // Look for contract creation transaction
             for (const tx of block.transactions) {
-              if (typeof tx === 'object' && tx.to === null) {
-                // This might be a contract creation transaction
-                const receipt = await this.provider.getTransactionReceipt(tx.hash)
-                if (receipt?.contractAddress?.toLowerCase() === contractAddress.toLowerCase()) {
-                  return {
-                    blockNumber: deploymentBlock,
-                    transactionHash: tx.hash,
-                    method: 'binary-search'
+              if (typeof tx === 'object' && tx !== null && 'to' in tx && 'hash' in tx) {
+                const txObj = tx as any
+                if (txObj.to === null) {
+                  // This might be a contract creation transaction
+                  const receipt = await this.provider.getTransactionReceipt(txObj.hash)
+                  if (receipt?.contractAddress?.toLowerCase() === contractAddress.toLowerCase()) {
+                    return {
+                      blockNumber: deploymentBlock,
+                      transactionHash: txObj.hash,
+                      method: 'binary-search'
+                    }
                   }
                 }
               }

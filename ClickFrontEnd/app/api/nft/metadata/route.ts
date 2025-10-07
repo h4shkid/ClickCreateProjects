@@ -123,8 +123,8 @@ export async function POST(request: NextRequest) {
     let imageResults = null;
     if (downloadImages) {
       const tokensWithImages = Array.from(metadataMap.entries())
-        .filter(([_, metadata]) => metadata.imageUrl)
-        .map(([tokenId, metadata]) => ({
+        .filter(([_, metadata]: any) => metadata.imageUrl)
+        .map(([tokenId, metadata]: any) => ({
           tokenId,
           imageUrl: metadata.imageUrl
         }));

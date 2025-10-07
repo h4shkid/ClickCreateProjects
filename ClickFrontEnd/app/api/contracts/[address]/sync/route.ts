@@ -78,7 +78,7 @@ async function fetchBlocksWithRateLimit(provider: ethers.JsonRpcProvider, blockN
     let rateLimitErrors = 0
     
     try {
-      const blockPromises = batch.map(async (blockNum) => {
+      const blockPromises = batch.map(async (blockNum: any) => {
         // Retry logic for rate limited blocks
         for (let attempt = 0; attempt < 3; attempt++) {
           try {
@@ -539,12 +539,12 @@ export async function POST(
           }
           
           // Batch fetch block timestamps for all unique blocks with rate limiting
-          const uniqueBlockNumbers = [...new Set(logs.map(log => log.blockNumber))]
+          const uniqueBlockNumbers = [...new Set(logs.map((log: any) => log.blockNumber))]
           console.log(`🕐 Fetching timestamps for ${uniqueBlockNumbers.length} unique blocks`)
-          
+
           const blocks = await fetchBlocksWithRateLimit(provider, uniqueBlockNumbers)
           const blockTimestamps = Object.fromEntries(
-            blocks.map(block => [block.number, block.timestamp])
+            blocks.map((block: any) => [block.number, block.timestamp])
           )
           
           // Prepare all events for batch insert

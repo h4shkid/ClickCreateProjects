@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
       });
 
       // Format response with the new format: [WalletID] || [Number of Sets] || [Number of tokens held] || [Token IDs Held]
-      const formattedHolders = completeHolders.map((holder, index) => ({
+      const formattedHolders = completeHolders.map((holder: any, index: number) => ({
         holderAddress: holder.address,
         numberOfSets: holder.numberOfCompleteSets,
         totalTokensHeld: holder.totalTokensHeld,
@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
         const stats = await detector.getMatchStatistics(tokenIdList);
         
         // Format response with the new format
-        const formattedHolders = holders.map((holder, index) => ({
+        const formattedHolders = holders.map((holder: any, index: number) => ({
           holderAddress: holder.address,
           numberOfSets: holder.numberOfCompleteSets,
           totalTokensHeld: holder.totalBalance,

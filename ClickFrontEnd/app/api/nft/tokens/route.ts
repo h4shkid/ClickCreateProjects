@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     // Get top holders for each token
     const tokensWithHolders = await Promise.all(
-      tokens.map(async (token) => {
+      tokens.map(async (token: any) => {
         const topHoldersStmt = db.prepare(`
           SELECT address, balance
           FROM current_state
@@ -80,14 +80,14 @@ export async function GET(request: NextRequest) {
           totalSupply: token.total_supply?.toString() || '0',
           maxBalance: token.max_balance?.toString() || '0',
           minBalance: token.min_balance?.toString() || '0',
-          topHolders: topHolders.map(h => ({
+          topHolders: topHolders.map((h: any) => ({
             address: h.address,
             balance: h.balance,
             percentage: token.total_supply > 0 
               ? ((parseInt(h.balance) * 100) / token.total_supply).toFixed(2)
               : '0'
           })),
-          recentActivity: recentActivity.map(a => ({
+          recentActivity: recentActivity.map((a: any) => ({
             type: a.event_type,
             from: a.from_address,
             to: a.to_address,

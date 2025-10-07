@@ -286,9 +286,9 @@ export async function GET(
 
         // Sort by balance descending and calculate percentages
         holders.sort((a, b) => parseInt(b.balance) - parseInt(a.balance))
-        const totalSupply = holders.reduce((sum, h) => sum + parseInt(h.balance), 0)
+        const totalSupply = holders.reduce((sum: number, h) => sum + parseInt(h.balance), 0)
 
-        holders = holders.map((holder, index) => ({
+        holders = holders.map((holder: any, index: number) => ({
           ...holder,
           percentage: totalSupply > 0 ? (parseInt(holder.balance) / totalSupply) * 100 : 0,
           rank: index + 1
@@ -308,7 +308,7 @@ export async function GET(
       }, { status: 404 })
     }
 
-    const totalSupply = holders.reduce((sum, h) => sum + parseInt(h.balance), 0)
+    const totalSupply = holders.reduce((sum: number, h) => sum + parseInt(h.balance), 0)
 
     console.log(`✅ Snapshot generated for block ${targetBlock}: ${holders.length} holders, ${totalSupply} total supply`)
 
@@ -373,8 +373,8 @@ async function generateDateRangeSnapshot(
   ])
 
   // Create maps for comparison
-  const startMap = new Map(startHolders.map(h => [h.holderAddress, h]))
-  const endMap = new Map(endHolders.map(h => [h.holderAddress, h]))
+  const startMap = new Map(startHolders.map((h: any) => [h.holderAddress, h]))
+  const endMap = new Map(endHolders.map((h: any) => [h.holderAddress, h]))
   
   // Find new and removed holders
   const newHolders = endHolders.filter(h => !startMap.has(h.holderAddress))
@@ -401,8 +401,8 @@ async function generateDateRangeSnapshot(
     }
   }
 
-  const startTotalSupply = startHolders.reduce((sum, h) => sum + parseInt(h.balance), 0)
-  const endTotalSupply = endHolders.reduce((sum, h) => sum + parseInt(h.balance), 0)
+  const startTotalSupply = startHolders.reduce((sum: number, h) => sum + parseInt(h.balance), 0)
+  const endTotalSupply = endHolders.reduce((sum: number, h) => sum + parseInt(h.balance), 0)
 
   return NextResponse.json({
     success: true,
@@ -512,9 +512,9 @@ async function generateSnapshotAtBlock(db: Database.Database, address: string, b
   
   // Sort by balance descending and calculate percentages
   holders.sort((a, b) => parseInt(b.balance) - parseInt(a.balance))
-  const totalSupply = holders.reduce((sum, h) => sum + parseInt(h.balance), 0)
+  const totalSupply = holders.reduce((sum: number, h) => sum + parseInt(h.balance), 0)
   
-  return holders.map((holder, index) => ({
+  return holders.map((holder: any, index: number) => ({
     ...holder,
     percentage: totalSupply > 0 ? (parseInt(holder.balance) / totalSupply) * 100 : 0,
     rank: index + 1
