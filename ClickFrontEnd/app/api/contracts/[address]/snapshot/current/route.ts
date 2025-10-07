@@ -31,7 +31,7 @@ export async function GET(
     const contract = db.prepare(`
       SELECT id, name, symbol, contract_type FROM contracts 
       WHERE address = ? COLLATE NOCASE
-    `).get(address.toLowerCase())
+    `).get(address.toLowerCase()) as any
 
     if (!contract) {
       return NextResponse.json({
@@ -137,12 +137,12 @@ export async function GET(
           if (seasonGroup) {
             const queryParams = [address.toLowerCase(), ...seasonGroup.tokenIds, seasonGroup.tokenIds.length]
             console.log(`🔍 Full season query params:`, queryParams)
-            realHolders = db.prepare(query).all(...queryParams)
+            realHolders = db.prepare(query).all(...queryParams) as any
             console.log(`📊 Full season query returned ${realHolders ? realHolders.length : 0} holders`)
           }
         } else {
           // Regular query
-          realHolders = db.prepare(query).all(address.toLowerCase(), ...tokenParams)
+          realHolders = db.prepare(query).all(address.toLowerCase(), ...tokenParams) as any
         }
       } catch (sqlError) {
         console.error('🚫 SQL Error:', sqlError.message)
@@ -203,8 +203,8 @@ export async function GET(
           totalStatsParams = [address.toLowerCase(), ...tokenParams]
         }
         
-        const totalStats = db.prepare(totalStatsQuery).all(...totalStatsParams)[0]
-        
+        const totalStats = db.prepare(totalStatsQuery).all(...totalStatsParams)[0] as any
+
         const totalSupply = totalStats?.total_supply || realHolders.reduce((sum, h) => sum + parseInt(h.balance), 0)
         
           holders = realHolders.map((holder, index) => ({
@@ -280,8 +280,8 @@ export async function GET(
         totalStatsParams = [address.toLowerCase(), ...tokenParams]
       }
       
-      const totalStats = db.prepare(totalStatsQuery).all(...totalStatsParams)[0]
-      
+      const totalStats = db.prepare(totalStatsQuery).all(...totalStatsParams)[0] as any
+
       // Get the latest block number from sync status
       const syncStatus = db.prepare(`
         SELECT current_block, end_block
@@ -292,7 +292,7 @@ export async function GET(
         )
         ORDER BY created_at DESC 
         LIMIT 1
-      `).get(address.toLowerCase())
+      `).get(address.toLowerCase()) as any
       
       totalSupply = totalStats?.total_supply || 0
       totalHolders = totalStats?.total_holders || 0

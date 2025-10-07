@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
 
     // Verify contract exists
     const checkContract = db.prepare('SELECT id FROM contracts WHERE id = ?')
-    const contract = checkContract.get(contractId)
+    const contract = checkContract.get(contractId) as any
 
     if (!contract) {
       return NextResponse.json({

@@ -57,15 +57,15 @@ export async function GET(
     let analytics = null
     try {
       const analyticsData = db.prepare(`
-        SELECT 
+        SELECT
           total_holders,
           total_supply,
           analysis_date
-        FROM contract_analytics 
+        FROM contract_analytics
         WHERE contract_id = ?
-        ORDER BY analysis_date DESC 
+        ORDER BY analysis_date DESC
         LIMIT 1
-      `).get(contract.id)
+      `).get(contract.id) as any
       
       if (analyticsData) {
         analytics = {
@@ -131,9 +131,9 @@ export async function PUT(
     // Get contract info from database
     const contract = db.prepare(`
       SELECT id, added_by_user_id, is_verified
-      FROM contracts 
+      FROM contracts
       WHERE address = ? COLLATE NOCASE
-    `).get(address.toLowerCase())
+    `).get(address.toLowerCase()) as any
 
     if (!contract) {
       return NextResponse.json({
@@ -206,7 +206,7 @@ export async function PUT(
         is_verified as isVerified, updated_at as updatedAt
       FROM contracts 
       WHERE address = ? COLLATE NOCASE
-    `).get(address.toLowerCase())
+    `).get(address.toLowerCase()) as any
 
     return NextResponse.json({
       success: true,

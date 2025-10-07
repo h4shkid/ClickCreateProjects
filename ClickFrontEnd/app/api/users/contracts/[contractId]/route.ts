@@ -32,7 +32,7 @@ export async function DELETE(
     }
 
     // Get user profile
-    const userProfile = db.prepare('SELECT id FROM user_profiles WHERE wallet_address = ? COLLATE NOCASE').get(walletAddress.toLowerCase())
+    const userProfile = db.prepare('SELECT id FROM user_profiles WHERE wallet_address = ? COLLATE NOCASE').get(walletAddress.toLowerCase()) as any
     
     if (!userProfile) {
       return NextResponse.json({
@@ -43,10 +43,10 @@ export async function DELETE(
 
     // Check if contract exists and belongs to user
     const contract = db.prepare(`
-      SELECT c.id, c.address, c.name 
-      FROM contracts c 
+      SELECT c.id, c.address, c.name
+      FROM contracts c
       WHERE c.id = ? AND c.added_by_user_id = ?
-    `).get(parseInt(contractId), userProfile.id)
+    `).get(parseInt(contractId), userProfile.id) as any
 
     if (!contract) {
       return NextResponse.json({

@@ -56,7 +56,7 @@ export async function GET(
     const contract = db.prepare(`
       SELECT id, name, symbol, contract_type FROM contracts 
       WHERE address = ? COLLATE NOCASE
-    `).get(address.toLowerCase())
+    `).get(address.toLowerCase()) as any
 
     if (!contract) {
       return NextResponse.json({
@@ -258,7 +258,7 @@ export async function GET(
         ]
       }
 
-      const holderBalances = db.prepare(balanceQuery).all(...balanceParams)
+      const holderBalances = db.prepare(balanceQuery).all(...balanceParams) as any
 
       if (holderBalances && holderBalances.length > 0) {
         hasRealData = true
@@ -463,7 +463,7 @@ async function generateSnapshotAtBlock(db: Database.Database, address: string, b
     AND to_address != '0x0000000000000000000000000000000000000000'
   `
   
-  const holderAddresses = db.prepare(eventsQuery).all(address.toLowerCase(), blockNumber)
+  const holderAddresses = db.prepare(eventsQuery).all(address.toLowerCase(), blockNumber) as any
   const holders = []
   
   // Calculate balance for each holder at the specified block
@@ -492,14 +492,14 @@ async function generateSnapshotAtBlock(db: Database.Database, address: string, b
     `
     
     const balance = db.prepare(balanceQuery).get(
-      address.toLowerCase(), 
-      holderAddress, 
+      address.toLowerCase(),
+      holderAddress,
       blockNumber,
-      address.toLowerCase(), 
+      address.toLowerCase(),
       holderAddress,
       blockNumber
-    )
-    
+    ) as any
+
     if (balance && balance.balance > 0) {
       holders.push({
         holderAddress: holderAddress,

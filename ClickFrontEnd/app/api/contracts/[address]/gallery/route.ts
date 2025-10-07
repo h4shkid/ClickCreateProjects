@@ -31,9 +31,9 @@ export async function GET(
 
     // Verify contract exists
     const contractExists = db.prepare(`
-      SELECT id FROM contracts 
+      SELECT id FROM contracts
       WHERE LOWER(address) = ? AND is_active = 1
-    `).get(contractAddress);
+    `).get(contractAddress) as any;
 
     if (!contractExists) {
       return NextResponse.json(
@@ -139,7 +139,7 @@ export async function GET(
       countParams.push(`%${search}%`, `%${search}%`);
     }
 
-    const totalCount = (db.prepare(countQuery).get(...countParams) as any).count;
+    const totalCount = (db.prepare(countQuery).get(...countParams) as any)?.count;
 
     // Get contract stats for the gallery
     const contractStats = db.prepare(`

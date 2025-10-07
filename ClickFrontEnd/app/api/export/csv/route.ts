@@ -157,8 +157,8 @@ export async function GET(request: NextRequest) {
         `;
         
         const transfers = tokenId
-          ? db.prepare(query).all(tokenId, limit)
-          : db.prepare(query).all(limit);
+          ? db.prepare(query).all(tokenId, limit) as any
+          : db.prepare(query).all(limit) as any;
 
         const csvHeaders = [
           'transaction_hash',
@@ -192,8 +192,8 @@ export async function GET(request: NextRequest) {
         `;
         
         const holders = tokenId
-          ? db.prepare(query).all(tokenId, limit)
-          : db.prepare(query).all(limit);
+          ? db.prepare(query).all(tokenId, limit) as any
+          : db.prepare(query).all(limit) as any;
 
         const csvHeaders = ['holder_address', 'token_id', 'balance', 'last_updated'];
         csvData = convertToCSV(holders as any[], csvHeaders);

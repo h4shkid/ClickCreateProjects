@@ -184,7 +184,7 @@ export async function GET(
     const contract = db.prepare(`
       SELECT id, name, contract_type, chain_id FROM contracts 
       WHERE address = ? COLLATE NOCASE
-    `).get(address.toLowerCase())
+    `).get(address.toLowerCase()) as any
 
     if (!contract) {
       return NextResponse.json({
@@ -197,7 +197,7 @@ export async function GET(
     let syncStatus
     try {
       syncStatus = db.prepare(`
-        SELECT 
+        SELECT
           current_block,
           end_block,
           start_block,
@@ -207,16 +207,16 @@ export async function GET(
           progress_percentage,
           completed_at,
           created_at
-        FROM contract_sync_status 
-        WHERE contract_id = ? 
-        ORDER BY created_at DESC 
+        FROM contract_sync_status
+        WHERE contract_id = ?
+        ORDER BY created_at DESC
         LIMIT 1
-      `).get(contract.id)
+      `).get(contract.id) as any
     } catch (error) {
       // Fallback query without progress_percentage for older database schemas
       console.warn('progress_percentage column not found, using fallback query')
       syncStatus = db.prepare(`
-        SELECT 
+        SELECT
           current_block,
           end_block,
           start_block,
@@ -225,11 +225,11 @@ export async function GET(
           processed_events,
           completed_at,
           created_at
-        FROM contract_sync_status 
-        WHERE contract_id = ? 
-        ORDER BY created_at DESC 
+        FROM contract_sync_status
+        WHERE contract_id = ?
+        ORDER BY created_at DESC
         LIMIT 1
-      `).get(contract.id)
+      `).get(contract.id) as any
     }
 
     // Get event statistics
@@ -242,7 +242,7 @@ export async function GET(
           COUNT(DISTINCT token_id) as uniqueTokens
         FROM events 
         WHERE contract_address = ? COLLATE NOCASE
-      `).get(address.toLowerCase())
+      `).get(address.toLowerCase()) as any
       
       if (eventStats) {
         stats = eventStats
@@ -330,7 +330,7 @@ export async function POST(
     const contract = db.prepare(`
       SELECT id, name, contract_type, chain_id FROM contracts 
       WHERE address = ? COLLATE NOCASE
-    `).get(address.toLowerCase())
+    `).get(address.toLowerCase()) as any
 
     if (!contract) {
       return NextResponse.json({
@@ -346,9 +346,9 @@ export async function POST(
 
     // Get contract deployment block for efficient syncing
     const contractDetails = db.prepare(`
-      SELECT deployment_block FROM contracts 
+      SELECT deployment_block FROM contracts
       WHERE id = ?
-    `).get(contract.id)
+    `).get(contract.id) as any
 
     let deploymentBlock = contractDetails?.deployment_block
     
@@ -398,10 +398,10 @@ export async function POST(
 
     // First, check if any sync already exists for this contract
     const existingSync = db.prepare(`
-      SELECT id, status, sync_type, current_block, start_block FROM contract_sync_status 
+      SELECT id, status, sync_type, current_block, start_block FROM contract_sync_status
       WHERE contract_id = ?
       ORDER BY created_at DESC LIMIT 1
-    `).get(contract.id)
+    `).get(contract.id) as any
 
     let syncId: number
     let startFromBlock = deploymentBlock
@@ -757,7 +757,7 @@ export async function POST(
               (SELECT MAX(block_number) FROM events e WHERE e.contract_address = ? COLLATE NOCASE AND e.token_id = net_balances.token_id AND (e.to_address = net_balances.address OR e.from_address = net_balances.address)) as block_number
             FROM net_balances
             ORDER BY token_id, address
-          `).all(address.toLowerCase(), address.toLowerCase(), address.toLowerCase())
+          `).all(address.toLowerCase(), address.toLowerCase(), address.toLowerCase()) as any
         } else {
           // ERC-721: Use original logic (one owner per token)
           currentOwners = db.prepare(`
@@ -781,7 +781,7 @@ export async function POST(
               1 as balance
             FROM latest_transfers 
             WHERE rn = 1
-          `).all(address.toLowerCase())
+          `).all(address.toLowerCase()) as any
         }
         
         console.log(`🏷️ Found ${currentOwners.length} currently owned tokens`)

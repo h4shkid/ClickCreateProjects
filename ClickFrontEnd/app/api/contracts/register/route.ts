@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 3: Get or create user profile
-    let userProfile = db.prepare('SELECT id FROM user_profiles WHERE wallet_address = ? COLLATE NOCASE').get(walletAddress.toLowerCase())
+    let userProfile = db.prepare('SELECT id FROM user_profiles WHERE wallet_address = ? COLLATE NOCASE').get(walletAddress.toLowerCase()) as any
     
     if (!userProfile) {
       const insertUser = db.prepare(`

@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       LIMIT 10
     `)
 
-    const recentActivity = getActivity.all(user.userId)
+    const recentActivity = getActivity.all(user.userId) as any
 
     return NextResponse.json({
       success: true,
@@ -117,7 +117,7 @@ export async function PUT(request: NextRequest) {
       const checkUsername = db.prepare(
         'SELECT id FROM user_profiles WHERE username = ? AND id != ?'
       )
-      const existingUser = checkUsername.get(sanitizedUpdates.username, user.userId)
+      const existingUser = checkUsername.get(sanitizedUpdates.username, user.userId) as any
       
       if (existingUser) {
         return NextResponse.json({
