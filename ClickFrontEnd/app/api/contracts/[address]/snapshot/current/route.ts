@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    const db = createDatabaseAdapter()
     const { address } = await params
     const { searchParams } = new URL(request.url)
     
@@ -203,7 +200,8 @@ export async function GET(
           totalStatsParams = [address.toLowerCase(), ...tokenParams]
         }
         
-        const totalStats = db.prepare(totalStatsQuery).all(...totalStatsParams)[0] as any
+        const totalStatsResult = await db.prepare(totalStatsQuery).all(...totalStatsParams)
+        const totalStats = totalStatsResult[0] as any
 
         const totalSupply = totalStats?.total_supply || realHolders.reduce((sum: number, h: any) => sum + parseInt(h.balance), 0)
         
@@ -280,7 +278,8 @@ export async function GET(
         totalStatsParams = [address.toLowerCase(), ...tokenParams]
       }
 
-      const totalStats = totalStatsQuery ? db.prepare(totalStatsQuery).all(...totalStatsParams)[0] as any : null
+      const totalStatsResult = totalStatsQuery ? await db.prepare(totalStatsQuery).all(...totalStatsParams) : null
+      const totalStats = totalStatsResult ? totalStatsResult[0] as any : null
 
       // Get the latest block number from sync status
       const syncStatus = db.prepare(`

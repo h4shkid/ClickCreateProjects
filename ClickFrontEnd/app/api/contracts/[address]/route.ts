@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth, isValidEthereumAddress } from '@/lib/auth/middleware'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    const db = createDatabaseAdapter()
     const { address } = await params
 
     // Validate address format
@@ -117,6 +114,7 @@ export async function PUT(
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    const db = createDatabaseAdapter()
     const user = await requireAuth(request)
     const { address } = await params
 
@@ -188,7 +186,7 @@ export async function PUT(
       WHERE address = ? COLLATE NOCASE
     `
 
-    const result = db.prepare(updateQuery).run(...values)
+    const result = await db.prepare(updateQuery).run(...values)
 
     if (result.changes === 0) {
       return NextResponse.json({

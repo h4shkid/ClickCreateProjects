@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyMessage } from 'viem'
 import { SignJWT } from 'jose'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 // JWT secret - in production, use a secure environment variable
 const JWT_SECRET = new TextEncoder().encode(
@@ -20,6 +16,7 @@ interface VerifySignatureRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    const db = createDatabaseAdapter()
     const { message, signature }: VerifySignatureRequest = await request.json()
 
     // Extract wallet address from the message
@@ -56,7 +53,7 @@ export async function POST(request: NextRequest) {
         updated_at = CURRENT_TIMESTAMP
     `)
 
-    const result = upsertUser.run(walletAddress)
+    const result = await upsertUser.run(walletAddress)
     
     // Get user profile
     const getUser = db.prepare('SELECT * FROM user_profiles WHERE wallet_address = ?')
@@ -75,7 +72,7 @@ export async function POST(request: NextRequest) {
       VALUES (?, 'login', CURRENT_TIMESTAMP)
     `)
 
-    logActivity.run(user.id)
+    await logActivity.run(user.id)
 
     // Create JWT token
     const token = await new SignJWT({

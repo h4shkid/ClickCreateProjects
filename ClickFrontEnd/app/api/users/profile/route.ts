@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth, sanitizeInput } from '@/lib/auth/middleware'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 // GET user profile
 export async function GET(request: NextRequest) {
   try {
+    const db = createDatabaseAdapter()
     const user = await requireAuth(request)
 
     const getProfile = db.prepare(`
@@ -84,6 +81,7 @@ export async function GET(request: NextRequest) {
 // PUT update user profile
 export async function PUT(request: NextRequest) {
   try {
+    const db = createDatabaseAdapter()
     const user = await requireAuth(request)
     const updates = await request.json()
 
@@ -164,7 +162,7 @@ export async function PUT(request: NextRequest) {
 
     const updateValues = [...updateFields.map((field: any) => sanitizedUpdates[field]), user.userId]
     
-    const updateResult = db.prepare(updateQuery).run(...updateValues)
+    const updateResult = await db.prepare(updateQuery).run(...updateValues)
 
     if (updateResult.changes === 0) {
       return NextResponse.json({
@@ -179,8 +177,8 @@ export async function PUT(request: NextRequest) {
       VALUES (?, 'profile_updated', ?, CURRENT_TIMESTAMP)
     `)
 
-    logActivity.run(
-      user.userId, 
+    await logActivity.run(
+      user.userId,
       JSON.stringify({ updatedFields: updateFields })
     )
 

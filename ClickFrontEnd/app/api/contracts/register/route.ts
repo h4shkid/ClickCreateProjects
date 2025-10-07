@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWalletAuth, isValidEthereumAddress, sanitizeInput, checkRateLimit } from '@/lib/auth/middleware'
 import { ContractDetector } from '@/lib/contracts/detector'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 const detector = new ContractDetector()
 
 export async function POST(request: NextRequest) {
   try {
+    const db = createDatabaseAdapter()
     const body = await request.json()
     const { contractAddress, chainId = 1, walletAddress } = body
     
@@ -201,7 +198,7 @@ export async function POST(request: NextRequest) {
         INSERT INTO user_profiles (wallet_address, username, created_at)
         VALUES (?, ?, CURRENT_TIMESTAMP)
       `)
-      const result = insertUser.run(walletAddress.toLowerCase(), `user_${walletAddress.slice(0, 8)}`)
+      const result = await insertUser.run(walletAddress.toLowerCase(), `user_${walletAddress.slice(0, 8)}`)
       userProfile = { id: result.lastInsertRowid }
     }
 
@@ -223,7 +220,7 @@ export async function POST(request: NextRequest) {
     const finalTwitterUrl = openSeaData?.twitter_username ? `https://twitter.com/${openSeaData.twitter_username}` : metadata.twitterUrl || ''
     const finalDiscordUrl = openSeaData?.discord_url || metadata.discordUrl || ''
 
-    const contractResult = insertContract.run(
+    const contractResult = await insertContract.run(
       contractAddress.toLowerCase(),
       finalName,
       contractInfo.symbol || 'UNKNOWN',
@@ -258,7 +255,7 @@ export async function POST(request: NextRequest) {
       VALUES (?, 'contract_added', ?, ?, CURRENT_TIMESTAMP)
     `)
     
-    insertActivity.run(
+    await insertActivity.run(
       userProfile.id,
       contractResult.lastInsertRowid,
       JSON.stringify({

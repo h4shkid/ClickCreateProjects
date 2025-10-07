@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Database from 'better-sqlite3'
-import path from 'path'
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 import { ethers } from 'ethers'
 import { createDeploymentDetector } from '@/lib/blockchain/deployment-detector'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
 
 // Event signatures for different token standards
 const ERC721_TRANSFER_SIGNATURE = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' // Transfer(address,address,uint256)
@@ -171,6 +167,7 @@ export async function GET(
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    const db = createDatabaseAdapter()
     const { address } = await params
 
     if (!address) {
@@ -317,6 +314,7 @@ export async function POST(
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    const db = createDatabaseAdapter()
     const { address } = await params
 
     if (!address) {
@@ -372,9 +370,9 @@ export async function POST(
             console.log(`✅ Auto-detected deployment block: ${deploymentBlock} (method: ${deploymentInfo.method})`)
             
             // Update the database with the detected deployment block
-            db.prepare(`
-              UPDATE contracts 
-              SET deployment_block = ? 
+            await db.prepare(`
+              UPDATE contracts
+              SET deployment_block = ?
               WHERE id = ?
             `).run(deploymentBlock, contract.id)
             
@@ -417,10 +415,10 @@ export async function POST(
       
       // Update existing sync record
       console.log(`Updating existing sync record ${existingSync.id} for contract ${contract.name}`)
-      
-      db.prepare(`
-        UPDATE contract_sync_status 
-        SET status = 'processing', 
+
+      await db.prepare(`
+        UPDATE contract_sync_status
+        SET status = 'processing',
             started_at = CURRENT_TIMESTAMP,
             start_block = ?,
             end_block = ?
@@ -447,7 +445,7 @@ export async function POST(
           VALUES (?, 'full_refresh', ?, ?, ?, 'processing', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         `)
         
-        const result = insertSyncStatus.run(contract.id, startFromBlock, currentBlock, startFromBlock)
+        const result = await insertSyncStatus.run(contract.id, startFromBlock, currentBlock, startFromBlock)
         syncId = result.lastInsertRowid as number
       } catch (dbError: any) {
         console.error('Could not insert sync status:', dbError)
@@ -488,15 +486,15 @@ export async function POST(
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Transfer', ?, CURRENT_TIMESTAMP)
       `)
       
-      // Create transaction for batch inserts
-      const insertEventsBatch = db.transaction((events: any[]) => {
+      // Batch insert function
+      const insertEventsBatch = async (events: any[]) => {
         for (const event of events) {
-          const result = insertEvent.run(...event)
+          const result = await insertEvent.run(...event)
           if (result.changes > 0) {
             eventsInserted++
           }
         }
-      })
+      }
       
       for (let fromBlock = startFromBlock; fromBlock <= currentBlock; fromBlock += CHUNK_SIZE) {
         const toBlock = Math.min(fromBlock + CHUNK_SIZE - 1, currentBlock)
@@ -654,7 +652,7 @@ export async function POST(
           // Batch insert all events for this chunk
           if (eventsToInsert.length > 0) {
             console.log(`💾 Batch inserting ${eventsToInsert.length} events`)
-            insertEventsBatch(eventsToInsert)
+            await insertEventsBatch(eventsToInsert)
           }
           
           processedBlocks += (toBlock - fromBlock + 1)
@@ -665,9 +663,9 @@ export async function POST(
           
           // Update sync progress with percentage (with fallback for older schemas)
           try {
-            db.prepare(`
-              UPDATE contract_sync_status 
-              SET current_block = ?, 
+            await db.prepare(`
+              UPDATE contract_sync_status
+              SET current_block = ?,
                   processed_events = ?,
                   progress_percentage = ?
               WHERE id = ?
@@ -675,9 +673,9 @@ export async function POST(
           } catch (updateError: any) {
             // Fallback update without progress_percentage
             console.warn('progress_percentage column not found in update, using fallback')
-            db.prepare(`
-              UPDATE contract_sync_status 
-              SET current_block = ?, 
+            await db.prepare(`
+              UPDATE contract_sync_status
+              SET current_block = ?,
                   processed_events = ?
               WHERE id = ?
             `).run(toBlock, eventsInserted, syncId)
@@ -789,15 +787,15 @@ export async function POST(
         if (currentOwners.length > 0) {
           console.log(`💾 Clearing existing state and rebuilding for contract ${address.toLowerCase()}`)
           
-          // Create transaction to atomically clear and rebuild state
-          const rebuildStateTransaction = db.transaction(() => {
+          // Rebuild state function
+          const rebuildStateFunction = async () => {
             // Step 1: Clear existing state for this contract
-            const deleteResult = db.prepare(`
+            const deleteResult = await db.prepare(`
               DELETE FROM current_state WHERE contract_address = ? COLLATE NOCASE
             `).run(address.toLowerCase())
-            
+
             console.log(`  🗑️ Cleared ${deleteResult.changes} existing state records`)
-            
+
             // Step 2: Insert current owners (only positive balances)
             const insertCurrentState = db.prepare(`
               INSERT INTO current_state (
@@ -805,12 +803,12 @@ export async function POST(
               )
               VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             `)
-            
+
             let insertedCount = 0
             for (const owner of currentOwners) {
               const balance = owner.balance || 1
               if (balance > 0) {
-                insertCurrentState.run(
+                await insertCurrentState.run(
                   address.toLowerCase(),
                   owner.token_id,
                   owner.current_owner.toLowerCase(),
@@ -821,15 +819,15 @@ export async function POST(
                 statesUpdated++
               }
             }
-            
+
             console.log(`  ✅ Inserted ${insertedCount} current holder records`)
-            
+
             return insertedCount
-          })
-          
-          // Execute the atomic rebuild
+          }
+
+          // Execute the rebuild
           console.log(`💾 Batch rebuilding ${currentOwners.length} holder states`)
-          rebuildStateTransaction()
+          await rebuildStateFunction()
         }
         
       } catch (balanceError: any) {
@@ -838,10 +836,10 @@ export async function POST(
       
       // Mark sync as completed with 100% progress (with fallback for older schemas)
       try {
-        db.prepare(`
-          UPDATE contract_sync_status 
-          SET status = 'completed', 
-              current_block = ?, 
+        await db.prepare(`
+          UPDATE contract_sync_status
+          SET status = 'completed',
+              current_block = ?,
               completed_at = CURRENT_TIMESTAMP,
               total_events = ?,
               processed_events = ?,
@@ -851,10 +849,10 @@ export async function POST(
       } catch (completionError: any) {
         // Fallback completion update without progress_percentage
         console.warn('progress_percentage column not found in completion, using fallback')
-        db.prepare(`
-          UPDATE contract_sync_status 
-          SET status = 'completed', 
-              current_block = ?, 
+        await db.prepare(`
+          UPDATE contract_sync_status
+          SET status = 'completed',
+              current_block = ?,
               completed_at = CURRENT_TIMESTAMP,
               total_events = ?,
               processed_events = ?
@@ -869,9 +867,9 @@ export async function POST(
       console.error('Failed to complete REAL blockchain sync:', error)
       
       // Mark sync as failed
-      db.prepare(`
-        UPDATE contract_sync_status 
-        SET status = 'failed', 
+      await db.prepare(`
+        UPDATE contract_sync_status
+        SET status = 'failed',
             error_message = ?,
             completed_at = CURRENT_TIMESTAMP
         WHERE id = ?

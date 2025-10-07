@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/middleware'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 // GET user's tracked contracts
 export async function GET(request: NextRequest) {
   try {
+    const db = createDatabaseAdapter()
     const { searchParams } = new URL(request.url)
     const walletAddress = searchParams.get('walletAddress')
     
@@ -96,6 +93,7 @@ export async function GET(request: NextRequest) {
 // POST add contract to favorites
 export async function POST(request: NextRequest) {
   try {
+    const db = createDatabaseAdapter()
     const user = await requireAuth(request)
     const { contractId, action } = await request.json()
 
@@ -124,7 +122,7 @@ export async function POST(request: NextRequest) {
         VALUES (?, ?, 'contract')
       `)
 
-      addFavorite.run(user.userId, contractId)
+      await addFavorite.run(user.userId, contractId)
 
       return NextResponse.json({
         success: true,
@@ -138,7 +136,7 @@ export async function POST(request: NextRequest) {
         WHERE user_id = ? AND contract_id = ? AND favorite_type = 'contract'
       `)
 
-      const result = removeFavorite.run(user.userId, contractId)
+      const result = await removeFavorite.run(user.userId, contractId)
 
       if (result.changes === 0) {
         return NextResponse.json({

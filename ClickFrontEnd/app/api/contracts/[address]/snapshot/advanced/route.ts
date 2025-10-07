@@ -4,14 +4,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import Database from 'better-sqlite3'
-import path from 'path'
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 import { HybridSnapshotGenerator } from '@/lib/blockchain/hybrid-snapshot-generator'
 import { AdvancedQueryBuilder, SnapshotQuery } from '@/lib/processing/advanced-query-builder'
 import { getPreset, buildQueryFromPreset } from '@/lib/processing/snapshot-presets'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
 
 export async function GET(
   request: NextRequest,
@@ -168,6 +164,8 @@ async function handleSimpleHybrid(
   searchParams: URLSearchParams
 ): Promise<NextResponse> {
   console.log('⚡ Using simple hybrid strategy')
+
+  const db = createDatabaseAdapter()
 
   // Get contract info
   const contract = db.prepare(`

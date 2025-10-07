@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isValidEthereumAddress } from '@/lib/auth/middleware'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ contractId: string }> }
 ) {
   try {
+    const db = createDatabaseAdapter()
     const { contractId } = await params
     const { searchParams } = new URL(request.url)
     const walletAddress = searchParams.get('walletAddress')
@@ -55,32 +52,25 @@ export async function DELETE(
       }, { status: 404 })
     }
 
-    // Start transaction
-    const transaction = db.transaction(() => {
-      // Log user activity
-      const insertActivity = db.prepare(`
-        INSERT INTO user_activity (user_id, activity_type, contract_id, metadata, created_at)
-        VALUES (?, 'contract_removed', ?, ?, CURRENT_TIMESTAMP)
-      `)
-      
-      insertActivity.run(
-        userProfile.id,
-        contract.id,
-        JSON.stringify({
-          contractAddress: contract.address,
-          contractName: contract.name,
-          removedAt: new Date().toISOString()
-        })
-      )
+    // Log user activity
+    const insertActivity = db.prepare(`
+      INSERT INTO user_activity (user_id, activity_type, contract_id, metadata, created_at)
+      VALUES (?, 'contract_removed', ?, ?, CURRENT_TIMESTAMP)
+    `)
 
-      // Delete the contract (this will cascade to related data)
-      const deleteContract = db.prepare('DELETE FROM contracts WHERE id = ? AND added_by_user_id = ?')
-      const result = deleteContract.run(contract.id, userProfile.id)
+    await insertActivity.run(
+      userProfile.id,
+      contract.id,
+      JSON.stringify({
+        contractAddress: contract.address,
+        contractName: contract.name,
+        removedAt: new Date().toISOString()
+      })
+    )
 
-      return result
-    })
-
-    const result = transaction()
+    // Delete the contract (this will cascade to related data)
+    const deleteContract = db.prepare('DELETE FROM contracts WHERE id = ? AND added_by_user_id = ?')
+    const result = await deleteContract.run(contract.id, userProfile.id)
 
     if (result.changes === 0) {
       return NextResponse.json({

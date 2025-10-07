@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Database from 'better-sqlite3'
-import path from 'path'
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 import { createDateToBlockConverter } from '@/lib/utils/date-to-block'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    const db = createDatabaseAdapter()
     const { address } = await params
     const { searchParams } = new URL(request.url)
     
@@ -356,15 +353,14 @@ export async function GET(
 
 // Helper function to generate date range snapshot comparison
 async function generateDateRangeSnapshot(
-  address: string, 
-  startBlock: number, 
-  endBlock: number, 
-  actualStartDate: Date, 
+  address: string,
+  startBlock: number,
+  endBlock: number,
+  actualStartDate: Date,
   actualEndDate: Date,
   requestedDates: { startDate: string, endDate: string }
 ) {
-  const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-  db.pragma('journal_mode = WAL')
+  const db = createDatabaseAdapter()
 
   // Generate snapshots for both start and end dates
   const [startHolders, endHolders] = await Promise.all([
@@ -453,7 +449,7 @@ async function generateDateRangeSnapshot(
 }
 
 // Helper function to generate snapshot at specific block
-async function generateSnapshotAtBlock(db: Database.Database, address: string, blockNumber: number) {
+async function generateSnapshotAtBlock(db: any, address: string, blockNumber: number) {
   // Get all unique holders up to the specified block
   const eventsQuery = `
     SELECT DISTINCT to_address as holder_address

@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production'
@@ -12,6 +8,7 @@ const JWT_SECRET = new TextEncoder().encode(
 
 export async function GET(request: NextRequest) {
   try {
+    const db = createDatabaseAdapter()
     const token = request.cookies.get('auth-token')?.value
 
     if (!token) {

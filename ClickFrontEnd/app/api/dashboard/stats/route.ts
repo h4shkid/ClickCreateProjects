@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Database from 'better-sqlite3'
-import path from 'path'
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 interface DashboardStats {
   totalContracts: number
@@ -9,12 +8,8 @@ interface DashboardStats {
 }
 
 export async function GET(request: NextRequest) {
-  let db: Database.Database | null = null
-  
   try {
-    // Initialize database
-    const dbPath = process.env.DATABASE_PATH || path.join(process.cwd(), 'data', 'nft-snapshot.db')
-    db = new Database(dbPath)
+    const db = createDatabaseAdapter()
     
     console.log('📊 Fetching dashboard statistics...')
     
@@ -86,7 +81,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error: any) {
     console.error('❌ Dashboard stats error:', error)
-    
+
     // Return fallback stats if database isn't available
     return NextResponse.json({
       success: true,
@@ -96,14 +91,5 @@ export async function GET(request: NextRequest) {
         totalSnapshots: 0
       }
     })
-    
-  } finally {
-    if (db) {
-      try {
-        db.close()
-      } catch (closeError: any) {
-        console.error('Error closing database:', closeError)
-      }
-    }
   }
 }

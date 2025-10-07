@@ -74,7 +74,7 @@ export async function POST(
       `).get() as any;
 
       if (!anonymousUser) {
-        const result = db.prepare(`
+        const result = await db.prepare(`
           INSERT INTO user_profiles (wallet_address, username, display_name)
           VALUES ('anonymous', 'anonymous', 'Anonymous User')
         `).run();
@@ -152,7 +152,7 @@ export async function POST(
     ) as any;
 
     // Save snapshot to database
-    const snapshotResult = db.prepare(`
+    const snapshotResult = await db.prepare(`
       INSERT INTO user_snapshots (
         user_id,
         contract_id,

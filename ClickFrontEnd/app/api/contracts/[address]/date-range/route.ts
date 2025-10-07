@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Database from 'better-sqlite3'
-import path from 'path'
-
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
 ) {
   try {
+    const db = createDatabaseAdapter()
     const { address } = await params
 
     if (!address) {
