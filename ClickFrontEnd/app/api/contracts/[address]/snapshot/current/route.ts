@@ -82,7 +82,7 @@ export async function GET(
       }
 
       // Try to get real holder data from current_state table
-      let query
+      let query: string = ''
       if (fullSeason && season) {
         // For full season mode: find addresses that own ALL tokens in the season
         const { getSeasonGroup } = await import('@/lib/constants/season-tokens')
