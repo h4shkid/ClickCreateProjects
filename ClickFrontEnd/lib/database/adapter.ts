@@ -55,22 +55,16 @@ class SQLiteAdapter implements DatabaseAdapter {
 
 class PostgresAdapter implements DatabaseAdapter {
   private pool: Pool
-  private client: PoolClient | null = null
 
   constructor(connectionString: string) {
+    // Serverless-optimized pool configuration
     this.pool = new Pool({
       connectionString,
-      max: 20,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000,
+      max: 1, // Serverless: minimize connections
+      idleTimeoutMillis: 10000, // Release idle connections quickly
+      connectionTimeoutMillis: 10000, // Longer timeout for serverless cold starts
+      allowExitOnIdle: true, // Allow process to exit when idle
     })
-  }
-
-  private async getClient(): Promise<PoolClient> {
-    if (!this.client) {
-      this.client = await this.pool.connect()
-    }
-    return this.client
   }
 
   prepare(sql: string): PreparedStatement {
@@ -87,36 +81,51 @@ class PostgresAdapter implements DatabaseAdapter {
 
     return {
       get: async (...params: any[]) => {
-        const client = await this.getClient()
-        const result = await client.query(pgSql, params)
-        return result.rows[0] || null
+        // Use fresh connection for each query (serverless-friendly)
+        const client = await this.pool.connect()
+        try {
+          const result = await client.query(pgSql, params)
+          return result.rows[0] || null
+        } finally {
+          client.release()
+        }
       },
       all: async (...params: any[]) => {
-        const client = await this.getClient()
-        const result = await client.query(pgSql, params)
-        return result.rows
+        // Use fresh connection for each query (serverless-friendly)
+        const client = await this.pool.connect()
+        try {
+          const result = await client.query(pgSql, params)
+          return result.rows || []
+        } finally {
+          client.release()
+        }
       },
       run: async (...params: any[]) => {
-        const client = await this.getClient()
-        const result = await client.query(pgSql, params)
-        return {
-          changes: result.rowCount || 0,
-          lastInsertRowid: result.rows[0]?.id || 0
+        // Use fresh connection for each query (serverless-friendly)
+        const client = await this.pool.connect()
+        try {
+          const result = await client.query(pgSql, params)
+          return {
+            changes: result.rowCount || 0,
+            lastInsertRowid: result.rows[0]?.id || 0
+          }
+        } finally {
+          client.release()
         }
       }
     }
   }
 
   async exec(sql: string): Promise<void> {
-    const client = await this.getClient()
-    await client.query(sql)
+    const client = await this.pool.connect()
+    try {
+      await client.query(sql)
+    } finally {
+      client.release()
+    }
   }
 
   async close(): Promise<void> {
-    if (this.client) {
-      this.client.release()
-      this.client = null
-    }
     await this.pool.end()
   }
 }
