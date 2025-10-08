@@ -31,7 +31,7 @@ async function checkUserContracts() {
 
     // Check contracts and their user association
     const contracts = await client.query(`
-      SELECT id, address, name, symbol, added_by_user_id, is_internal
+      SELECT id, address, name, symbol, added_by_user_id
       FROM contracts
     `)
     console.log('📊 Contracts:')
@@ -40,7 +40,6 @@ async function checkUserContracts() {
       console.log(`   Name: ${contract.name}`)
       console.log(`   Address: ${contract.address}`)
       console.log(`   Added by user ID: ${contract.added_by_user_id}`)
-      console.log(`   Is internal: ${contract.is_internal}`)
       console.log('')
     })
 

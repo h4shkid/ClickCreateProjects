@@ -74,9 +74,16 @@ class PostgresAdapter implements DatabaseAdapter {
   }
 
   prepare(sql: string): PreparedStatement {
-    // Convert SQLite ? placeholders to Postgres $1, $2, etc.
+    // Convert SQLite syntax to Postgres syntax
+    let pgSql = sql
+
+    // Replace ? placeholders with $1, $2, etc.
     let paramCounter = 0
-    const pgSql = sql.replace(/\?/g, () => `$${++paramCounter}`)
+    pgSql = pgSql.replace(/\?/g, () => `$${++paramCounter}`)
+
+    // Remove COLLATE NOCASE (Postgres is case-sensitive by default, but we use LOWER() for comparisons)
+    // The values are already lowercased in the code, so we can safely remove COLLATE NOCASE
+    pgSql = pgSql.replace(/\s+COLLATE\s+NOCASE/gi, '')
 
     return {
       get: async (...params: any[]) => {
