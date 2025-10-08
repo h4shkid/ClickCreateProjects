@@ -127,14 +127,21 @@ class PostgresAdapter implements DatabaseAdapter {
 export function createDatabaseAdapter(): DatabaseAdapter {
   const dbType = process.env.DATABASE_TYPE as DatabaseType || 'sqlite'
 
+  console.log('[DatabaseAdapter] DATABASE_TYPE:', dbType)
+  console.log('[DatabaseAdapter] POSTGRES_URL exists:', !!process.env.POSTGRES_URL)
+
   if (dbType === 'postgres') {
     const connectionString = process.env.POSTGRES_URL
     if (!connectionString) {
+      console.error('[DatabaseAdapter] ERROR: DATABASE_TYPE is postgres but POSTGRES_URL is missing!')
+      console.error('[DatabaseAdapter] Available env vars:', Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('POSTGRES')))
       throw new Error('POSTGRES_URL environment variable is required for Postgres')
     }
+    console.log('[DatabaseAdapter] Using Postgres adapter')
     return new PostgresAdapter(connectionString)
   } else {
     // SQLite for local development
+    console.log('[DatabaseAdapter] Using SQLite adapter')
     const dbPath = path.join(process.cwd(), 'data', 'nft-snapshot.db')
     return new SQLiteAdapter(dbPath)
   }
