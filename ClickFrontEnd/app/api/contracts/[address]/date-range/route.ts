@@ -17,7 +17,7 @@ export async function GET(
     }
 
     // Get contract from database
-    const contract = db.prepare(`
+    const contract = await db.prepare(`
       SELECT id, name, symbol, contract_type, deployment_block FROM contracts
       WHERE address = ? COLLATE NOCASE
     `).get(address.toLowerCase()) as any
@@ -30,14 +30,14 @@ export async function GET(
     }
 
     // Get date range for this contract's events
-    const dateRange = db.prepare(`
-      SELECT 
+    const dateRange = await db.prepare(`
+      SELECT
         MIN(block_timestamp) as earliest_timestamp,
         MAX(block_timestamp) as latest_timestamp,
         MIN(block_number) as earliest_block,
         MAX(block_number) as latest_block,
         COUNT(*) as total_events
-      FROM events 
+      FROM events
       WHERE contract_address = ? COLLATE NOCASE
     `).get(address.toLowerCase()) as any
 
@@ -59,22 +59,22 @@ export async function GET(
           name: contract.name,
           symbol: contract.symbol,
           type: contract.contract_type,
-          deploymentBlock: contract.deployment_block
+          deploymentBlock: contract.deployment_block || contract.deploymentblock
         },
         dateRange: {
           earliestDate: earliestDate.toISOString(),
           latestDate: latestDate.toISOString(),
-          earliestBlock: dateRange.earliest_block,
-          latestBlock: dateRange.latest_block,
-          totalEvents: dateRange.total_events,
+          earliestBlock: dateRange.earliest_block || dateRange.earliest_block,
+          latestBlock: dateRange.latest_block || dateRange.latest_block,
+          totalEvents: dateRange.total_events || dateRange.total_events,
           // For form validation
           minDate: earliestDate.toISOString().split('T')[0], // YYYY-MM-DD
           maxDate: latestDate.toISOString().split('T')[0]   // YYYY-MM-DD
         },
         stats: {
           dataAvailability: `${Math.round((latestDate.getTime() - earliestDate.getTime()) / (1000 * 60 * 60 * 24))} days`,
-          blockRange: dateRange.latest_block - dateRange.earliest_block,
-          avgBlocksPerDay: Math.round((dateRange.latest_block - dateRange.earliest_block) / ((latestDate.getTime() - earliestDate.getTime()) / (1000 * 60 * 60 * 24)))
+          blockRange: (dateRange.latest_block || dateRange.latest_block) - (dateRange.earliest_block || dateRange.earliest_block),
+          avgBlocksPerDay: Math.round(((dateRange.latest_block || dateRange.latest_block) - (dateRange.earliest_block || dateRange.earliest_block)) / ((latestDate.getTime() - earliestDate.getTime()) / (1000 * 60 * 60 * 24)))
         }
       }
     })
