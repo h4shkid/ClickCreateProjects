@@ -90,17 +90,17 @@ export async function GET(
           const placeholders = seasonGroup.tokenIds.map(() => '?').join(',')
           
           query = `
-            SELECT 
+            SELECT
               address as holder_address,
               SUM(CAST(balance AS INTEGER)) as balance,
               COUNT(DISTINCT token_id) as owned_tokens
-            FROM current_state 
+            FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
             AND token_id IN (${placeholders})
             AND CAST(balance AS INTEGER) > 0
             GROUP BY address
             HAVING COUNT(DISTINCT token_id) = ?
-            ORDER BY SUM(CAST(balance AS INTEGER)) DESC
+            ORDER BY balance DESC
             ${limit > 0 ? `LIMIT ${limit}` : ''}
           `
           
@@ -109,15 +109,15 @@ export async function GET(
       } else {
         // Regular query for partial ownership
         query = `
-          SELECT 
+          SELECT
             address as holder_address,
             SUM(CAST(balance AS INTEGER)) as balance
-          FROM current_state 
+          FROM current_state
           WHERE contract_address = ? COLLATE NOCASE
           ${tokenFilter}
           GROUP BY address
           HAVING SUM(CAST(balance AS INTEGER)) > 0
-          ORDER BY SUM(CAST(balance AS INTEGER)) DESC
+          ORDER BY balance DESC
           ${limit > 0 ? `LIMIT ${limit}` : ''}
         `
       }
@@ -167,35 +167,35 @@ export async function GET(
             const placeholders = seasonGroup.tokenIds.map(() => '?').join(',')
             
             totalStatsQuery = `
-              SELECT 
+              SELECT
                 COUNT(DISTINCT address) as total_holders,
                 SUM(balance_sum) as total_supply
               FROM (
                 SELECT address, SUM(CAST(balance AS INTEGER)) as balance_sum
-                FROM current_state 
+                FROM current_state
                 WHERE contract_address = ? COLLATE NOCASE
                 AND token_id IN (${placeholders})
                 AND CAST(balance AS INTEGER) > 0
                 GROUP BY address
                 HAVING COUNT(DISTINCT token_id) = ?
-              )
+              ) AS subquery
             `
             totalStatsParams = [address.toLowerCase(), ...seasonGroup.tokenIds, expectedTokenCount]
           }
         } else {
           // Regular stats query
           totalStatsQuery = `
-            SELECT 
+            SELECT
               COUNT(DISTINCT address) as total_holders,
               SUM(balance_sum) as total_supply
             FROM (
               SELECT address, SUM(CAST(balance AS INTEGER)) as balance_sum
-              FROM current_state 
+              FROM current_state
               WHERE contract_address = ? COLLATE NOCASE
               ${tokenFilter || ''}
               GROUP BY address
               HAVING SUM(CAST(balance AS INTEGER)) > 0
-            )
+            ) AS subquery
           `
           totalStatsParams = [address.toLowerCase(), ...tokenParams]
         }
@@ -256,7 +256,7 @@ export async function GET(
               AND CAST(balance AS INTEGER) > 0
               GROUP BY address
               HAVING COUNT(DISTINCT token_id) = ?
-            )
+            ) AS subquery
           `
           totalStatsParams = [address.toLowerCase(), ...seasonGroup.tokenIds, expectedTokenCount]
         }
@@ -273,7 +273,7 @@ export async function GET(
             ${tokenFilter}
             GROUP BY address
             HAVING SUM(CAST(balance AS INTEGER)) > 0
-          )
+          ) AS subquery
         `
         totalStatsParams = [address.toLowerCase(), ...tokenParams]
       }

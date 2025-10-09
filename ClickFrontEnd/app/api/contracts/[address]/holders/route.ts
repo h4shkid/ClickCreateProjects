@@ -54,7 +54,7 @@ export async function GET(
 
     // Build holders query
     let query = `
-      SELECT 
+      SELECT
         cs.address,
         SUM(cs.balance) as total_balance,
         COUNT(DISTINCT cs.token_id) as token_count,
@@ -62,7 +62,7 @@ export async function GET(
         MIN(e.block_timestamp) as first_transaction_date,
         MAX(e.block_timestamp) as last_transaction_date
       FROM current_state cs
-      LEFT JOIN events e ON LOWER(e.contract_address) = LOWER(cs.contract_address) 
+      LEFT JOIN events e ON LOWER(e.contract_address) = LOWER(cs.contract_address)
         AND (e.from_address = cs.address OR e.to_address = cs.address)
       WHERE cs.balance > 0 AND LOWER(cs.contract_address) = ?
     `;
@@ -152,8 +152,8 @@ export async function GET(
 
     // Calculate holder distribution
     const distributionQuery = `
-      SELECT 
-        CASE 
+      SELECT
+        CASE
           WHEN total_balance = 1 THEN '1'
           WHEN total_balance BETWEEN 2 AND 5 THEN '2-5'
           WHEN total_balance BETWEEN 6 AND 10 THEN '6-10'
@@ -164,7 +164,7 @@ export async function GET(
         COUNT(*) as holders,
         SUM(total_balance) as total_balance_in_range
       FROM (
-        SELECT 
+        SELECT
           cs.address,
           SUM(cs.balance) as total_balance
         FROM current_state cs

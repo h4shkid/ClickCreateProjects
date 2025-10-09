@@ -153,7 +153,7 @@ export async function GET(
       `).all(contractAddress, tokenId) as any[];
     } else {
       topHolders = db.prepare(`
-        SELECT 
+        SELECT
           address,
           SUM(balance) as balance,
           COUNT(DISTINCT token_id) as token_count
@@ -169,7 +169,7 @@ export async function GET(
     let tokenActivity = [];
     if (!tokenId) {
       tokenActivity = db.prepare(`
-        SELECT 
+        SELECT
           token_id,
           COUNT(DISTINCT address) as holders,
           SUM(balance) as total_supply,
@@ -194,28 +194,28 @@ export async function GET(
     let timeSeries;
     if (tokenId) {
       timeSeries = db.prepare(`
-        SELECT 
+        SELECT
           DATE(block_timestamp, 'unixepoch') as date,
           COUNT(*) as events,
           COUNT(DISTINCT from_address) as unique_from,
           COUNT(DISTINCT to_address) as unique_to
         FROM events
-        WHERE block_timestamp >= strftime('%s', ${timeCondition}) 
+        WHERE block_timestamp >= strftime('%s', ${timeCondition})
           AND LOWER(contract_address) = ? AND token_id = ?
-        GROUP BY DATE(block_timestamp, 'unixepoch')
+        GROUP BY date
         ORDER BY date DESC
       `).all(contractAddress, tokenId) as any[];
     } else {
       timeSeries = db.prepare(`
-        SELECT 
+        SELECT
           DATE(block_timestamp, 'unixepoch') as date,
           COUNT(*) as events,
           COUNT(DISTINCT from_address) as unique_from,
           COUNT(DISTINCT to_address) as unique_to
         FROM events
-        WHERE block_timestamp >= strftime('%s', ${timeCondition}) 
+        WHERE block_timestamp >= strftime('%s', ${timeCondition})
           AND LOWER(contract_address) = ?
-        GROUP BY DATE(block_timestamp, 'unixepoch')
+        GROUP BY date
         ORDER BY date DESC
       `).all(contractAddress) as any[];
     }
