@@ -344,27 +344,32 @@ export default function CollectionSnapshotPage() {
   const syncBlockchain = async () => {
     setSyncStatus({ syncing: true, progress: 0 })
     setError('')
-    
+
     try {
       // Start blockchain sync
       const response = await axios.post(`/api/contracts/${address}/sync`, {})
-      
+
       if (response.data.success) {
         console.log('🚀 Sync started:', response.data.message)
-        
+
         // Poll for sync status with real progress
         const pollInterval = setInterval(async () => {
           try {
             const statusRes = await axios.get(`/api/contracts/${address}/sync`)
             const syncData = statusRes.data.data
-            
+
             console.log('📊 Sync status:', syncData)
-            
+
             if (syncData.status === 'completed') {
               clearInterval(pollInterval)
               setSyncStatus({ syncing: false, progress: 100 })
               setSyncInfo(syncData) // Update sync info
-              console.log('✅ Sync completed!')
+
+              // Refresh sync info after a short delay to get latest statistics
+              setTimeout(async () => {
+                await checkSyncStatus()
+                console.log('✅ Sync completed and statistics refreshed!')
+              }, 2000)
             } else if (syncData.status === 'processing') {
               // Update progress with real percentage
               const progress = syncData.progressPercentage || 0
@@ -381,12 +386,15 @@ export default function CollectionSnapshotPage() {
             console.error('Status poll error:', err)
           }
         }, 2000) // Poll every 2 seconds
-        
+
         // Stop polling after 15 minutes (for very large syncs)
         setTimeout(() => {
           clearInterval(pollInterval)
           setSyncStatus({ syncing: false, progress: 100 })
-          console.log('⏰ Sync polling timeout')
+
+          // Refresh stats when timeout
+          checkSyncStatus()
+          console.log('⏰ Sync polling timeout, refreshing stats')
         }, 900000) // 15 minutes
       }
     } catch (err) {
