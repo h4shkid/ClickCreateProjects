@@ -11,11 +11,11 @@ export async function GET(
     const db = createDatabaseAdapter()
 
     // Get contract info
-    const contract = await db.get(`
+    const contract = await db.prepare(`
       SELECT id, name, symbol, deployment_block
       FROM contracts
-      WHERE LOWER(address) = LOWER($1)
-    `, [address.toLowerCase()]) as any
+      WHERE LOWER(address) = LOWER(?)
+    `).get(address.toLowerCase()) as any
 
     if (!contract) {
       return NextResponse.json({
@@ -25,7 +25,7 @@ export async function GET(
     }
 
     // Get event statistics
-    const eventStats = await db.get(`
+    const eventStats = await db.prepare(`
       SELECT
         COUNT(*) as total_events,
         MIN(block_number) as first_block,
@@ -33,19 +33,19 @@ export async function GET(
         MIN(block_timestamp) as first_timestamp,
         MAX(block_timestamp) as last_timestamp
       FROM events
-      WHERE LOWER(contract_address) = LOWER($1)
-    `, [address.toLowerCase()]) as any
+      WHERE LOWER(contract_address) = LOWER(?)
+    `).get(address.toLowerCase()) as any
 
     // Get holder statistics
-    const holderStats = await db.get(`
+    const holderStats = await db.prepare(`
       SELECT
         COUNT(DISTINCT address) as total_holders,
         COUNT(DISTINCT token_id) as unique_tokens,
         SUM(CAST(balance AS BIGINT)) as total_supply
       FROM current_state
-      WHERE LOWER(contract_address) = LOWER($1)
+      WHERE LOWER(contract_address) = LOWER(?)
         AND CAST(balance AS BIGINT) > 0
-    `, [address.toLowerCase()]) as any
+    `).get(address.toLowerCase()) as any
 
     const totalEvents = parseInt(eventStats?.total_events) || 0
     const totalHolders = parseInt(holderStats?.total_holders) || 0
