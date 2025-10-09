@@ -99,7 +99,7 @@ export default function CollectionSnapshotPage() {
               const progress = syncData.progressPercentage || 0
               setSyncStatus({ syncing: true, progress })
               // Preserve existing statistics during auto-polling
-              setSyncInfo(prev => ({
+              setSyncInfo((prev: any) => ({
                 ...syncData,
                 statistics: syncData.statistics || prev?.statistics
               }))
@@ -107,7 +107,7 @@ export default function CollectionSnapshotPage() {
             } else if (syncData.status === 'completed') {
               setSyncStatus({ syncing: false, progress: 100 })
               // Preserve existing statistics
-              setSyncInfo(prev => ({
+              setSyncInfo((prev: any) => ({
                 ...syncData,
                 statistics: syncData.statistics || prev?.statistics
               }))
@@ -373,7 +373,7 @@ export default function CollectionSnapshotPage() {
               setSyncStatus({ syncing: false, progress: 100 })
 
               // Preserve existing statistics during sync completion
-              setSyncInfo(prev => ({
+              setSyncInfo((prev: any) => ({
                 ...syncData,
                 statistics: syncData.statistics || prev?.statistics
               }))
@@ -389,7 +389,7 @@ export default function CollectionSnapshotPage() {
               setSyncStatus({ syncing: true, progress })
 
               // Preserve existing statistics during sync
-              setSyncInfo(prev => ({
+              setSyncInfo((prev: any) => ({
                 ...syncData,
                 statistics: syncData.statistics || prev?.statistics
               }))
