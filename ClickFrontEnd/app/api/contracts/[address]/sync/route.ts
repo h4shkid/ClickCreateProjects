@@ -97,14 +97,46 @@ export async function POST(
 ) {
   try {
     const { address } = await params
+    const body = await request.json().catch(() => ({}))
 
-    // For now, return a message that sync is not supported in serverless environment
-    // In the future, this could trigger a background job or webhook
+    const syncWorkerUrl = process.env.SYNC_WORKER_URL
+
+    if (!syncWorkerUrl) {
+      return NextResponse.json({
+        success: false,
+        error: 'Sync worker not configured. Please contact administrator.'
+      }, { status: 503 })
+    }
+
+    // Call sync worker
+    const workerResponse = await fetch(`${syncWorkerUrl}/sync`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.SYNC_WORKER_SECRET || ''}`
+      },
+      body: JSON.stringify({
+        contractAddress: address.toLowerCase(),
+        fromBlock: body.fromBlock || 'auto',
+        toBlock: body.toBlock || 'latest'
+      })
+    })
+
+    const workerData = await workerResponse.json()
+
+    if (!workerData.success) {
+      return NextResponse.json({
+        success: false,
+        error: workerData.error || 'Failed to queue sync job'
+      }, { status: 500 })
+    }
+
     return NextResponse.json({
-      success: false,
-      error: 'Blockchain sync is currently disabled in production. The database already contains up-to-date data migrated from SQLite. If you need to update data, please run sync scripts locally and re-migrate.',
-      message: 'Your contract data is already synced with 342,405 events up to block 23,526,504'
-    }, { status: 200 })
+      success: true,
+      jobId: workerData.jobId,
+      message: 'Blockchain sync started',
+      position: workerData.position
+    })
 
   } catch (error: any) {
     console.error('Sync trigger error:', error)
