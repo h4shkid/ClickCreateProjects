@@ -66,20 +66,20 @@ export async function GET(request: NextRequest) {
           address: contract.address,
           name: contract.name || 'Unknown Collection',
           symbol: contract.symbol || 'UNKNOWN',
-          contractType: contract.contractType || 'ERC1155',
-          chainId: contract.chainId || 1,
+          contractType: contract.contracttype || 'ERC1155',
+          chainId: contract.chainid || 1,
           description: contract.description || '',
-          websiteUrl: contract.websiteUrl || '',
-          twitterUrl: contract.twitterUrl || '',
-          discordUrl: contract.discordUrl || '',
-          imageUrl: contract.imageUrl || '',
-          bannerImageUrl: contract.bannerImageUrl || '',
-          isVerified: Boolean(contract.isVerified),
-          holderCount: contract.holderCount || 0,
-          totalSupply: contract.totalSupply || '0',
-          usageCount: contract.usageCount || 0,
-          userSnapshots: contract.userSnapshots || 0,
-          addedAt: contract.addedAt
+          websiteUrl: contract.websiteurl || '',
+          twitterUrl: contract.twitterurl || '',
+          discordUrl: contract.discordurl || '',
+          imageUrl: contract.imageurl || '',
+          bannerImageUrl: contract.bannerimageurl || '',
+          isVerified: Boolean(contract.isverified),
+          holderCount: contract.holdercount || 0,
+          totalSupply: contract.totalsupply || '0',
+          usageCount: contract.usagecount || 0,
+          userSnapshots: parseInt(contract.usersnapshots) || 0,
+          addedAt: contract.addedat
         }))
       }
     })
