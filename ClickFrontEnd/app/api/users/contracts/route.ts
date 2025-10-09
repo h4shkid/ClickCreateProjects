@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     // Get user's contracts from database
     const query = `
-      SELECT 
+      SELECT
         c.id,
         c.address,
         c.name,
@@ -37,23 +37,26 @@ export async function GET(request: NextRequest) {
         c.usage_count as usageCount,
         c.total_supply as totalSupply,
         c.created_at as addedAt,
-        ca.total_holders as holderCount,
+        MAX(ca.total_holders) as holderCount,
         COUNT(DISTINCT us.id) as userSnapshots
       FROM contracts c
       LEFT JOIN user_profiles up ON up.wallet_address = ? COLLATE NOCASE
-      LEFT JOIN contract_analytics ca ON c.id = ca.contract_id 
+      LEFT JOIN contract_analytics ca ON c.id = ca.contract_id
         AND ca.analysis_date = (
-          SELECT MAX(analysis_date) 
-          FROM contract_analytics 
+          SELECT MAX(analysis_date)
+          FROM contract_analytics
           WHERE contract_id = c.id
         )
       LEFT JOIN user_snapshots us ON c.id = us.contract_id AND us.user_id = up.id
       WHERE c.added_by_user_id = up.id
-      GROUP BY c.id
+      GROUP BY c.id, c.address, c.name, c.symbol, c.contract_type, c.chain_id,
+               c.description, c.website_url, c.twitter_url, c.discord_url,
+               c.image_url, c.banner_image_url, c.is_verified, c.usage_count,
+               c.total_supply, c.created_at
       ORDER BY c.usage_count DESC, c.created_at DESC
     `
 
-    const contracts = db.prepare(query).all(walletAddress.toLowerCase()) as any[]
+    const contracts = (await db.prepare(query).all(walletAddress.toLowerCase())) as any[]
 
     return NextResponse.json({
       success: true,
