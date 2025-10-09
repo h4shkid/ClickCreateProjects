@@ -19,7 +19,7 @@ export async function GET(
     }
 
     // Get contract info from database
-    const contract = db.prepare(`
+    const contract = await db.prepare(`
       SELECT
         id,
         address,
@@ -53,7 +53,7 @@ export async function GET(
     // Get basic analytics if available
     let analytics = null
     try {
-      const analyticsData = db.prepare(`
+      const analyticsData = await db.prepare(`
         SELECT
           total_holders,
           total_supply,
@@ -104,7 +104,7 @@ export async function GET(
     console.error('Contract fetch error:', error)
     return NextResponse.json({
       success: false,
-      error: 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error'
     }, { status: 500 })
   }
 }
