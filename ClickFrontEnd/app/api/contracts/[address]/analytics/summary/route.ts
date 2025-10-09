@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase } from '@/lib/database/init';
+import { createDatabaseAdapter } from '@/lib/database/adapter';
 
 export async function GET(
   request: NextRequest,
@@ -22,15 +22,13 @@ export async function GET(
     const contractAddress = address.toLowerCase();
 
     // Initialize database
-    const dbManager = getDatabase();
-    await dbManager.initialize();
-    const db = dbManager.getDb();
+    const db = createDatabaseAdapter();
 
     // Get contract info
-    const contractInfo = db.prepare(`
+    const contractInfo = await db.prepare(`
       SELECT id, name, symbol, contract_type, total_supply, is_verified
-      FROM contracts 
-      WHERE LOWER(address) = ? AND is_active = 1
+      FROM contracts
+      WHERE LOWER(address) = ?
     `).get(contractAddress) as any;
 
     if (!contractInfo) {
@@ -43,8 +41,8 @@ export async function GET(
     // Get overall statistics for this contract
     let overallStats;
     if (tokenId) {
-      overallStats = db.prepare(`
-        SELECT 
+      overallStats = await db.prepare(`
+        SELECT
           COUNT(DISTINCT address) as unique_holders,
           COUNT(DISTINCT token_id) as unique_tokens,
           SUM(balance) as total_supply,
@@ -55,8 +53,8 @@ export async function GET(
         WHERE balance > 0 AND LOWER(contract_address) = ? AND token_id = ?
       `).get(contractAddress, tokenId) as any;
     } else {
-      overallStats = db.prepare(`
-        SELECT 
+      overallStats = await db.prepare(`
+        SELECT
           COUNT(DISTINCT address) as unique_holders,
           COUNT(DISTINCT token_id) as unique_tokens,
           SUM(balance) as total_supply,
@@ -71,8 +69,8 @@ export async function GET(
     // Get event statistics for this contract
     let eventStats;
     if (tokenId) {
-      eventStats = db.prepare(`
-        SELECT 
+      eventStats = await db.prepare(`
+        SELECT
           COUNT(*) as total_events,
           COUNT(DISTINCT from_address) as unique_senders,
           COUNT(DISTINCT to_address) as unique_receivers,
@@ -84,8 +82,8 @@ export async function GET(
         WHERE LOWER(contract_address) = ? AND token_id = ?
       `).get(contractAddress, tokenId) as any;
     } else {
-      eventStats = db.prepare(`
-        SELECT 
+      eventStats = await db.prepare(`
+        SELECT
           COUNT(*) as total_events,
           COUNT(DISTINCT from_address) as unique_senders,
           COUNT(DISTINCT to_address) as unique_receivers,
@@ -101,9 +99,9 @@ export async function GET(
     // Get holder distribution for this contract
     let distribution;
     if (tokenId) {
-      distribution = db.prepare(`
-        SELECT 
-          CASE 
+      distribution = await db.prepare(`
+        SELECT
+          CASE
             WHEN balance = 1 THEN '1'
             WHEN balance BETWEEN 2 AND 5 THEN '2-5'
             WHEN balance BETWEEN 6 AND 10 THEN '6-10'
@@ -119,9 +117,9 @@ export async function GET(
         ORDER BY MIN(balance)
       `).all(contractAddress, tokenId) as any[];
     } else {
-      distribution = db.prepare(`
-        SELECT 
-          CASE 
+      distribution = await db.prepare(`
+        SELECT
+          CASE
             WHEN balance = 1 THEN '1'
             WHEN balance BETWEEN 2 AND 5 THEN '2-5'
             WHEN balance BETWEEN 6 AND 10 THEN '6-10'
@@ -141,8 +139,8 @@ export async function GET(
     // Get top holders for this contract
     let topHolders;
     if (tokenId) {
-      topHolders = db.prepare(`
-        SELECT 
+      topHolders = await db.prepare(`
+        SELECT
           address,
           balance,
           1 as token_count
@@ -152,7 +150,7 @@ export async function GET(
         LIMIT 10
       `).all(contractAddress, tokenId) as any[];
     } else {
-      topHolders = db.prepare(`
+      topHolders = await db.prepare(`
         SELECT
           address,
           SUM(balance) as balance,
@@ -168,7 +166,7 @@ export async function GET(
     // Get token activity (if not filtering by specific token)
     let tokenActivity = [];
     if (!tokenId) {
-      tokenActivity = db.prepare(`
+      tokenActivity = await db.prepare(`
         SELECT
           token_id,
           COUNT(DISTINCT address) as holders,
@@ -193,7 +191,7 @@ export async function GET(
 
     let timeSeries;
     if (tokenId) {
-      timeSeries = db.prepare(`
+      timeSeries = await db.prepare(`
         SELECT
           DATE(block_timestamp, 'unixepoch') as date,
           COUNT(*) as events,
@@ -206,7 +204,7 @@ export async function GET(
         ORDER BY date DESC
       `).all(contractAddress, tokenId) as any[];
     } else {
-      timeSeries = db.prepare(`
+      timeSeries = await db.prepare(`
         SELECT
           DATE(block_timestamp, 'unixepoch') as date,
           COUNT(*) as events,
@@ -221,8 +219,8 @@ export async function GET(
     }
 
     // Get latest contract analytics if available
-    const contractAnalytics = db.prepare(`
-      SELECT 
+    const contractAnalytics = await db.prepare(`
+      SELECT
         gini_coefficient,
         whale_concentration,
         volume_24h,

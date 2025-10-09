@@ -25,9 +25,9 @@ export async function GET(
     }
 
     // Get contract from database
-    const contract = db.prepare(`
-      SELECT id, name, symbol, contract_type FROM contracts 
-      WHERE address = ? COLLATE NOCASE
+    const contract = await db.prepare(`
+      SELECT id, name, symbol, contract_type FROM contracts
+      WHERE address = ?
     `).get(address.toLowerCase()) as any
 
     if (!contract) {
@@ -134,12 +134,12 @@ export async function GET(
           if (seasonGroup) {
             const queryParams = [address.toLowerCase(), ...seasonGroup.tokenIds, seasonGroup.tokenIds.length]
             console.log(`🔍 Full season query params:`, queryParams)
-            realHolders = db.prepare(query).all(...queryParams) as any
+            realHolders = await db.prepare(query).all(...queryParams) as any
             console.log(`📊 Full season query returned ${realHolders ? realHolders.length : 0} holders`)
           }
         } else {
           // Regular query
-          realHolders = db.prepare(query).all(address.toLowerCase(), ...tokenParams) as any
+          realHolders = await db.prepare(query).all(address.toLowerCase(), ...tokenParams) as any
         }
       } catch (sqlError: any) {
         console.error('🚫 SQL Error:', (sqlError as any)?.message || sqlError)
