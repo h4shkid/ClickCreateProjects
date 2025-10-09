@@ -11,11 +11,11 @@ export async function GET(
     const db = createDatabaseAdapter()
 
     // Get contract info
-    const contract = await db.prepare(`
+    const contract = await db.get(`
       SELECT id, name, symbol, deployment_block
       FROM contracts
-      WHERE address = ?
-    `).get(address.toLowerCase()) as any
+      WHERE LOWER(address) = LOWER($1)
+    `, [address.toLowerCase()]) as any
 
     if (!contract) {
       return NextResponse.json({
@@ -25,7 +25,7 @@ export async function GET(
     }
 
     // Get event statistics
-    const eventStats = await db.prepare(`
+    const eventStats = await db.get(`
       SELECT
         COUNT(*) as total_events,
         MIN(block_number) as first_block,
@@ -33,24 +33,24 @@ export async function GET(
         MIN(block_timestamp) as first_timestamp,
         MAX(block_timestamp) as last_timestamp
       FROM events
-      WHERE LOWER(contract_address) = ?
-    `).get(address.toLowerCase()) as any
+      WHERE LOWER(contract_address) = LOWER($1)
+    `, [address.toLowerCase()]) as any
 
     // Get holder statistics
-    const holderStats = await db.prepare(`
+    const holderStats = await db.get(`
       SELECT
         COUNT(DISTINCT address) as total_holders,
         COUNT(DISTINCT token_id) as unique_tokens,
-        SUM(CAST(balance AS INTEGER)) as total_supply
+        SUM(CAST(balance AS BIGINT)) as total_supply
       FROM current_state
-      WHERE LOWER(contract_address) = ?
-        AND CAST(balance AS INTEGER) > 0
-    `).get(address.toLowerCase()) as any
+      WHERE LOWER(contract_address) = LOWER($1)
+        AND CAST(balance AS BIGINT) > 0
+    `, [address.toLowerCase()]) as any
 
-    const totalEvents = eventStats?.total_events || 0
-    const totalHolders = holderStats?.total_holders || 0
-    const uniqueTokens = holderStats?.unique_tokens || 0
-    const lastSyncedBlock = eventStats?.last_block || 0
+    const totalEvents = parseInt(eventStats?.total_events) || 0
+    const totalHolders = parseInt(holderStats?.total_holders) || 0
+    const uniqueTokens = parseInt(holderStats?.unique_tokens) || 0
+    const lastSyncedBlock = parseInt(eventStats?.last_block) || 0
 
     // Determine sync status
     let status = 'idle'
