@@ -46,31 +46,15 @@ export async function GET(
         AND CAST(balance AS INTEGER) > 0
     `).get(address.toLowerCase()) as any
 
-    // Get sync status from contract_sync_status table
-    const syncStatus = await db.prepare(`
-      SELECT
-        current_block,
-        end_block,
-        status,
-        created_at,
-        updated_at
-      FROM contract_sync_status
-      WHERE contract_id = ?
-      ORDER BY created_at DESC
-      LIMIT 1
-    `).get(contract.id) as any
-
     const totalEvents = eventStats?.total_events || 0
     const totalHolders = holderStats?.total_holders || 0
     const uniqueTokens = holderStats?.unique_tokens || 0
-    const lastSyncedBlock = eventStats?.last_block || syncStatus?.current_block || 0
+    const lastSyncedBlock = eventStats?.last_block || 0
 
     // Determine sync status
     let status = 'idle'
     if (totalEvents > 0) {
       status = 'completed'
-    } else if (syncStatus?.status === 'processing') {
-      status = 'processing'
     }
 
     return NextResponse.json({
@@ -80,7 +64,7 @@ export async function GET(
         lastSyncedBlock,
         deploymentBlock: contract.deployment_block || 0,
         currentBlock: lastSyncedBlock,
-        endBlock: syncStatus?.end_block || lastSyncedBlock,
+        endBlock: lastSyncedBlock,
         progressPercentage: totalEvents > 0 ? 100 : 0,
         statistics: {
           totalEvents,
@@ -91,7 +75,7 @@ export async function GET(
         timestamps: {
           firstEvent: eventStats?.first_timestamp || null,
           lastEvent: eventStats?.last_timestamp || null,
-          lastSync: syncStatus?.updated_at || null
+          lastSync: eventStats?.last_timestamp || null
         }
       }
     })
