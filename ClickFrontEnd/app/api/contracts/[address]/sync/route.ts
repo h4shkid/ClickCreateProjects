@@ -108,7 +108,19 @@ export async function POST(
       }, { status: 503 })
     }
 
-    // Call sync worker
+    // Step 1: Wake up worker (Render free tier cold start)
+    console.log('🔄 Waking up sync worker...')
+    try {
+      await fetch(`${syncWorkerUrl}/health`, {
+        signal: AbortSignal.timeout(60000) // 60 second timeout for cold start
+      })
+      console.log('✅ Worker is awake')
+    } catch (error) {
+      console.log('⚠️ Worker wake-up timeout, continuing anyway...')
+    }
+
+    // Step 2: Trigger sync job
+    console.log('🚀 Triggering sync job...')
     const workerResponse = await fetch(`${syncWorkerUrl}/sync`, {
       method: 'POST',
       headers: {
@@ -119,7 +131,8 @@ export async function POST(
         contractAddress: address.toLowerCase(),
         fromBlock: body.fromBlock || 'auto',
         toBlock: body.toBlock || 'latest'
-      })
+      }),
+      signal: AbortSignal.timeout(10000) // 10 second timeout for sync trigger
     })
 
     const workerData = await workerResponse.json()
