@@ -94,15 +94,23 @@ export default function CollectionSnapshotPage() {
           
           if (statusRes.data.success) {
             const syncData = statusRes.data.data
-            
+
             if (syncData.status === 'processing') {
               const progress = syncData.progressPercentage || 0
               setSyncStatus({ syncing: true, progress })
-              setSyncInfo(syncData)
+              // Preserve existing statistics during auto-polling
+              setSyncInfo(prev => ({
+                ...syncData,
+                statistics: syncData.statistics || prev?.statistics
+              }))
               console.log(`🔄 Auto-detected sync progress: ${progress}%`)
             } else if (syncData.status === 'completed') {
               setSyncStatus({ syncing: false, progress: 100 })
-              setSyncInfo(syncData)
+              // Preserve existing statistics
+              setSyncInfo(prev => ({
+                ...syncData,
+                statistics: syncData.statistics || prev?.statistics
+              }))
             } else {
               setSyncStatus({ syncing: false, progress: 0 })
             }
@@ -363,7 +371,12 @@ export default function CollectionSnapshotPage() {
             if (syncData.status === 'completed') {
               clearInterval(pollInterval)
               setSyncStatus({ syncing: false, progress: 100 })
-              setSyncInfo(syncData) // Update sync info
+
+              // Preserve existing statistics during sync completion
+              setSyncInfo(prev => ({
+                ...syncData,
+                statistics: syncData.statistics || prev?.statistics
+              }))
 
               // Refresh sync info after a short delay to get latest statistics
               setTimeout(async () => {
@@ -374,7 +387,12 @@ export default function CollectionSnapshotPage() {
               // Update progress with real percentage
               const progress = syncData.progressPercentage || 0
               setSyncStatus({ syncing: true, progress })
-              setSyncInfo(syncData) // Update sync info during sync
+
+              // Preserve existing statistics during sync
+              setSyncInfo(prev => ({
+                ...syncData,
+                statistics: syncData.statistics || prev?.statistics
+              }))
               console.log(`🔄 Sync progress: ${progress}%`)
             } else if (syncData.status === 'failed') {
               clearInterval(pollInterval)
