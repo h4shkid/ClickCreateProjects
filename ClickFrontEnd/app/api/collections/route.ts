@@ -36,9 +36,9 @@ export async function GET(request: NextRequest) {
       data: {
         collections: collections.map(c => ({
           ...c,
-          holderCount: parseInt(c.holderCount) || 0,
-          uniqueTokens: parseInt(c.uniqueTokens) || 0,
-          totalSupply: c.totalSupply?.toString() || '0'
+          holderCount: parseInt(c.holdercount || c.holderCount) || 0,
+          uniqueTokens: parseInt(c.uniquetokens || c.uniqueTokens) || 0,
+          totalSupply: (c.totalsupply || c.totalSupply)?.toString() || '0'
         })),
         total: collections.length
       }
