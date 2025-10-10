@@ -267,15 +267,14 @@ export default function CollectionsPage() {
       </div>
 
       {/* Quick Add Collection Modal */}
-      {showAddCollection && (
-        <QuickAddCollection
-          onClose={() => setShowAddCollection(false)}
-          onSuccess={() => {
-            setShowAddCollection(false)
-            fetchCollections() // Refresh list
-          }}
-        />
-      )}
+      <QuickAddCollection
+        isOpen={showAddCollection}
+        onClose={() => setShowAddCollection(false)}
+        onSuccess={() => {
+          setShowAddCollection(false)
+          fetchCollections() // Refresh list
+        }}
+      />
     </div>
   )
 }
