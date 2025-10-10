@@ -141,20 +141,19 @@ class PostgresAdapter implements DatabaseAdapter {
  * Create database adapter based on environment
  */
 export function createDatabaseAdapter(): DatabaseAdapter {
-  const dbType = process.env.DATABASE_TYPE as DatabaseType || 'sqlite'
+  // Auto-detect: if POSTGRES_URL exists, use Postgres
+  const postgresUrl = process.env.POSTGRES_URL
+  const dbType = postgresUrl ? 'postgres' : (process.env.DATABASE_TYPE as DatabaseType || 'sqlite')
 
   console.log('[DatabaseAdapter] DATABASE_TYPE:', dbType)
-  console.log('[DatabaseAdapter] POSTGRES_URL exists:', !!process.env.POSTGRES_URL)
+  console.log('[DatabaseAdapter] POSTGRES_URL exists:', !!postgresUrl)
 
-  if (dbType === 'postgres') {
-    const connectionString = process.env.POSTGRES_URL
-    if (!connectionString) {
-      console.error('[DatabaseAdapter] ERROR: DATABASE_TYPE is postgres but POSTGRES_URL is missing!')
-      console.error('[DatabaseAdapter] Available env vars:', Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('POSTGRES')))
-      throw new Error('POSTGRES_URL environment variable is required for Postgres')
-    }
+  if (dbType === 'postgres' && postgresUrl) {
     console.log('[DatabaseAdapter] Using Postgres adapter')
-    return new PostgresAdapter(connectionString)
+    return new PostgresAdapter(postgresUrl)
+  } else if (dbType === 'postgres' && !postgresUrl) {
+    console.error('[DatabaseAdapter] ERROR: DATABASE_TYPE is postgres but POSTGRES_URL is missing!')
+    throw new Error('POSTGRES_URL environment variable is required for Postgres')
   } else {
     // SQLite for local development
     console.log('[DatabaseAdapter] Using SQLite adapter')
