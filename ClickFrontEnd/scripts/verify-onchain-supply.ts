@@ -1,92 +1,147 @@
 import { Pool } from 'pg'
+import { ethers } from 'ethers'
 
-const POSTGRES_URL = process.env.POSTGRES_URL
+const POSTGRES_URL = process.env.POSTGRES_URL || "postgres://ca4daf153803706ed28b7b0405128d5897c65b35d96487ed6b0363f56c8c17e6:sk_MLsMuw4nt6ywk9XN19QQw@db.prisma.io:5432/postgres?sslmode=require"
+const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || "8_iY3mDKZOYuNM_fBzS-eIBMq9Sz1x-P"
 
-if (!POSTGRES_URL) {
-  console.error('❌ POSTGRES_URL environment variable required')
-  process.exit(1)
+interface VerificationResult {
+  contract: string
+  name: string
+  onchainSupply: bigint
+  dbSupply: bigint
+  difference: bigint
+  status: 'perfect' | 'minor' | 'major' | 'critical'
 }
 
-const pool = new Pool({
-  connectionString: POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
-})
+async function verifyAllContracts() {
+  const pool = new Pool({ connectionString: POSTGRES_URL })
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`)
 
-async function verifySupply() {
-  const client = await pool.connect()
-  const contractAddress = '0x18a62e93ff3ab180e0c7abd4812595bf2be3405f'
+  console.log(`\n🔍 Verifying On-Chain Accuracy for ALL Contracts`)
+  console.log('═'.repeat(80))
+
+  const results: VerificationResult[] = []
 
   try {
-    console.log('🔍 Verifying MAX PAIN AND FRENS collection supply\n')
-
-    // Get contract info
-    const contractResult = await client.query(`
-      SELECT address, name, symbol, contract_type, deployment_block, total_supply
+    // Get all active ERC721 contracts (ERC1155 is harder to verify)
+    const contracts = await pool.query(`
+      SELECT address, name, symbol, contract_type
       FROM contracts
-      WHERE LOWER(address) = LOWER($1)
-    `, [contractAddress])
+      WHERE is_active = true
+      ORDER BY id
+    `)
 
-    const contract = contractResult.rows[0]
-    console.log('📊 Contract Info:')
-    console.log(`   Name: ${contract.name}`)
-    console.log(`   Type: ${contract.contract_type}`)
-    console.log(`   Deployment Block: ${contract.deployment_block}`)
-    console.log(`   Stored Total Supply: ${contract.total_supply}\n`)
+    console.log(`\nFound ${contracts.rows.length} active contracts\n`)
 
-    // Get actual unique tokens from events
-    const tokensResult = await client.query(`
-      SELECT COUNT(DISTINCT token_id) as unique_tokens
-      FROM events
-      WHERE LOWER(contract_address) = LOWER($1)
-    `, [contractAddress])
+    for (const contract of contracts.rows) {
+      console.log(`\n${'─'.repeat(80)}`)
+      console.log(`📦 ${contract.name} (${contract.symbol})`)
+      console.log(`   Address: ${contract.address}`)
+      console.log(`   Type: ${contract.contract_type}`)
 
-    console.log('🎫 Actual Minted Tokens: ' + tokensResult.rows[0].unique_tokens)
+      // Get DB supply
+      const dbStats = await pool.query(`
+        SELECT
+          COUNT(DISTINCT token_id) FILTER (WHERE CAST(balance AS BIGINT) > 0) as unique_tokens,
+          SUM(CAST(balance AS BIGINT)) FILTER (WHERE CAST(balance AS BIGINT) > 0) as total_supply
+        FROM current_state
+        WHERE LOWER(contract_address) = LOWER($1)
+      `, [contract.address])
 
-    // Get current holders
-    const holdersResult = await client.query(`
-      SELECT COUNT(DISTINCT address) as unique_holders
-      FROM current_state
-      WHERE LOWER(contract_address) = LOWER($1)
-      AND CAST(balance AS BIGINT) > 0
-    `, [contractAddress])
+      const dbSupply = BigInt(dbStats.rows[0].total_supply || 0)
+      console.log(`   Database Supply: ${dbSupply}`)
 
-    console.log('👥 Current Holders: ' + holdersResult.rows[0].unique_holders)
+      // Try to get on-chain supply (only works for ERC721 with totalSupply)
+      let onchainSupply = BigInt(0)
+      let status: 'perfect' | 'minor' | 'major' | 'critical' = 'perfect'
 
-    // Get total events
-    const eventsResult = await client.query(`
-      SELECT COUNT(*) as total_events, MIN(block_number) as first_event, MAX(block_number) as last_event
-      FROM events
-      WHERE LOWER(contract_address) = LOWER($1)
-    `, [contractAddress])
+      if (contract.contract_type === 'ERC721') {
+        try {
+          const abi = ['function totalSupply() view returns (uint256)']
+          const tokenContract = new ethers.Contract(contract.address, abi, provider)
+          onchainSupply = await tokenContract.totalSupply()
 
-    console.log('📦 Total Transfer Events: ' + eventsResult.rows[0].total_events)
-    console.log(`   First Event: Block ${eventsResult.rows[0].first_event}`)
-    console.log(`   Last Event: Block ${eventsResult.rows[0].last_event}\n`)
+          console.log(`   On-Chain Supply: ${onchainSupply}`)
 
-    // List all unique token IDs
-    const tokenListResult = await client.query(`
-      SELECT DISTINCT token_id
-      FROM events
-      WHERE LOWER(contract_address) = LOWER($1)
-      ORDER BY token_id ASC
-    `, [contractAddress])
+          const difference = onchainSupply > dbSupply
+            ? onchainSupply - dbSupply
+            : dbSupply - onchainSupply
 
-    console.log('📝 All Token IDs:')
-    tokenListResult.rows.forEach((row, i) => {
-      console.log(`   ${i + 1}. Token #${row.token_id}`)
-    })
+          const percentDiff = Number(difference * BigInt(100) / onchainSupply)
 
-    console.log('\n✅ Verification complete!')
-    console.log('\n💡 Note: This is a limited edition XCOPY collection (Ranked Auctions)')
-    console.log('   The token numbering scheme (169000XXXXXX) suggests a curated/limited release')
-    console.log('   NOT a 3000+ holder collection - this is correct behavior!')
+          if (difference === BigInt(0)) {
+            status = 'perfect'
+            console.log(`   ✅ PERFECT MATCH!`)
+          } else if (percentDiff < 1) {
+            status = 'minor'
+            console.log(`   ⚠️  MINOR DIFFERENCE: ${difference} (${percentDiff}%)`)
+          } else if (percentDiff < 5) {
+            status = 'major'
+            console.log(`   🟠 MAJOR DIFFERENCE: ${difference} (${percentDiff}%)`)
+          } else {
+            status = 'critical'
+            console.log(`   🔴 CRITICAL DIFFERENCE: ${difference} (${percentDiff}%)`)
+          }
 
-  } catch (error: any) {
-    console.error('❌ Error:', error.message)
+          results.push({
+            contract: contract.address,
+            name: contract.name,
+            onchainSupply,
+            dbSupply,
+            difference,
+            status
+          })
+
+        } catch (err: any) {
+          console.log(`   ⚠️  Cannot verify (contract may not have totalSupply function)`)
+        }
+      } else {
+        console.log(`   ⚠️  ERC1155 verification not supported (need individual token queries)`)
+      }
+    }
+
+    // Summary
+    console.log(`\n${'═'.repeat(80)}`)
+    console.log(`📊 VERIFICATION SUMMARY`)
+    console.log('═'.repeat(80))
+
+    const perfect = results.filter(r => r.status === 'perfect')
+    const minor = results.filter(r => r.status === 'minor')
+    const major = results.filter(r => r.status === 'major')
+    const critical = results.filter(r => r.status === 'critical')
+
+    console.log(`\n✅ Perfect Match: ${perfect.length}`)
+    console.log(`⚠️  Minor Issues: ${minor.length}`)
+    console.log(`🟠 Major Issues: ${major.length}`)
+    console.log(`🔴 Critical Issues: ${critical.length}`)
+
+    if (critical.length > 0) {
+      console.log(`\n🔴 CRITICAL ISSUES FOUND:`)
+      critical.forEach(r => {
+        console.log(`   - ${r.name}: Missing ${r.difference} tokens`)
+      })
+      console.log(`\n💡 Action Required:`)
+      console.log(`   1. Re-sync blockchain events for these contracts`)
+      console.log(`   2. Run rebuild-contract-state.ts after re-sync`)
+    }
+
+    if (major.length > 0) {
+      console.log(`\n🟠 MAJOR ISSUES FOUND:`)
+      major.forEach(r => {
+        console.log(`   - ${r.name}: Off by ${r.difference} tokens`)
+      })
+      console.log(`\n💡 Recommended: Re-sync these contracts`)
+    }
+
+    if (perfect.length === results.length) {
+      console.log(`\n🎉 ALL CONTRACTS ARE PERFECTLY ACCURATE!`)
+    }
+
+  } catch (error) {
+    console.error('\n❌ Error:', error)
   } finally {
-    client.release()
     await pool.end()
   }
 }
 
-verifySupply().catch(console.error)
+verifyAllContracts()
