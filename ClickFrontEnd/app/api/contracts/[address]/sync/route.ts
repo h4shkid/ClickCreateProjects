@@ -47,10 +47,10 @@ export async function GET(
         AND CAST(balance AS BIGINT) > 0
     `).get(address.toLowerCase()) as any
 
-    const totalEvents = parseInt(eventStats?.total_events) || 0
-    const totalHolders = parseInt(holderStats?.total_holders) || 0
-    const uniqueTokens = parseInt(holderStats?.unique_tokens) || 0
-    const lastSyncedBlock = parseInt(eventStats?.last_block) || 0
+    const totalEvents = parseInt(eventStats?.total_events || eventStats?.['total_events']) || 0
+    const totalHolders = parseInt(holderStats?.total_holders || holderStats?.['total_holders']) || 0
+    const uniqueTokens = parseInt(holderStats?.unique_tokens || holderStats?.['unique_tokens']) || 0
+    const lastSyncedBlock = parseInt(eventStats?.last_block || eventStats?.['last_block']) || 0
 
     // Check worker for real-time progress
     const syncWorkerUrl = process.env.SYNC_WORKER_URL
@@ -58,9 +58,14 @@ export async function GET(
 
     if (syncWorkerUrl) {
       try {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 3000)
+
         const progressRes = await fetch(`${syncWorkerUrl}/progress/${address.toLowerCase()}`, {
-          signal: AbortSignal.timeout(3000)
+          signal: controller.signal
         })
+        clearTimeout(timeout)
+
         const progressData = await progressRes.json()
 
         if (progressData.success && progressData.progress) {
@@ -99,12 +104,12 @@ export async function GET(
           totalEvents,
           totalHolders,
           uniqueTokens,
-          totalSupply: holderStats?.total_supply || 0
+          totalSupply: holderStats?.total_supply || holderStats?.['total_supply'] || 0
         },
         timestamps: {
-          firstEvent: eventStats?.first_timestamp || null,
-          lastEvent: eventStats?.last_timestamp || null,
-          lastSync: eventStats?.last_timestamp || null
+          firstEvent: eventStats?.first_timestamp || eventStats?.['first_timestamp'] || null,
+          lastEvent: eventStats?.last_timestamp || eventStats?.['last_timestamp'] || null,
+          lastSync: eventStats?.last_timestamp || eventStats?.['last_timestamp'] || null
         }
       }
     })
@@ -139,9 +144,13 @@ export async function POST(
     // Step 1: Wake up worker (Render free tier cold start)
     console.log('🔄 Waking up sync worker...')
     try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 60000) // 60 second timeout
+
       await fetch(`${syncWorkerUrl}/health`, {
-        signal: AbortSignal.timeout(60000) // 60 second timeout for cold start
+        signal: controller.signal
       })
+      clearTimeout(timeout)
       console.log('✅ Worker is awake')
     } catch (error) {
       console.log('⚠️ Worker wake-up timeout, continuing anyway...')
@@ -149,6 +158,9 @@ export async function POST(
 
     // Step 2: Trigger sync job
     console.log('🚀 Triggering sync job...')
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
     const workerResponse = await fetch(`${syncWorkerUrl}/sync`, {
       method: 'POST',
       headers: {
@@ -160,8 +172,9 @@ export async function POST(
         fromBlock: body.fromBlock || 'auto',
         toBlock: body.toBlock || 'latest'
       }),
-      signal: AbortSignal.timeout(10000) // 10 second timeout for sync trigger
+      signal: controller.signal
     })
+    clearTimeout(timeout)
 
     const workerData = await workerResponse.json()
 
