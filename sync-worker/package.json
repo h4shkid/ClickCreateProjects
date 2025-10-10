@@ -1,12 +1,13 @@
 {
   "name": "clickcreate-sync-worker",
-  "version": "1.0.0",
-  "description": "Background worker for blockchain sync",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Enterprise-level blockchain sync worker with self-healing",
+  "main": "index-v2.js",
   "type": "module",
   "scripts": {
-    "start": "node --expose-gc --max-old-space-size=460 index.js",
-    "dev": "node --watch --expose-gc index.js"
+    "start": "node --expose-gc --max-old-space-size=460 index-v2.js",
+    "start:v1": "node --expose-gc --max-old-space-size=460 index.js",
+    "dev": "node --watch --expose-gc index-v2.js"
   },
   "dependencies": {
     "express": "^4.19.0",
