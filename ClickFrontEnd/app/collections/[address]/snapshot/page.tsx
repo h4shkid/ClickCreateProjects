@@ -115,14 +115,14 @@ export default function CollectionSnapshotPage() {
               }))
               console.log(`🔄 Auto-detected sync progress: ${progress}%`)
             } else if (syncData.status === 'completed') {
-              setSyncStatus({ syncing: false, progress: 100 })
+              setSyncStatus({ syncing: false, progress: 100, eta: '' })
               // Preserve existing statistics
               setSyncInfo((prev: any) => ({
                 ...syncData,
                 statistics: syncData.statistics || prev?.statistics
               }))
             } else {
-              setSyncStatus({ syncing: false, progress: 0 })
+              setSyncStatus({ syncing: false, progress: 0, eta: '' })
             }
           }
         } catch (err: any) {
@@ -360,7 +360,7 @@ export default function CollectionSnapshotPage() {
 
   // Sync blockchain data
   const syncBlockchain = async () => {
-    setSyncStatus({ syncing: true, progress: 0 })
+    setSyncStatus({ syncing: true, progress: 0, eta: '' })
     setError('')
 
     try {
@@ -380,7 +380,7 @@ export default function CollectionSnapshotPage() {
 
             if (syncData.status === 'completed') {
               clearInterval(pollInterval)
-              setSyncStatus({ syncing: false, progress: 100 })
+              setSyncStatus({ syncing: false, progress: 100, eta: '' })
 
               // Preserve existing statistics during sync completion
               setSyncInfo((prev: any) => ({
@@ -407,7 +407,7 @@ export default function CollectionSnapshotPage() {
               console.log(`🔄 Sync progress: ${progress}% ${eta ? `(ETA: ${eta})` : ''}`)
             } else if (syncData.status === 'failed') {
               clearInterval(pollInterval)
-              setSyncStatus({ syncing: false, progress: 0 })
+              setSyncStatus({ syncing: false, progress: 0, eta: '' })
               setError('Sync failed. Please try again.')
               console.error('❌ Sync failed')
             }
@@ -419,7 +419,7 @@ export default function CollectionSnapshotPage() {
         // Stop polling after 15 minutes (for very large syncs)
         setTimeout(() => {
           clearInterval(pollInterval)
-          setSyncStatus({ syncing: false, progress: 100 })
+          setSyncStatus({ syncing: false, progress: 100, eta: '' })
 
           // Refresh stats when timeout
           checkSyncStatus()
@@ -429,7 +429,7 @@ export default function CollectionSnapshotPage() {
     } catch (err) {
       console.error('Sync error:', err)
       setError('Failed to sync blockchain data')
-      setSyncStatus({ syncing: false, progress: 0 })
+      setSyncStatus({ syncing: false, progress: 0, eta: '' })
     }
   }
 
