@@ -29,8 +29,8 @@ export async function DELETE(
     }
 
     // Get user profile
-    const userProfile = db.prepare('SELECT id FROM user_profiles WHERE wallet_address = ? COLLATE NOCASE').get(walletAddress.toLowerCase()) as any
-    
+    const userProfile = await db.prepare('SELECT id FROM user_profiles WHERE LOWER(wallet_address) = LOWER(?)').get(walletAddress.toLowerCase()) as any
+
     if (!userProfile) {
       return NextResponse.json({
         success: false,
@@ -39,7 +39,7 @@ export async function DELETE(
     }
 
     // Check if contract exists and belongs to user
-    const contract = db.prepare(`
+    const contract = await db.prepare(`
       SELECT c.id, c.address, c.name
       FROM contracts c
       WHERE c.id = ? AND c.added_by_user_id = ?
@@ -56,8 +56,10 @@ export async function DELETE(
     const insertActivity = db.prepare(`
       INSERT INTO user_activity (user_id, activity_type, contract_id, metadata, created_at)
       VALUES (?, 'contract_removed', ?, ?, CURRENT_TIMESTAMP)
+      RETURNING id
     `)
 
+    console.log(`📝 Logging removal activity for user ${userProfile.id}, contract ${contract.id}`)
     await insertActivity.run(
       userProfile.id,
       contract.id,
