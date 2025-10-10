@@ -36,6 +36,12 @@ export async function GET(request: NextRequest) {
       data: {
         collections: collections.map(c => ({
           ...c,
+          contractType: c.contracttype || c.contractType,
+          chainId: c.chainid || c.chainId,
+          imageUrl: c.imageurl || c.imageUrl,
+          isVerified: c.isverified || c.isVerified,
+          usageCount: c.usagecount || c.usageCount,
+          createdAt: c.createdat || c.createdAt,
           holderCount: parseInt(c.holdercount || c.holderCount) || 0,
           uniqueTokens: parseInt(c.uniquetokens || c.uniqueTokens) || 0,
           totalSupply: (c.totalsupply || c.totalSupply)?.toString() || '0'
