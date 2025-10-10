@@ -198,6 +198,7 @@ export async function POST(request: NextRequest) {
       const insertUser = db.prepare(`
         INSERT INTO user_profiles (wallet_address, username, created_at)
         VALUES (?, ?, CURRENT_TIMESTAMP)
+        RETURNING id
       `)
       const result = await insertUser.run(walletAddress.toLowerCase(), `user_${walletAddress.slice(0, 8)}`)
       userProfile = { id: result.lastInsertRowid }
@@ -224,6 +225,7 @@ export async function POST(request: NextRequest) {
         image_url, banner_image_url,
         metadata_json, added_by_user_id, usage_count, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      RETURNING id
     `)
 
     // Combine OpenSea data with user-provided metadata
@@ -266,8 +268,10 @@ export async function POST(request: NextRequest) {
     const insertActivity = db.prepare(`
       INSERT INTO user_activity (user_id, activity_type, contract_id, metadata, created_at)
       VALUES (?, 'contract_added', ?, ?, CURRENT_TIMESTAMP)
+      RETURNING id
     `)
-    
+
+    console.log(`📝 Logging activity for user ${userProfile.id}, contract ${contractResult.lastInsertRowid}`)
     await insertActivity.run(
       userProfile.id,
       contractResult.lastInsertRowid,
