@@ -13,7 +13,7 @@ const AUTHORIZED_SNAPSHOT_WALLET = '0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC'
 const navItems = [
   { href: '/', label: 'Home' },
   { href: '/snapshot', label: 'Snapshot' },
-  { href: '/my-collections', label: 'My Collections' },
+  { href: '/collections', label: 'Collections' },
   { href: '/profile', label: 'Profile' },
 ]
 
@@ -62,8 +62,9 @@ export default function Navigation() {
                 if (item.href === '/snapshot') {
                   return isAuthorizedForSnapshot
                 }
-                // Show profile and collections only for connected wallet users
-                if (item.href === '/my-collections' || item.href === '/profile') {
+                // Show profile only for connected wallet users
+                // Collections is now public - everyone can see
+                if (item.href === '/profile') {
                   return isConnected
                 }
                 return true
