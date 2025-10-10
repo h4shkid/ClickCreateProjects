@@ -150,7 +150,26 @@ async function syncContract(job) {
     console.log(`📝 Contract: ${contract.name} (${contract.symbol})`)
 
     // Determine block range
-    let startBlock = fromBlock === 'auto' ? contract.deployment_block : parseInt(fromBlock)
+    let startBlock
+    if (fromBlock === 'auto') {
+      // Get last synced block from events table
+      const lastBlockResult = await client.query(
+        'SELECT MAX(block_number) as last_block FROM events WHERE LOWER(contract_address) = $1',
+        [contractAddress]
+      )
+      const lastBlock = lastBlockResult.rows[0]?.last_block
+
+      if (lastBlock) {
+        startBlock = parseInt(lastBlock) + 1 // Start from next block
+        console.log(`🔄 Resuming sync from block ${startBlock} (last synced: ${lastBlock})`)
+      } else {
+        startBlock = contract.deployment_block
+        console.log(`🆕 Starting initial sync from deployment block ${startBlock}`)
+      }
+    } else {
+      startBlock = parseInt(fromBlock)
+    }
+
     let endBlock = toBlock === 'latest' ? null : parseInt(toBlock)
 
     // Get current blockchain height if endBlock is latest
@@ -216,7 +235,7 @@ async function insertEvent(client, contract, log) {
   const block = await log.getBlock()
 
   // Parse event based on signature
-  let fromAddress, toAddress, tokenId, value
+  let fromAddress, toAddress, tokenId, value, operator
 
   if (log.topics[0] === TRANSFER_EVENT_SIGNATURE) {
     // ERC-721 Transfer
@@ -224,8 +243,10 @@ async function insertEvent(client, contract, log) {
     toAddress = '0x' + log.topics[2].slice(26)
     tokenId = BigInt(log.topics[3]).toString()
     value = '1'
+    operator = fromAddress // ERC-721 doesn't have operator, use from_address
   } else if (log.topics[0] === TRANSFER_SINGLE_SIGNATURE) {
     // ERC-1155 TransferSingle
+    operator = '0x' + log.topics[1].slice(26)
     fromAddress = '0x' + log.topics[2].slice(26)
     toAddress = '0x' + log.topics[3].slice(26)
     const data = ethers.AbiCoder.defaultAbiCoder().decode(['uint256', 'uint256'], log.data)
@@ -238,13 +259,14 @@ async function insertEvent(client, contract, log) {
 
   await client.query(`
     INSERT INTO events (
-      contract_address, event_type, from_address, to_address,
-      token_id, value, block_number, block_timestamp, transaction_hash, log_index
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      contract_address, event_type, operator, from_address, to_address,
+      token_id, amount, block_number, block_timestamp, transaction_hash, log_index
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
     ON CONFLICT (transaction_hash, log_index) DO NOTHING
   `, [
     contract.address.toLowerCase(),
     'Transfer',
+    operator.toLowerCase(),
     fromAddress.toLowerCase(),
     toAddress.toLowerCase(),
     tokenId,
@@ -263,18 +285,20 @@ async function rebuildCurrentState(client, contractAddress) {
   `, [contractAddress])
 
   await client.query(`
-    INSERT INTO current_state (contract_address, token_id, address, balance)
+    INSERT INTO current_state (contract_address, token_id, address, balance, last_updated_block)
     SELECT
       contract_address,
       token_id,
       address,
-      SUM(balance_change) as balance
+      SUM(balance_change) as balance,
+      MAX(block_number) as last_updated_block
     FROM (
       SELECT
         contract_address,
         token_id,
         to_address as address,
-        CAST(value AS BIGINT) as balance_change
+        CAST(amount AS BIGINT) as balance_change,
+        block_number
       FROM events
       WHERE LOWER(contract_address) = $1
 
@@ -284,7 +308,8 @@ async function rebuildCurrentState(client, contractAddress) {
         contract_address,
         token_id,
         from_address as address,
-        -CAST(value AS BIGINT) as balance_change
+        -CAST(amount AS BIGINT) as balance_change,
+        block_number
       FROM events
       WHERE LOWER(contract_address) = $1
         AND from_address != '0x0000000000000000000000000000000000000000'

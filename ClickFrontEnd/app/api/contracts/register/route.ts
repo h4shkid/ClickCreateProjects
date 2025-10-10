@@ -192,14 +192,27 @@ export async function POST(request: NextRequest) {
 
     // Step 3: Get or create user profile
     let userProfile = await db.prepare('SELECT id FROM user_profiles WHERE LOWER(wallet_address) = LOWER(?)').get(walletAddress.toLowerCase()) as any
-    
+
     if (!userProfile) {
+      console.log(`👤 Creating new user profile for ${walletAddress}`)
       const insertUser = db.prepare(`
         INSERT INTO user_profiles (wallet_address, username, created_at)
         VALUES (?, ?, CURRENT_TIMESTAMP)
       `)
       const result = await insertUser.run(walletAddress.toLowerCase(), `user_${walletAddress.slice(0, 8)}`)
       userProfile = { id: result.lastInsertRowid }
+      console.log(`✅ Created user profile with ID: ${userProfile.id}`)
+    } else {
+      console.log(`✅ Found existing user profile with ID: ${userProfile.id}`)
+    }
+
+    // Validate user profile ID before proceeding
+    if (!userProfile || !userProfile.id) {
+      console.error('❌ Failed to get/create user profile')
+      return NextResponse.json({
+        success: false,
+        error: 'Failed to create user profile'
+      }, { status: 500 })
     }
 
     // Step 4: Insert contract into database

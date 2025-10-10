@@ -104,7 +104,14 @@ class PostgresAdapter implements DatabaseAdapter {
         // Use fresh connection for each query (serverless-friendly)
         const client = await this.pool.connect()
         try {
-          const result = await client.query(pgSql, params)
+          // Detect INSERT queries and add RETURNING id if not present
+          let finalSql = pgSql
+          if (pgSql.trim().toUpperCase().startsWith('INSERT') &&
+              !pgSql.toUpperCase().includes('RETURNING')) {
+            finalSql = pgSql.trim() + ' RETURNING id'
+          }
+
+          const result = await client.query(finalSql, params)
           return {
             changes: result.rowCount || 0,
             lastInsertRowid: result.rows[0]?.id || 0
