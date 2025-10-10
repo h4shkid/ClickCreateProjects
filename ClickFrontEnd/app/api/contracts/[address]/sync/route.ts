@@ -52,9 +52,36 @@ export async function GET(
     const uniqueTokens = parseInt(holderStats?.unique_tokens) || 0
     const lastSyncedBlock = parseInt(eventStats?.last_block) || 0
 
+    // Check worker for real-time progress
+    const syncWorkerUrl = process.env.SYNC_WORKER_URL
+    let workerProgress = null
+
+    if (syncWorkerUrl) {
+      try {
+        const progressRes = await fetch(`${syncWorkerUrl}/progress/${address.toLowerCase()}`, {
+          signal: AbortSignal.timeout(3000)
+        })
+        const progressData = await progressRes.json()
+
+        if (progressData.success && progressData.progress) {
+          workerProgress = progressData.progress
+        }
+      } catch (err) {
+        // Worker offline or timeout, ignore
+      }
+    }
+
     // Determine sync status
     let status = 'idle'
-    if (totalEvents > 0) {
+    let progressPercentage = totalEvents > 0 ? 100 : 0
+
+    if (workerProgress && workerProgress.status === 'processing') {
+      status = 'processing'
+      progressPercentage = workerProgress.progress || 0
+    } else if (workerProgress && workerProgress.status === 'completed') {
+      status = 'completed'
+      progressPercentage = 100
+    } else if (totalEvents > 0) {
       status = 'completed'
     }
 
@@ -64,9 +91,10 @@ export async function GET(
         status,
         lastSyncedBlock,
         deploymentBlock: contract.deployment_block || 0,
-        currentBlock: lastSyncedBlock,
-        endBlock: lastSyncedBlock,
-        progressPercentage: totalEvents > 0 ? 100 : 0,
+        currentBlock: workerProgress?.currentBlock || lastSyncedBlock,
+        endBlock: workerProgress?.endBlock || lastSyncedBlock,
+        progressPercentage,
+        workerProgress,
         statistics: {
           totalEvents,
           totalHolders,
