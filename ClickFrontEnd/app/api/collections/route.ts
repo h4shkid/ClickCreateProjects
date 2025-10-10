@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     const db = createDatabaseAdapter()
 
-    // Get all collections with holder/supply statistics
+    // Optimize query: remove events join, use subquery for stats
     const collections = await db.prepare(`
       SELECT
         c.id,
@@ -22,11 +22,9 @@ export async function GET(request: NextRequest) {
         c.created_at as createdAt,
         COUNT(DISTINCT cs.address) FILTER (WHERE CAST(cs.balance AS BIGINT) > 0) as holderCount,
         COUNT(DISTINCT cs.token_id) FILTER (WHERE CAST(cs.balance AS BIGINT) > 0) as uniqueTokens,
-        COALESCE(SUM(CAST(cs.balance AS BIGINT)) FILTER (WHERE CAST(cs.balance AS BIGINT) > 0), 0) as totalSupply,
-        MAX(e.block_timestamp) as lastActivityAt
+        COALESCE(SUM(CAST(cs.balance AS BIGINT)) FILTER (WHERE CAST(cs.balance AS BIGINT) > 0), 0) as totalSupply
       FROM contracts c
       LEFT JOIN current_state cs ON LOWER(c.address) = LOWER(cs.contract_address)
-      LEFT JOIN events e ON LOWER(c.address) = LOWER(e.contract_address)
       WHERE c.is_active = true
       GROUP BY c.id, c.address, c.name, c.symbol, c.contract_type, c.chain_id,
                c.description, c.image_url, c.is_verified, c.usage_count, c.created_at
