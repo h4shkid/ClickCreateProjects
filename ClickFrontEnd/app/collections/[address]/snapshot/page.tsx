@@ -36,11 +36,20 @@ interface Collection {
   chainId: number
 }
 
+// Helper function to format ETA
+const formatETA = (seconds: number): string => {
+  if (seconds < 60) return `${seconds}s`
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
+  const hours = Math.floor(seconds / 3600)
+  const mins = Math.floor((seconds % 3600) / 60)
+  return `${hours}h ${mins}m`
+}
+
 export default function CollectionSnapshotPage() {
   const params = useParams()
   const address = params?.address as string
   const { isConnected, address: walletAddress } = useAccount()
-  
+
   const [collection, setCollection] = useState<Collection | null>(null)
   const [loading, setLoading] = useState(false)
   const [snapshotData, setSnapshotData] = useState<SnapshotData | null>(null)
@@ -53,7 +62,7 @@ export default function CollectionSnapshotPage() {
   const [dateRange, setDateRange] = useState<{ minDate: string, maxDate: string } | null>(null)
   const [snapshotType, setSnapshotType] = useState<'current' | 'historical'>('current')
   const [error, setError] = useState<string>('')
-  const [syncStatus, setSyncStatus] = useState({ syncing: false, progress: 0 })
+  const [syncStatus, setSyncStatus] = useState({ syncing: false, progress: 0, eta: '' })
   const [syncInfo, setSyncInfo] = useState<any>(null)
   const [showAllHolders, setShowAllHolders] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
@@ -97,7 +106,8 @@ export default function CollectionSnapshotPage() {
 
             if (syncData.status === 'processing') {
               const progress = syncData.progressPercentage || 0
-              setSyncStatus({ syncing: true, progress })
+              const eta = syncData.workerProgress?.etaSeconds ? formatETA(syncData.workerProgress.etaSeconds) : ''
+              setSyncStatus({ syncing: true, progress, eta })
               // Preserve existing statistics during auto-polling
               setSyncInfo((prev: any) => ({
                 ...syncData,
@@ -386,14 +396,15 @@ export default function CollectionSnapshotPage() {
             } else if (syncData.status === 'processing') {
               // Update progress with real percentage
               const progress = syncData.progressPercentage || 0
-              setSyncStatus({ syncing: true, progress })
+              const eta = syncData.workerProgress?.etaSeconds ? formatETA(syncData.workerProgress.etaSeconds) : ''
+              setSyncStatus({ syncing: true, progress, eta })
 
               // Preserve existing statistics during sync
               setSyncInfo((prev: any) => ({
                 ...syncData,
                 statistics: syncData.statistics || prev?.statistics
               }))
-              console.log(`🔄 Sync progress: ${progress}%`)
+              console.log(`🔄 Sync progress: ${progress}% ${eta ? `(ETA: ${eta})` : ''}`)
             } else if (syncData.status === 'failed') {
               clearInterval(pollInterval)
               setSyncStatus({ syncing: false, progress: 0 })
@@ -863,7 +874,7 @@ export default function CollectionSnapshotPage() {
                 className="btn-secondary flex items-center justify-center gap-2 flex-1"
               >
                 <RefreshCw className={`w-4 h-4 ${syncStatus.syncing ? 'animate-spin' : ''}`} />
-                {syncStatus.syncing ? `Syncing ${syncStatus.progress}%` : 'Sync Blockchain'}
+                {syncStatus.syncing ? `Syncing ${syncStatus.progress}%${syncStatus.eta ? ` (${syncStatus.eta})` : ''}` : 'Sync Blockchain'}
               </button>
               <button
                 onClick={generateSnapshot}
