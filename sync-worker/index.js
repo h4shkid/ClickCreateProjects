@@ -17,8 +17,9 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 })
 
-// In-memory job queue
+// In-memory job queue and progress tracking
 const jobQueue = []
+const jobProgress = new Map() // Track progress by contract address
 let isProcessing = false
 
 // ERC-721 Transfer event signature
@@ -27,6 +28,15 @@ const TRANSFER_EVENT_SIGNATURE = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4
 const TRANSFER_SINGLE_SIGNATURE = '0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62'
 // ERC-1155 TransferBatch event signature
 const TRANSFER_BATCH_SIGNATURE = '0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb'
+
+// Helper function to format time
+function formatTime(seconds) {
+  if (seconds < 60) return `${seconds}s`
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
+  const hours = Math.floor(seconds / 3600)
+  const mins = Math.floor((seconds % 3600) / 60)
+  return `${hours}h ${mins}m`
+}
 
 console.log('🚀 ClickCreate Sync Worker Starting...')
 console.log('📊 Postgres URL:', process.env.POSTGRES_URL ? 'Connected' : 'Missing!')
@@ -87,6 +97,26 @@ app.get('/status/:jobId', (req, res) => {
   res.json({ success: true, job })
 })
 
+// Get progress by contract address
+app.get('/progress/:contractAddress', (req, res) => {
+  const address = req.params.contractAddress.toLowerCase()
+  const progress = jobProgress.get(address)
+
+  if (!progress) {
+    return res.json({
+      success: true,
+      isProcessing: false,
+      progress: null
+    })
+  }
+
+  res.json({
+    success: true,
+    isProcessing: progress.status === 'processing',
+    progress
+  })
+})
+
 // Process queue
 async function processQueue() {
   if (isProcessing || jobQueue.length === 0) return
@@ -135,6 +165,8 @@ async function syncContract(job) {
   const { contractAddress, fromBlock, toBlock } = job
   const client = await pool.connect()
 
+  const startTime = Date.now()
+
   try {
     // Get contract info
     const contractResult = await client.query(
@@ -163,7 +195,7 @@ async function syncContract(job) {
         startBlock = parseInt(lastBlock) + 1 // Start from next block
         console.log(`🔄 Resuming sync from block ${startBlock} (last synced: ${lastBlock})`)
       } else {
-        startBlock = contract.deployment_block
+        startBlock = parseInt(contract.deployment_block)
         console.log(`🆕 Starting initial sync from deployment block ${startBlock}`)
       }
     } else {
@@ -183,12 +215,27 @@ async function syncContract(job) {
 
     console.log(`📦 Syncing blocks ${startBlock} to ${endBlock}`)
 
+    // Initialize progress tracking
+    jobProgress.set(contractAddress, {
+      status: 'processing',
+      startBlock,
+      endBlock,
+      currentBlock: startBlock,
+      totalBlocks: endBlock - startBlock + 1,
+      progress: 0,
+      eventsFound: 0,
+      startTime: Date.now()
+    })
+
     // Fetch logs in chunks
     const CHUNK_SIZE = 2000
     let currentBlock = startBlock
     let totalEvents = 0
 
     while (currentBlock <= endBlock) {
+      // Create new block cache for each chunk to prevent memory leak
+      const blockCache = new Map()
+
       const chunkEnd = Math.min(currentBlock + CHUNK_SIZE - 1, endBlock)
 
       console.log(`🔍 Fetching blocks ${currentBlock} to ${chunkEnd}...`)
@@ -205,34 +252,123 @@ async function syncContract(job) {
       if (logs.length > 0) {
         console.log(`   Found ${logs.length} events`)
 
+        // Fetch unique blocks for all logs in this chunk
+        const uniqueBlockNumbers = [...new Set(logs.map(log => log.blockNumber))]
+        for (const blockNum of uniqueBlockNumbers) {
+          const block = await provider.getBlock(blockNum)
+          blockCache.set(blockNum, block)
+        }
+
         // Process and insert events
         for (const log of logs) {
-          await insertEvent(client, contract, log)
+          await insertEvent(client, contract, log, blockCache)
           totalEvents++
+        }
+
+        // Add small delay to avoid rate limiting
+        if (logs.length > 50) {
+          await new Promise(resolve => setTimeout(resolve, 100))
         }
       }
 
+      // Clear cache after chunk to free memory
+      blockCache.clear()
+
       currentBlock = chunkEnd + 1
 
+      // Force garbage collection every 10 chunks (20K blocks)
+      if ((currentBlock - startBlock) % 20000 === 0) {
+        if (global.gc) {
+          global.gc()
+          console.log('🧹 Manual GC triggered')
+        }
+      }
+
       // Update job progress
-      job.progress = Math.round(((currentBlock - startBlock) / (endBlock - startBlock)) * 100)
+      const progressPercent = Math.round(((currentBlock - startBlock) / (endBlock - startBlock)) * 100)
+      job.progress = progressPercent
       job.eventsProcessed = totalEvents
+
+      // Calculate ETA
+      const elapsedMs = Date.now() - startTime
+      const elapsedSec = Math.round(elapsedMs / 1000)
+      const blocksProcessed = currentBlock - startBlock
+      const blocksRemaining = endBlock - currentBlock + 1
+
+      let etaSeconds = 0
+      if (blocksProcessed > 0 && progressPercent > 0) {
+        const msPerBlock = elapsedMs / blocksProcessed
+        etaSeconds = Math.round((blocksRemaining * msPerBlock) / 1000)
+      }
+
+      // Update global progress map
+      jobProgress.set(contractAddress, {
+        status: 'processing',
+        startBlock,
+        endBlock,
+        currentBlock: currentBlock - 1, // Last completed block
+        totalBlocks: endBlock - startBlock + 1,
+        blocksProcessed,
+        blocksRemaining,
+        progress: progressPercent,
+        eventsFound: totalEvents,
+        startTime,
+        elapsedTime: elapsedSec,
+        etaSeconds
+      })
+
+      // Periodic progress update
+      if (currentBlock % 10000 === 0) {
+        const etaFormatted = etaSeconds > 0 ? `ETA: ${formatTime(etaSeconds)}` : ''
+        console.log(`📊 Progress: ${progressPercent}% (${totalEvents} events, ${elapsedSec}s elapsed, ${etaFormatted})`)
+      }
     }
 
     // Rebuild current_state
     console.log('🔨 Rebuilding current_state...')
     await rebuildCurrentState(client, contractAddress)
 
-    console.log(`✅ Sync complete! Processed ${totalEvents} events`)
+    const totalTime = Math.round((Date.now() - startTime) / 1000)
+    console.log(`✅ Sync complete! Processed ${totalEvents} events in ${totalTime}s`)
 
+    // Update progress to completed
+    jobProgress.set(contractAddress, {
+      status: 'completed',
+      startBlock,
+      endBlock,
+      currentBlock: endBlock,
+      totalBlocks: endBlock - startBlock + 1,
+      progress: 100,
+      eventsFound: totalEvents,
+      startTime,
+      elapsedTime: totalTime
+    })
+
+    // Remove completed progress after 5 minutes
+    setTimeout(() => {
+      jobProgress.delete(contractAddress)
+    }, 5 * 60 * 1000)
+
+  } catch (error) {
+    // Update progress to failed
+    jobProgress.set(contractAddress, {
+      status: 'failed',
+      error: error.message
+    })
+    throw error
   } finally {
     client.release()
   }
 }
 
 // Insert event into database
-async function insertEvent(client, contract, log) {
-  const block = await log.getBlock()
+async function insertEvent(client, contract, log, blockCache) {
+  const block = blockCache.get(log.blockNumber)
+
+  if (!block) {
+    console.warn(`⚠️  Block ${log.blockNumber} not found in cache, skipping event`)
+    return
+  }
 
   // Parse event based on signature
   let fromAddress, toAddress, tokenId, value, operator
