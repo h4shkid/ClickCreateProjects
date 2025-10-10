@@ -181,8 +181,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 2: Check if contract already exists
-    const existingContract = db.prepare('SELECT id, address, name FROM contracts WHERE address = ? COLLATE NOCASE').get(contractAddress.toLowerCase()) as { id: number; address: string; name?: string } | undefined
-    
+    const existingContract = await db.prepare('SELECT id, address, name FROM contracts WHERE LOWER(address) = LOWER(?)').get(contractAddress.toLowerCase()) as { id: number; address: string; name?: string } | undefined
+
     if (existingContract) {
       return NextResponse.json({
         success: false,
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 3: Get or create user profile
-    let userProfile = db.prepare('SELECT id FROM user_profiles WHERE wallet_address = ? COLLATE NOCASE').get(walletAddress.toLowerCase()) as any
+    let userProfile = await db.prepare('SELECT id FROM user_profiles WHERE LOWER(wallet_address) = LOWER(?)').get(walletAddress.toLowerCase()) as any
     
     if (!userProfile) {
       const insertUser = db.prepare(`
