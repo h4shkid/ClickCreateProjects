@@ -536,36 +536,57 @@ export default function SnapshotPage() {
         {/* Sync Status Card */}
         {syncInfo && (
           <div className="card-glass mb-4 bg-primary/5 border-primary/20 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Blockchain Sync Status</p>
-                <p className="text-base font-medium">
-                  Last synced: {syncInfo.lastSyncedBlock?.toLocaleString() || 'Never'}
-                </p>
-                {syncInfo.currentBlockNumber && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Current: {syncInfo.currentBlockNumber.toLocaleString()}
-                    {syncInfo.lastSyncedBlock && syncInfo.currentBlockNumber > syncInfo.lastSyncedBlock && (
-                      <span className="text-yellow-400 ml-2">
-                        ({(syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock).toLocaleString()} behind)
-                      </span>
-                    )}
-                  </p>
-                )}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground mb-2">Blockchain Sync Status</p>
+
+                {/* Block Information */}
+                <div className="space-y-1.5">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-xs text-muted-foreground">Last synced:</span>
+                    <span className="text-sm font-semibold">
+                      {syncInfo.lastSyncedBlock?.toLocaleString() || 'Never'}
+                    </span>
+                  </div>
+
+                  {syncInfo.currentBlockNumber && (
+                    <>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xs text-muted-foreground">Current block:</span>
+                        <span className="text-sm font-semibold">
+                          {syncInfo.currentBlockNumber.toLocaleString()}
+                        </span>
+                      </div>
+
+                      {syncInfo.lastSyncedBlock && syncInfo.currentBlockNumber > syncInfo.lastSyncedBlock && (
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-xs text-muted-foreground">Behind:</span>
+                          <span className="text-sm font-semibold text-yellow-400">
+                            {(syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock).toLocaleString()} blocks
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Statistics */}
                 {syncInfo.statistics && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {syncInfo.statistics.totalEvents} events · {syncInfo.statistics.totalHolders} holders · {syncInfo.statistics.uniqueTokens} tokens
+                  <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/30">
+                    {syncInfo.statistics.totalEvents?.toLocaleString() || 0} events · {syncInfo.statistics.totalHolders?.toLocaleString() || 0} holders · {syncInfo.statistics.uniqueTokens?.toLocaleString() || 0} tokens
                   </p>
                 )}
               </div>
-              <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+
+              {/* Status Badge */}
+              <div className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap self-start ${
                 syncInfo.isSynced ? 'bg-green-500/20 text-green-400' :
                 syncInfo.status === 'syncing' ? 'bg-yellow-500/20 text-yellow-400' :
                 'bg-orange-500/20 text-orange-400'
               }`}>
-                {syncInfo.isSynced ? 'Up to date' :
-                 syncInfo.status === 'syncing' ? 'Syncing...' :
-                 'Auto-sync'}
+                {syncInfo.isSynced ? '✓ Up to date' :
+                 syncInfo.status === 'syncing' ? '⟳ Syncing...' :
+                 '○ Behind'}
               </div>
             </div>
           </div>
