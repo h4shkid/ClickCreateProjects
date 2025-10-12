@@ -383,12 +383,18 @@ export default function CollectionSnapshotPage() {
               setSyncStatus({ syncing: false, progress: 100, eta: '' })
 
               // Update sync info immediately with completed status
+              // Force lastSyncedBlock to currentBlockNumber if sync completed
+              const updatedLastSynced = syncData.currentBlockNumber || syncData.endBlock || syncData.lastSyncedBlock
+
               setSyncInfo((prev: any) => ({
                 ...syncData,
+                lastSyncedBlock: updatedLastSynced, // Update to latest block
                 isSynced: true, // Force synced state
                 status: 'completed',
                 statistics: syncData.statistics || prev?.statistics
               }))
+
+              console.log(`📝 Force updated lastSyncedBlock to ${updatedLastSynced}`)
 
               // Refresh sync info after a delay to get latest statistics with fresh currentBlockNumber
               setTimeout(async () => {

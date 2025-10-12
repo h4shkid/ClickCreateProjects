@@ -158,11 +158,61 @@ export async function POST(
 
     const syncWorkerUrl = process.env.SYNC_WORKER_URL
 
+    // If no worker URL, do fallback local sync
     if (!syncWorkerUrl) {
-      return NextResponse.json({
-        success: false,
-        error: 'Sync worker not configured. Please contact administrator.'
-      }, { status: 503 })
+      console.log('⚠️ No sync worker configured, attempting local sync...')
+
+      try {
+        // Import sync utilities
+        const { syncContractEvents } = await import('@/lib/blockchain/sync')
+
+        // Get contract info
+        const db = createDatabaseAdapter()
+        const contract = await db.prepare(`
+          SELECT address, deployment_block, chain_id
+          FROM contracts
+          WHERE LOWER(address) = LOWER(?)
+        `).get(address.toLowerCase()) as any
+
+        if (!contract) {
+          return NextResponse.json({
+            success: false,
+            error: 'Contract not found'
+          }, { status: 404 })
+        }
+
+        // Get last synced block
+        const lastEvent = await db.prepare(`
+          SELECT MAX(block_number) as last_block
+          FROM events
+          WHERE LOWER(contract_address) = LOWER(?)
+        `).get(address.toLowerCase()) as any
+
+        const fromBlock = lastEvent?.last_block ? lastEvent.last_block + 1 : contract.deployment_block
+
+        // Start background sync (don't await - let it run async)
+        syncContractEvents({
+          contractAddress: address.toLowerCase(),
+          fromBlock,
+          toBlock: 'latest',
+          chainId: contract.chain_id || 1
+        }).catch((err: any) => {
+          console.error('Background sync error:', err)
+        })
+
+        return NextResponse.json({
+          success: true,
+          message: 'Local sync started in background',
+          method: 'local'
+        })
+
+      } catch (error: any) {
+        console.error('Local sync error:', error)
+        return NextResponse.json({
+          success: false,
+          error: 'Sync worker not configured and local sync failed. Please contact administrator.'
+        }, { status: 503 })
+      }
     }
 
     // Step 1: Wake up worker (Render free tier cold start)

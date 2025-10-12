@@ -435,13 +435,18 @@ export default function SnapshotPage() {
               setSyncStatus({ syncing: false, progress: 100 })
 
               // Update sync info immediately with completed status
+              // Force lastSyncedBlock to currentBlockNumber if sync completed
+              const updatedLastSynced = syncData.currentBlockNumber || syncData.endBlock || syncData.lastSyncedBlock
+
               setSyncInfo({
                 ...syncData,
+                lastSyncedBlock: updatedLastSynced, // Update to latest block
                 isSynced: true, // Force synced state
                 status: 'completed'
               })
 
               console.log('✅ Sync completed!')
+              console.log(`📝 Force updated lastSyncedBlock to ${updatedLastSynced}`)
 
               // Refresh sync info and date range after completion with fresh currentBlockNumber
               setTimeout(async () => {
