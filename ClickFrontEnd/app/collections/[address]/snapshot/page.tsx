@@ -33,6 +33,8 @@ interface Collection {
   symbol: string
   contractType: 'ERC721' | 'ERC1155'
   chainId: number
+  imageUrl?: string
+  description?: string
 }
 
 // Helper function to format ETA
