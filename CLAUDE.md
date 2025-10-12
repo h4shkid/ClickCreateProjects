@@ -4,17 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ClickCreate Projects** - This repository contains multiple projects related to NFT analytics and blockchain data processing. The primary project is **ClickFrontEnd**, a universal multi-contract NFT analytics platform.
+**ClickCreate Projects** - Multi-project repository for NFT analytics and blockchain data processing. The primary project is **ClickFrontEnd**, a universal multi-contract NFT analytics platform.
 
 ### Primary Project: ClickFrontEnd
 
 **ClickFrontEnd** is a modern, universal multi-contract NFT analytics platform built with Next.js 15, TypeScript, and Tailwind CSS. Originally designed for a single collection, it has evolved into a comprehensive platform supporting any ERC-721/ERC-1155 contract across multiple blockchains with wallet-based authentication, user profiles, and OpenSea integration.
 
-**📋 For complete development guidance, refer to: `ClickFrontEnd/CLAUDE.md`**
+**📋 For complete development guidance, refer to: [ClickFrontEnd/CLAUDE.md](ClickFrontEnd/CLAUDE.md)**
 
 The ClickFrontEnd directory contains the authoritative CLAUDE.md file with comprehensive architecture documentation, development guidelines, and technical specifications.
 
+### Other Projects
+
+- **nft-snapshot-tool/** - Legacy single-contract version (deprecated, use ClickFrontEnd instead)
+- **clickcreate-sync-worker/** - Sync worker service (if applicable)
+- **_archive/** - Historical files and documentation
+
 ## Quick Start
+
+**Most work should happen in ClickFrontEnd.** Unless explicitly working on legacy projects or archive materials, always work within the ClickFrontEnd directory.
 
 ```bash
 # Navigate to main project
@@ -27,12 +35,22 @@ npm run dev
 # View at http://localhost:3000
 ```
 
+**First-time setup:**
+```bash
+cd ClickFrontEnd
+npm install
+cp .env.example .env.local  # Create environment file
+# Edit .env.local with your API keys
+npx tsx scripts/init-multi-contract-db.js  # Initialize database
+npm run dev
+```
+
 ## Repository Structure
 
 ```
 ClickCreateProjects/
-├── ClickFrontEnd/              # Main NFT analytics platform (PRIMARY PROJECT)
-│   ├── CLAUDE.md              # ⭐ Authoritative development guide
+├── ClickFrontEnd/              # ⭐ PRIMARY PROJECT - Work here by default
+│   ├── CLAUDE.md              # Complete development guide (READ THIS FIRST)
 │   ├── VALIDATION_GUIDE.md    # Data validation system documentation
 │   ├── QUICKNODE-OPTIMIZATION.md  # QuickNode RPC optimization guide
 │   ├── TEST_COLLECTION_SNAPSHOTS.md  # Collection snapshot testing guide
@@ -41,11 +59,15 @@ ClickCreateProjects/
 │   ├── lib/                   # Core libraries and utilities
 │   ├── scripts/               # Database and sync scripts
 │   └── data/                  # SQLite database files
+├── clickcreate-sync-worker/   # Sync worker service (separate project)
 ├── nft-snapshot-tool/         # Legacy single-contract version (deprecated)
 ├── _archive/                  # Historical files and documentation
 ├── IMPLEMENTATION_PROGRESS.md # Project evolution timeline
-└── AGENTS.md                  # Repository development guidelines
+├── AGENTS.md                  # Repository-wide coding standards
+└── CLAUDE.md                  # This file - repository overview
 ```
+
+**Working Directory:** Unless explicitly stated otherwise, all development work should be done within [ClickFrontEnd/](ClickFrontEnd/).
 
 ## Key Features
 
@@ -59,10 +81,29 @@ ClickCreateProjects/
 
 ## Important Documentation Files
 
-- **ClickFrontEnd/CLAUDE.md** - Complete architecture, commands, and development guidelines
-- **IMPLEMENTATION_PROGRESS.md** - Evolution from single to multi-contract platform
-- **ClickFrontEnd/VALIDATION_GUIDE.md** - Data validation workflow and best practices
-- **AGENTS.md** - Repository-wide coding standards and conventions
+- **[ClickFrontEnd/CLAUDE.md](ClickFrontEnd/CLAUDE.md)** - Complete architecture, commands, and development guidelines (PRIMARY REFERENCE)
+- **[IMPLEMENTATION_PROGRESS.md](IMPLEMENTATION_PROGRESS.md)** - Evolution from single to multi-contract platform
+- **[ClickFrontEnd/VALIDATION_GUIDE.md](ClickFrontEnd/VALIDATION_GUIDE.md)** - Data validation workflow and best practices
+- **[AGENTS.md](AGENTS.md)** - Repository-wide coding standards and conventions
+
+**When working in ClickFrontEnd, always refer to ClickFrontEnd/CLAUDE.md for detailed guidance.**
+
+## Repository-Level Commands
+
+```bash
+# Check current project location
+pwd  # Should be in ClickCreateProjects/ClickFrontEnd for most work
+
+# Navigate to primary project
+cd ClickFrontEnd
+
+# View project status
+git status
+git log --oneline -5
+
+# Search across entire repository
+grep -r "search_term" --exclude-dir=node_modules --exclude-dir=.next
+```
 
 ## Common Issues & Quick Fixes
 
