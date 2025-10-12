@@ -443,20 +443,27 @@ export default function SnapshotPage() {
 
               console.log('✅ Sync completed!')
 
-              // Refresh sync info and date range after completion
+              // Refresh sync info and date range after completion with fresh currentBlockNumber
               setTimeout(async () => {
                 try {
-                  const freshStatusRes = await axios.get(`/api/contracts/${INTERNAL_COLLECTION_ADDRESS}/sync`)
+                  // Add cache busting parameter and force fresh data
+                  const freshStatusRes = await axios.get(`/api/contracts/${INTERNAL_COLLECTION_ADDRESS}/sync?t=${Date.now()}`, {
+                    headers: {
+                      'Cache-Control': 'no-cache',
+                      'Pragma': 'no-cache'
+                    }
+                  })
                   if (freshStatusRes.data.success) {
                     const freshData = freshStatusRes.data.data
                     console.log('🔍 Fresh sync data after completion:', freshData)
+                    console.log(`📊 Updated: Last synced ${freshData.lastSyncedBlock}, Current ${freshData.currentBlockNumber}, Behind ${freshData.currentBlockNumber - freshData.lastSyncedBlock}`)
                     setSyncInfo(freshData)
                   }
                   await refreshDateRange()
                 } catch (err) {
                   console.error('Error refreshing sync status:', err)
                 }
-              }, 2000)
+              }, 3000) // Increased delay to 3 seconds
             } else if (syncData.status === 'processing') {
               // Update progress with real percentage
               const progress = syncData.progressPercentage || 0

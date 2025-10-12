@@ -390,16 +390,27 @@ export default function CollectionSnapshotPage() {
                 statistics: syncData.statistics || prev?.statistics
               }))
 
-              // Refresh sync info after a short delay to get latest statistics
+              // Refresh sync info after a delay to get latest statistics with fresh currentBlockNumber
               setTimeout(async () => {
-                const statusRes = await axios.get(`/api/contracts/${address}/sync`)
-                if (statusRes.data.success) {
-                  const freshData = statusRes.data.data
-                  console.log('🔍 Fresh sync data after completion:', freshData)
-                  setSyncInfo(freshData)
+                try {
+                  // Add cache busting parameter and force fresh data
+                  const statusRes = await axios.get(`/api/contracts/${address}/sync?t=${Date.now()}`, {
+                    headers: {
+                      'Cache-Control': 'no-cache',
+                      'Pragma': 'no-cache'
+                    }
+                  })
+                  if (statusRes.data.success) {
+                    const freshData = statusRes.data.data
+                    console.log('🔍 Fresh sync data after completion:', freshData)
+                    console.log(`📊 Updated: Last synced ${freshData.lastSyncedBlock}, Current ${freshData.currentBlockNumber}, Behind ${freshData.currentBlockNumber - freshData.lastSyncedBlock}`)
+                    setSyncInfo(freshData)
+                  }
+                  console.log('✅ Sync completed and statistics refreshed!')
+                } catch (err) {
+                  console.error('Failed to refresh sync info:', err)
                 }
-                console.log('✅ Sync completed and statistics refreshed!')
-              }, 2000)
+              }, 3000) // Increased delay to 3 seconds
             } else if (syncData.status === 'processing') {
               // Update progress with real percentage
               const progress = syncData.progressPercentage || 0
