@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Download, Search, RefreshCw, Calendar, Users, Hash, TrendingUp, Copy, ArrowLeft } from 'lucide-react'
+import { Download, Search, RefreshCw, Calendar, Users, Hash, TrendingUp, Copy, ArrowLeft, AlertCircle, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import axios from 'axios'
 import { SEASON_GROUPS, formatTokenIdsForInput } from '@/lib/constants/season-tokens'
+import Image from 'next/image'
 
 // NOTE: This is the PUBLIC snapshot page - no wallet restrictions
 // For internal snapshot tool, use /snapshot page instead
@@ -448,29 +449,65 @@ export default function CollectionSnapshotPage() {
   return (
     <div className="min-h-screen pt-24 px-6 lg:px-8">
       <div className="container mx-auto max-w-4xl">
-        {/* Header */}
+        {/* Header with Collection Info */}
         <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-4 mb-4">
             <Link
               href={`/collections/${address}`}
               className="p-2 -ml-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <div className="flex items-center gap-2 flex-1">
-              <span className="px-2 py-1 text-xs font-mono bg-green-500/20 text-green-400 rounded">
-                Collection: {address.slice(0, 6)}...{address.slice(-4)}
-              </span>
-            </div>
+
+            {/* Collection Logo and Info */}
+            {collection && (
+              <div className="flex items-center gap-4 flex-1">
+                {collection.imageUrl && (
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-primary/20">
+                    <Image
+                      src={collection.imageUrl}
+                      alt={collection.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-2xl font-bold mb-1 truncate">
+                    {collection.name || 'Unknown Collection'}
+                  </h1>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {address.slice(0, 6)}...{address.slice(-4)}
+                    </span>
+                    <span className="px-2 py-0.5 text-xs bg-primary/10 text-primary rounded">
+                      {collection.symbol || 'N/A'}
+                    </span>
+                    <span className="px-2 py-0.5 text-xs bg-card border border-border rounded">
+                      {collection.contractType}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Sync Status Card */}
         {syncInfo && (
-          <div className="card-glass mb-4 bg-primary/5 border-primary/20">
+          <div className={`card-glass mb-4 ${
+            !syncInfo.isSynced && syncInfo.status !== 'syncing'
+              ? 'bg-orange-500/10 border-orange-500/30 animate-pulse-slow'
+              : 'bg-primary/5 border-primary/20'
+          }`}>
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground mb-2">Blockchain Sync Status</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-xs text-muted-foreground">Blockchain Sync Status</p>
+                  {!syncInfo.isSynced && syncInfo.status !== 'syncing' && (
+                    <AlertCircle className="w-4 h-4 text-orange-400" />
+                  )}
+                </div>
 
                 {/* Block Information */}
                 <div className="space-y-1.5">
@@ -492,9 +529,9 @@ export default function CollectionSnapshotPage() {
 
                       {syncInfo.lastSyncedBlock && syncInfo.currentBlockNumber > syncInfo.lastSyncedBlock && (
                         <div className="flex items-baseline gap-2">
-                          <span className="text-xs text-muted-foreground">Behind:</span>
-                          <span className="text-sm font-semibold text-yellow-400">
-                            {(syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock).toLocaleString()} blocks
+                          <span className="text-xs text-muted-foreground">Blocks behind:</span>
+                          <span className="text-sm font-semibold text-orange-400">
+                            {(syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock).toLocaleString()}
                           </span>
                         </div>
                       )}
@@ -508,17 +545,27 @@ export default function CollectionSnapshotPage() {
                     {syncInfo.statistics.totalEvents?.toLocaleString() || 0} events · {syncInfo.statistics.totalHolders?.toLocaleString() || 0} holders · {syncInfo.statistics.uniqueTokens?.toLocaleString() || 0} tokens
                   </p>
                 )}
+
+                {/* Warning message when behind */}
+                {!syncInfo.isSynced && syncInfo.status !== 'syncing' && (
+                  <div className="mt-3 pt-3 border-t border-orange-500/30">
+                    <p className="text-xs text-orange-300 flex items-start gap-2">
+                      <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                      <span>Data is outdated. Click &quot;Sync Blockchain&quot; to fetch the latest blocks for accurate snapshots.</span>
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Status Badge */}
               <div className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap self-start ${
                 syncInfo.isSynced ? 'bg-green-500/20 text-green-400' :
                 syncInfo.status === 'syncing' ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-orange-500/20 text-orange-400'
+                'bg-orange-500/20 text-orange-400 ring-2 ring-orange-500/30'
               }`}>
                 {syncInfo.isSynced ? '✓ Up to date' :
                  syncInfo.status === 'syncing' ? '⟳ Syncing...' :
-                 '○ Behind'}
+                 '⚠ Behind'}
               </div>
             </div>
           </div>
