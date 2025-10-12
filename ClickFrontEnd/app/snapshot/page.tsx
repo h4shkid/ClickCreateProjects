@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Download, Search, RefreshCw, Calendar, Users, Hash, TrendingUp, Copy, Plus, Shield } from 'lucide-react'
+import { Download, Search, RefreshCw, Calendar, Users, Hash, TrendingUp, Copy, Plus, Shield, AlertCircle, Zap } from 'lucide-react'
 import axios from 'axios'
 import { SEASON_GROUPS, formatTokenIdsForInput } from '@/lib/constants/season-tokens'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -554,11 +554,30 @@ export default function SnapshotPage() {
         </div>
 
         {/* Sync Status Card */}
-        {syncInfo && (
-          <div className="card-glass mb-4 bg-primary/5 border-primary/20 p-4">
+        {syncInfo && (() => {
+          // Calculate blocks behind
+          const blocksBehind = syncInfo.currentBlockNumber && syncInfo.lastSyncedBlock
+            ? syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock
+            : 0
+
+          // Consider "synced" if within 50 blocks (~10 minutes on Ethereum)
+          const isRecentlysynced = blocksBehind <= 50
+          const showWarning = !isRecentlysynced && syncInfo.status !== 'syncing'
+
+          return (
+          <div className={`card-glass mb-4 p-4 ${
+            showWarning
+              ? 'bg-orange-500/10 border-orange-500/30 animate-pulse-slow'
+              : 'bg-primary/5 border-primary/20'
+          }`}>
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground mb-2">Blockchain Sync Status</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-xs text-muted-foreground">Blockchain Sync Status</p>
+                  {showWarning && (
+                    <AlertCircle className="w-4 h-4 text-orange-400" />
+                  )}
+                </div>
 
                 {/* Block Information */}
                 <div className="space-y-1.5">
@@ -578,11 +597,16 @@ export default function SnapshotPage() {
                         </span>
                       </div>
 
-                      {syncInfo.lastSyncedBlock && syncInfo.currentBlockNumber > syncInfo.lastSyncedBlock && (
+                      {blocksBehind > 0 && (
                         <div className="flex items-baseline gap-2">
-                          <span className="text-xs text-muted-foreground">Behind:</span>
-                          <span className="text-sm font-semibold text-yellow-400">
-                            {(syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock).toLocaleString()} blocks
+                          <span className="text-xs text-muted-foreground">Blocks behind:</span>
+                          <span className={`text-sm font-semibold ${
+                            blocksBehind > 50 ? 'text-orange-400' : 'text-green-400'
+                          }`}>
+                            {blocksBehind.toLocaleString()}
+                            {blocksBehind <= 50 && (
+                              <span className="text-xs text-muted-foreground ml-1">(recently synced)</span>
+                            )}
                           </span>
                         </div>
                       )}
@@ -596,21 +620,32 @@ export default function SnapshotPage() {
                     {syncInfo.statistics.totalEvents?.toLocaleString() || 0} events · {syncInfo.statistics.totalHolders?.toLocaleString() || 0} holders · {syncInfo.statistics.uniqueTokens?.toLocaleString() || 0} tokens
                   </p>
                 )}
+
+                {/* Warning message when significantly behind */}
+                {showWarning && (
+                  <div className="mt-3 pt-3 border-t border-orange-500/30">
+                    <p className="text-xs text-orange-300 flex items-start gap-2">
+                      <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                      <span>Data is {blocksBehind} blocks behind. Click &quot;Sync Blockchain&quot; to fetch the latest blocks for accurate snapshots.</span>
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Status Badge */}
               <div className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap self-start ${
-                syncInfo.isSynced ? 'bg-green-500/20 text-green-400' :
+                isRecentlysynced || syncInfo.isSynced ? 'bg-green-500/20 text-green-400' :
                 syncInfo.status === 'syncing' ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-orange-500/20 text-orange-400'
+                'bg-orange-500/20 text-orange-400 ring-2 ring-orange-500/30'
               }`}>
-                {syncInfo.isSynced ? '✓ Up to date' :
+                {isRecentlysynced || syncInfo.isSynced ? '✓ Up to date' :
                  syncInfo.status === 'syncing' ? '⟳ Syncing...' :
-                 '○ Behind'}
+                 '⚠ Behind'}
               </div>
             </div>
           </div>
-        )}
+          )
+        })()}
 
         {/* Controls */}
         <div className="card-glass mb-6 p-5">

@@ -503,9 +503,19 @@ export default function CollectionSnapshotPage() {
         </div>
 
         {/* Sync Status Card */}
-        {syncInfo && (
+        {syncInfo && (() => {
+          // Calculate blocks behind
+          const blocksBehind = syncInfo.currentBlockNumber && syncInfo.lastSyncedBlock
+            ? syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock
+            : 0
+
+          // Consider "synced" if within 50 blocks (~10 minutes on Ethereum)
+          const isRecentlysynced = blocksBehind <= 50
+          const showWarning = !isRecentlysynced && syncInfo.status !== 'syncing'
+
+          return (
           <div className={`card-glass mb-4 ${
-            !syncInfo.isSynced && syncInfo.status !== 'syncing'
+            showWarning
               ? 'bg-orange-500/10 border-orange-500/30 animate-pulse-slow'
               : 'bg-primary/5 border-primary/20'
           }`}>
@@ -513,7 +523,7 @@ export default function CollectionSnapshotPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2">
                   <p className="text-xs text-muted-foreground">Blockchain Sync Status</p>
-                  {!syncInfo.isSynced && syncInfo.status !== 'syncing' && (
+                  {showWarning && (
                     <AlertCircle className="w-4 h-4 text-orange-400" />
                   )}
                 </div>
@@ -536,11 +546,16 @@ export default function CollectionSnapshotPage() {
                         </span>
                       </div>
 
-                      {syncInfo.lastSyncedBlock && syncInfo.currentBlockNumber > syncInfo.lastSyncedBlock && (
+                      {blocksBehind > 0 && (
                         <div className="flex items-baseline gap-2">
                           <span className="text-xs text-muted-foreground">Blocks behind:</span>
-                          <span className="text-sm font-semibold text-orange-400">
-                            {(syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock).toLocaleString()}
+                          <span className={`text-sm font-semibold ${
+                            blocksBehind > 50 ? 'text-orange-400' : 'text-green-400'
+                          }`}>
+                            {blocksBehind.toLocaleString()}
+                            {blocksBehind <= 50 && (
+                              <span className="text-xs text-muted-foreground ml-1">(recently synced)</span>
+                            )}
                           </span>
                         </div>
                       )}
@@ -555,12 +570,12 @@ export default function CollectionSnapshotPage() {
                   </p>
                 )}
 
-                {/* Warning message when behind */}
-                {!syncInfo.isSynced && syncInfo.status !== 'syncing' && (
+                {/* Warning message when significantly behind */}
+                {showWarning && (
                   <div className="mt-3 pt-3 border-t border-orange-500/30">
                     <p className="text-xs text-orange-300 flex items-start gap-2">
                       <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                      <span>Data is outdated. Click &quot;Sync Blockchain&quot; to fetch the latest blocks for accurate snapshots.</span>
+                      <span>Data is {blocksBehind} blocks behind. Click &quot;Sync Blockchain&quot; to fetch the latest blocks for accurate snapshots.</span>
                     </p>
                   </div>
                 )}
@@ -568,17 +583,18 @@ export default function CollectionSnapshotPage() {
 
               {/* Status Badge */}
               <div className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap self-start ${
-                syncInfo.isSynced ? 'bg-green-500/20 text-green-400' :
+                isRecentlysynced || syncInfo.isSynced ? 'bg-green-500/20 text-green-400' :
                 syncInfo.status === 'syncing' ? 'bg-yellow-500/20 text-yellow-400' :
                 'bg-orange-500/20 text-orange-400 ring-2 ring-orange-500/30'
               }`}>
-                {syncInfo.isSynced ? '✓ Up to date' :
+                {isRecentlysynced || syncInfo.isSynced ? '✓ Up to date' :
                  syncInfo.status === 'syncing' ? '⟳ Syncing...' :
                  '⚠ Behind'}
               </div>
             </div>
           </div>
-        )}
+          )
+        })()}
 
         {/* Controls */}
         <div className="card-glass mb-6">
