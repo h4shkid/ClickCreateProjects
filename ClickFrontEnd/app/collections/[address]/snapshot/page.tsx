@@ -382,15 +382,22 @@ export default function CollectionSnapshotPage() {
               clearInterval(pollInterval)
               setSyncStatus({ syncing: false, progress: 100, eta: '' })
 
-              // Preserve existing statistics during sync completion
+              // Update sync info immediately with completed status
               setSyncInfo((prev: any) => ({
                 ...syncData,
+                isSynced: true, // Force synced state
+                status: 'completed',
                 statistics: syncData.statistics || prev?.statistics
               }))
 
               // Refresh sync info after a short delay to get latest statistics
               setTimeout(async () => {
-                await checkSyncStatus()
+                const statusRes = await axios.get(`/api/contracts/${address}/sync`)
+                if (statusRes.data.success) {
+                  const freshData = statusRes.data.data
+                  console.log('🔍 Fresh sync data after completion:', freshData)
+                  setSyncInfo(freshData)
+                }
                 console.log('✅ Sync completed and statistics refreshed!')
               }, 2000)
             } else if (syncData.status === 'processing') {

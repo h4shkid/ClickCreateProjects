@@ -433,10 +433,30 @@ export default function SnapshotPage() {
             if (syncData.status === 'completed') {
               clearInterval(pollInterval)
               setSyncStatus({ syncing: false, progress: 100 })
-              setSyncInfo(syncData) // Update sync info
+
+              // Update sync info immediately with completed status
+              setSyncInfo({
+                ...syncData,
+                isSynced: true, // Force synced state
+                status: 'completed'
+              })
+
               console.log('✅ Sync completed!')
-              // Refresh date range after sync completion
-              await refreshDateRange()
+
+              // Refresh sync info and date range after completion
+              setTimeout(async () => {
+                try {
+                  const freshStatusRes = await axios.get(`/api/contracts/${INTERNAL_COLLECTION_ADDRESS}/sync`)
+                  if (freshStatusRes.data.success) {
+                    const freshData = freshStatusRes.data.data
+                    console.log('🔍 Fresh sync data after completion:', freshData)
+                    setSyncInfo(freshData)
+                  }
+                  await refreshDateRange()
+                } catch (err) {
+                  console.error('Error refreshing sync status:', err)
+                }
+              }, 2000)
             } else if (syncData.status === 'processing') {
               // Update progress with real percentage
               const progress = syncData.progressPercentage || 0
