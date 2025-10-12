@@ -90,15 +90,39 @@ export async function GET(
       status = 'completed'
     }
 
+    // Get current blockchain block number
+    let currentBlockNumber = lastSyncedBlock
+
+    // Try to get current block from RPC provider
+    try {
+      const { ethers } = await import('ethers')
+      const rpcUrl = process.env.NEXT_PUBLIC_QUICKNODE_ENDPOINT ||
+                     (process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+                       ? `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
+                       : 'https://eth.llamarpc.com')
+
+      const provider = new ethers.JsonRpcProvider(rpcUrl)
+      currentBlockNumber = await provider.getBlockNumber()
+    } catch (err) {
+      // Fallback to last synced block if RPC call fails
+      console.log('Could not fetch current block number:', err)
+    }
+
+    // Check if recently synced (within 50 blocks)
+    const blocksBehind = currentBlockNumber - lastSyncedBlock
+    const isSynced = blocksBehind <= 50
+
     return NextResponse.json({
       success: true,
       data: {
         status,
         lastSyncedBlock,
+        currentBlockNumber, // Current blockchain block
         deploymentBlock: contract.deployment_block || 0,
-        currentBlock: workerProgress?.currentBlock || lastSyncedBlock,
+        currentBlock: workerProgress?.currentBlock || lastSyncedBlock, // Worker's current processing block
         endBlock: workerProgress?.endBlock || lastSyncedBlock,
         progressPercentage,
+        isSynced, // Add sync status based on grace period
         workerProgress,
         statistics: {
           totalEvents,
