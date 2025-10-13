@@ -526,13 +526,18 @@ export default function CollectionSnapshotPage() {
             ? syncInfo.currentBlockNumber - syncInfo.lastSyncedBlock
             : 0
 
+          // Check if this is a new collection (never synced)
+          const isNewCollection = syncInfo.lastSyncedBlock === 0 && syncInfo.statistics?.totalEvents === 0
+
           // Consider "synced" if within 50 blocks (~10 minutes on Ethereum)
           const isRecentlysynced = blocksBehind <= 50
           const showWarning = !isRecentlysynced && syncInfo.status !== 'syncing'
 
           return (
           <div className={`card-glass mb-4 ${
-            showWarning
+            isNewCollection
+              ? 'bg-blue-500/10 border-blue-500/30'
+              : showWarning
               ? 'bg-orange-500/10 border-orange-500/30 animate-pulse-slow'
               : 'bg-primary/5 border-primary/20'
           }`}>
@@ -540,7 +545,9 @@ export default function CollectionSnapshotPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2">
                   <p className="text-xs text-muted-foreground">Blockchain Sync Status</p>
-                  {showWarning && (
+                  {isNewCollection ? (
+                    <RefreshCw className="w-4 h-4 text-blue-400" />
+                  ) : showWarning && (
                     <AlertCircle className="w-4 h-4 text-orange-400" />
                   )}
                 </div>
@@ -587,8 +594,24 @@ export default function CollectionSnapshotPage() {
                   </p>
                 )}
 
+                {/* New collection welcome message */}
+                {isNewCollection && (
+                  <div className="mt-3 pt-3 border-t border-blue-500/30">
+                    <p className="text-sm font-medium text-blue-300 mb-2">
+                      🎉 Welcome! This is a newly added collection.
+                    </p>
+                    <p className="text-xs text-blue-200/80 mb-3">
+                      To generate snapshots, you need to sync blockchain data first. This will fetch all transfer events and build the holder database.
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-blue-200/60">
+                      <RefreshCw className="w-3 h-3" />
+                      <span>Click &quot;Sync Blockchain&quot; below to get started</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Warning message when significantly behind */}
-                {showWarning && (
+                {!isNewCollection && showWarning && (
                   <div className="mt-3 pt-3 border-t border-orange-500/30">
                     <p className="text-xs text-orange-300 flex items-start gap-2">
                       <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
@@ -600,11 +623,13 @@ export default function CollectionSnapshotPage() {
 
               {/* Status Badge */}
               <div className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap self-start ${
+                isNewCollection ? 'bg-blue-500/20 text-blue-400 ring-2 ring-blue-500/30' :
                 isRecentlysynced || syncInfo.isSynced ? 'bg-green-500/20 text-green-400' :
                 syncInfo.status === 'syncing' ? 'bg-yellow-500/20 text-yellow-400' :
                 'bg-orange-500/20 text-orange-400 ring-2 ring-orange-500/30'
               }`}>
-                {isRecentlysynced || syncInfo.isSynced ? '✓ Up to date' :
+                {isNewCollection ? '🆕 New' :
+                 isRecentlysynced || syncInfo.isSynced ? '✓ Up to date' :
                  syncInfo.status === 'syncing' ? '⟳ Syncing...' :
                  '⚠ Behind'}
               </div>
