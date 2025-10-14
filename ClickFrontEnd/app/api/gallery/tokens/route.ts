@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 const OPENSEA_API_KEY = process.env.OPENSEA_API_KEY
 
@@ -7,8 +6,8 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const contractAddress = searchParams.get('contract')
-    const limit = parseInt(searchParams.get('limit') || '50')
-    const page = parseInt(searchParams.get('page') || '0')
+    const limit = parseInt(searchParams.get('limit') || '200')
+    const next = searchParams.get('next')
 
     if (!contractAddress) {
       return NextResponse.json({
@@ -24,136 +23,65 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
-    const db = createDatabaseAdapter()
-
-    // Get all token IDs from database (sorted high to low)
-    const dbTokens = db.prepare(`
-      SELECT DISTINCT token_id
-      FROM current_state
-      WHERE LOWER(contract_address) = LOWER(?)
-      ORDER BY CAST(token_id AS INTEGER) DESC
-      LIMIT ? OFFSET ?
-    `).all(contractAddress, limit, page * limit) as Array<{ token_id: string }>
-
-    // If no tokens in DB, fall back to OpenSea pagination
-    if (dbTokens.length === 0) {
-      console.log('[Gallery] No tokens in DB, using OpenSea fallback for:', contractAddress)
-
-      const response = await fetch(
-        `https://api.opensea.io/api/v2/chain/ethereum/contract/${contractAddress}/nfts?limit=${limit}`,
-        {
-          headers: {
-            'x-api-key': OPENSEA_API_KEY
-          }
-        }
-      )
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('[Gallery] OpenSea API error:', response.status, errorText)
-        return NextResponse.json({
-          success: false,
-          error: `Failed to fetch NFTs from OpenSea: ${response.status}`
-        }, { status: response.status })
-      }
-
-      const data = await response.json()
-      console.log('[Gallery] OpenSea returned:', data.nfts?.length, 'NFTs')
-
-      const tokens = (data.nfts?.map((nft: any) => ({
-        contractAddress: nft.contract,
-        tokenId: nft.identifier,
-        name: nft.name || `#${nft.identifier}`,
-        description: nft.description,
-        imageUrl: nft.image_url || nft.display_image_url,
-        attributes: nft.traits?.map((trait: any) => ({
-          trait_type: trait.trait_type,
-          value: trait.value
-        })) || []
-      })) || []).reverse()
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          tokens,
-          pagination: {
-            page,
-            hasMore: data.next !== null
-          }
-        }
-      })
+    // Build OpenSea API URL
+    let url = `https://api.opensea.io/api/v2/chain/ethereum/contract/${contractAddress}/nfts?limit=${limit}`
+    if (next) {
+      url += `&next=${next}`
     }
 
-    // Fetch metadata from OpenSea for each token
-    const tokens = await Promise.all(
-      dbTokens.map(async ({ token_id }) => {
-        try {
-          const response = await fetch(
-            `https://api.opensea.io/api/v2/chain/ethereum/contract/${contractAddress}/nfts/${token_id}`,
-            {
-              headers: {
-                'x-api-key': OPENSEA_API_KEY
-              }
-            }
-          )
+    console.log('[Gallery] Fetching from OpenSea:', url)
 
-          if (!response.ok) {
-            return {
-              contractAddress,
-              tokenId: token_id,
-              name: `#${token_id}`,
-              description: null,
-              imageUrl: null,
-              attributes: []
-            }
-          }
+    const response = await fetch(url, {
+      headers: {
+        'x-api-key': OPENSEA_API_KEY
+      }
+    })
 
-          const nft = await response.json()
-          return {
-            contractAddress: nft.nft?.contract || contractAddress,
-            tokenId: nft.nft?.identifier || token_id,
-            name: nft.nft?.name || `#${token_id}`,
-            description: nft.nft?.description,
-            imageUrl: nft.nft?.image_url || nft.nft?.display_image_url,
-            attributes: nft.nft?.traits?.map((trait: any) => ({
-              trait_type: trait.trait_type,
-              value: trait.value
-            })) || []
-          }
-        } catch (err) {
-          console.error(`Failed to fetch token ${token_id}:`, err)
-          return {
-            contractAddress,
-            tokenId: token_id,
-            name: `#${token_id}`,
-            description: null,
-            imageUrl: null,
-            attributes: []
-          }
-        }
-      })
-    )
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('[Gallery] OpenSea API error:', response.status, errorText)
+      return NextResponse.json({
+        success: false,
+        error: `Failed to fetch NFTs from OpenSea: ${response.status}`
+      }, { status: response.status })
+    }
 
-    // Check if there are more tokens
-    const totalCount = db.prepare(`
-      SELECT COUNT(DISTINCT token_id) as count
-      FROM current_state
-      WHERE LOWER(contract_address) = LOWER(?)
-    `).get(contractAddress) as { count: number }
+    const data = await response.json()
+    console.log('[Gallery] OpenSea returned:', data.nfts?.length, 'NFTs')
+
+    // Sort by token ID descending (highest first)
+    const nfts = data.nfts || []
+    nfts.sort((a: any, b: any) => {
+      const aId = parseInt(a.identifier)
+      const bId = parseInt(b.identifier)
+      return bId - aId
+    })
+
+    const tokens = nfts.map((nft: any) => ({
+      contractAddress: nft.contract,
+      tokenId: nft.identifier,
+      name: nft.name || `#${nft.identifier}`,
+      description: nft.description,
+      imageUrl: nft.image_url || nft.display_image_url,
+      attributes: nft.traits?.map((trait: any) => ({
+        trait_type: trait.trait_type,
+        value: trait.value
+      })) || []
+    }))
 
     return NextResponse.json({
       success: true,
       data: {
         tokens,
         pagination: {
-          page,
-          hasMore: (page + 1) * limit < totalCount.count
+          next: data.next || null,
+          hasMore: data.next !== null
         }
       }
     })
 
   } catch (error: any) {
-    console.error('Gallery tokens error:', error)
+    console.error('[Gallery] Error:', error)
     return NextResponse.json({
       success: false,
       error: error.message || 'Failed to fetch gallery tokens'

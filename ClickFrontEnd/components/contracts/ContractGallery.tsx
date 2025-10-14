@@ -32,15 +32,19 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [selectedToken, setSelectedToken] = useState<NFTToken | null>(null)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [hasMore, setHasMore] = useState(false)
+  const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [loadingHolders, setLoadingHolders] = useState(false)
   const [snapshotLoading, setSnapshotLoading] = useState(false)
 
-  const fetchTokens = async (page: number = 0) => {
+  const fetchTokens = async (cursor: string | null = null) => {
     setLoadingTokens(true)
     try {
-      const response = await fetch(`/api/gallery/tokens?contract=${contractAddress}&limit=50&page=${page}`)
+      let url = `/api/gallery/tokens?contract=${contractAddress}&limit=200`
+      if (cursor) {
+        url += `&next=${cursor}`
+      }
+
+      const response = await fetch(url)
       const data = await response.json()
 
       if (data.success) {
@@ -53,8 +57,7 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
           attributes: token.attributes || []
         }))
         setTokens(mappedTokens)
-        setCurrentPage(page)
-        setHasMore(data.data.pagination.hasMore)
+        setNextCursor(data.data.pagination.next)
       }
     } catch (err) {
       console.error('Failed to load tokens:', err)
@@ -199,24 +202,17 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
       {/* Results Count and Pagination */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          Page {currentPage + 1} - Showing {filteredTokens.length} {filteredTokens.length === 1 ? 'token' : 'tokens'}
+          Showing {filteredTokens.length} {filteredTokens.length === 1 ? 'token' : 'tokens'}
         </p>
-        <div className="flex items-center gap-2">
+        {nextCursor && (
           <button
-            onClick={() => fetchTokens(currentPage - 1)}
-            disabled={currentPage === 0 || loadingTokens}
+            onClick={() => fetchTokens(nextCursor)}
+            disabled={loadingTokens}
             className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed text-sm px-4 py-2"
           >
-            ← Previous
+            Load More →
           </button>
-          <button
-            onClick={() => fetchTokens(currentPage + 1)}
-            disabled={!hasMore || loadingTokens}
-            className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed text-sm px-4 py-2"
-          >
-            Next →
-          </button>
-        </div>
+        )}
       </div>
 
       {/* Gallery Grid */}
