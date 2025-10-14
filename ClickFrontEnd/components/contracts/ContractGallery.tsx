@@ -399,20 +399,30 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
                           <span className="text-sm">Loading holders...</span>
                         </div>
                       ) : (
-                        <div className="space-y-2">
-                          {selectedToken.holders!.slice(0, 5).map((holder, index) => (
-                            <div key={index} className="bg-card/50 rounded-lg p-2">
-                              <div className="flex items-center justify-between">
-                                <p className="text-xs font-mono text-muted-foreground truncate flex-1">
-                                  {holder.address.slice(0, 6)}...{holder.address.slice(-4)}
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {selectedToken.holders!.slice(0, 10).map((holder, index) => (
+                            <Link
+                              key={index}
+                              href={`https://opensea.io/${holder.address}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-card/50 rounded-lg p-2 hover:bg-card/70 transition-colors flex items-center justify-between group"
+                            >
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span className="text-xs text-muted-foreground font-medium">#{index + 1}</span>
+                                <p className="text-xs font-mono text-muted-foreground group-hover:text-primary transition-colors truncate">
+                                  {holder.address}
                                 </p>
-                                <p className="text-xs font-medium">x{holder.balance}</p>
                               </div>
-                            </div>
+                              <div className="flex items-center gap-2">
+                                <p className="text-xs font-medium">x{holder.balance}</p>
+                                <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                              </div>
+                            </Link>
                           ))}
-                          {selectedToken.holderCount && selectedToken.holderCount > 5 && (
-                            <p className="text-xs text-muted-foreground text-center">
-                              +{selectedToken.holderCount - 5} more holders
+                          {selectedToken.holderCount && selectedToken.holderCount > 10 && (
+                            <p className="text-xs text-muted-foreground text-center pt-2">
+                              +{selectedToken.holderCount - 10} more holders
                             </p>
                           )}
                         </div>
