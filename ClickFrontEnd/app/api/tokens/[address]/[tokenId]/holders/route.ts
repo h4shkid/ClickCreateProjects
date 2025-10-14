@@ -8,20 +8,26 @@ export async function GET(
   try {
     const { address, tokenId } = await params
 
+    console.log('[Holders API] Fetching holders for:', address, 'token:', tokenId)
+
     const db = createDatabaseAdapter()
 
     // Get holders for this specific token
-    const holders = db.prepare(`
+    const stmt = db.prepare(`
       SELECT address, balance
       FROM current_state
       WHERE LOWER(contract_address) = LOWER(?)
         AND token_id = ?
         AND CAST(balance AS INTEGER) > 0
       ORDER BY CAST(balance AS INTEGER) DESC
-    `).all(address, tokenId) as Array<{
+    `)
+
+    const holders = await stmt.all(address, tokenId) as Array<{
       address: string
       balance: string
     }>
+
+    console.log('[Holders API] Found', holders.length, 'holders')
 
     const holderCount = holders.length
 
@@ -36,10 +42,11 @@ export async function GET(
     })
 
   } catch (error: any) {
-    console.error('Token holders error:', error)
+    console.error('[Holders API] Error:', error.message, error.stack)
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to fetch token holders'
+      error: error.message || 'Failed to fetch token holders',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     }, { status: 500 })
   }
 }

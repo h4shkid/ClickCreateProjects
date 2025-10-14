@@ -76,19 +76,30 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
     setLoadingHolders(true)
     try {
       const response = await fetch(`/api/tokens/${contractAddress}/${token.tokenId}/holders`)
-      const data = await response.json()
 
-      if (data.success) {
+      if (!response.ok) {
+        console.error('[Gallery] Holders API failed:', response.status, response.statusText)
+        const errorData = await response.json().catch(() => ({}))
+        console.error('[Gallery] Error details:', errorData)
+        setSelectedToken(token)
+        return
+      }
+
+      const data = await response.json()
+      console.log('[Gallery] Holders response:', data)
+
+      if (data.success && data.data.holders) {
         setSelectedToken({
           ...token,
           holders: data.data.holders,
           holderCount: data.data.holderCount
         })
       } else {
+        console.warn('[Gallery] No holders data in response')
         setSelectedToken(token)
       }
     } catch (err) {
-      console.error('Failed to load holders:', err)
+      console.error('[Gallery] Failed to load holders:', err)
       setSelectedToken(token)
     } finally {
       setLoadingHolders(false)
