@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Search, Filter, Grid, List, ExternalLink, Image as ImageIcon } from 'lucide-react'
 import Link from 'next/link'
-import { resolveENSBatch } from '@/lib/ens/resolver'
 
 interface NFTToken {
   tokenId: string
@@ -93,21 +92,39 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
       if (data.success && data.data.holders) {
         const holders = data.data.holders
 
-        // Resolve ENS names for holders (batch request)
+        // Resolve ENS names for holders (server-side batch request)
         const addresses = holders.map((h: any) => h.address)
-        const ensMap = await resolveENSBatch(addresses)
 
-        // Add ENS names to holders
-        const holdersWithENS = holders.map((holder: any) => ({
-          ...holder,
-          ensName: ensMap.get(holder.address.toLowerCase()) || null
-        }))
+        try {
+          const ensResponse = await fetch('/api/ens/batch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ addresses })
+          })
 
-        setSelectedToken({
-          ...token,
-          holders: holdersWithENS,
-          holderCount: data.data.holderCount
-        })
+          const ensData = await ensResponse.json()
+          const ensResults = ensData.success ? ensData.data : {}
+
+          // Add ENS names to holders
+          const holdersWithENS = holders.map((holder: any) => ({
+            ...holder,
+            ensName: ensResults[holder.address] || null
+          }))
+
+          setSelectedToken({
+            ...token,
+            holders: holdersWithENS,
+            holderCount: data.data.holderCount
+          })
+        } catch (ensError) {
+          console.warn('[Gallery] ENS resolution failed, showing without ENS names:', ensError)
+          // If ENS resolution fails, still show holders without ENS names
+          setSelectedToken({
+            ...token,
+            holders,
+            holderCount: data.data.holderCount
+          })
+        }
       } else {
         console.warn('[Gallery] No holders data in response')
         setSelectedToken(token)
