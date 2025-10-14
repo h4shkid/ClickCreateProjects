@@ -32,21 +32,15 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [selectedToken, setSelectedToken] = useState<NFTToken | null>(null)
-  const [nextCursor, setNextCursor] = useState<string | null>(null)
-  const [previousCursor, setPreviousCursor] = useState<string | null>(null)
-  const [currentCursor, setCurrentCursor] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [hasMore, setHasMore] = useState(false)
   const [loadingHolders, setLoadingHolders] = useState(false)
   const [snapshotLoading, setSnapshotLoading] = useState(false)
 
-  const fetchTokens = async (cursor: string | null = null) => {
+  const fetchTokens = async (page: number = 0) => {
     setLoadingTokens(true)
     try {
-      let url = `/api/gallery/tokens?contract=${contractAddress}&limit=50`
-      if (cursor) {
-        url += `&next=${cursor}`
-      }
-
-      const response = await fetch(url)
+      const response = await fetch(`/api/gallery/tokens?contract=${contractAddress}&limit=50&page=${page}`)
       const data = await response.json()
 
       if (data.success) {
@@ -59,8 +53,8 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
           attributes: token.attributes || []
         }))
         setTokens(mappedTokens)
-        setNextCursor(data.data.pagination.next)
-        setPreviousCursor(data.data.pagination.previous)
+        setCurrentPage(page)
+        setHasMore(data.data.pagination.hasMore)
       }
     } catch (err) {
       console.error('Failed to load tokens:', err)
@@ -205,15 +199,22 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
       {/* Results Count and Pagination */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          Showing {filteredTokens.length} {filteredTokens.length === 1 ? 'token' : 'tokens'}
+          Page {currentPage + 1} - Showing {filteredTokens.length} {filteredTokens.length === 1 ? 'token' : 'tokens'}
         </p>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => fetchTokens(nextCursor)}
-            disabled={!nextCursor || loadingTokens}
+            onClick={() => fetchTokens(currentPage - 1)}
+            disabled={currentPage === 0 || loadingTokens}
             className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed text-sm px-4 py-2"
           >
-            Next Page →
+            ← Previous
+          </button>
+          <button
+            onClick={() => fetchTokens(currentPage + 1)}
+            disabled={!hasMore || loadingTokens}
+            className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed text-sm px-4 py-2"
+          >
+            Next →
           </button>
         </div>
       </div>
