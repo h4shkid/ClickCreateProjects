@@ -3,10 +3,10 @@ import { createDatabaseAdapter } from '@/lib/database/adapter'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { address: string; tokenId: string } }
+  { params }: { params: Promise<{ address: string; tokenId: string }> }
 ) {
   try {
-    const { address, tokenId } = params
+    const { address, tokenId } = await params
 
     const db = createDatabaseAdapter()
 
