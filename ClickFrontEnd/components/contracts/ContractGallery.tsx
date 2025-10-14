@@ -33,11 +33,20 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
     const fetchTokens = async () => {
       setLoadingTokens(true)
       try {
-        const response = await fetch(`/api/contracts/${contractAddress}/gallery?limit=20`)
+        const response = await fetch(`/api/gallery/tokens?contract=${contractAddress}&limit=100`)
         const data = await response.json()
-        
+
         if (data.success) {
-          setTokens(data.tokens || [])
+          // Map the response to match our interface
+          const mappedTokens = data.data.tokens.map((token: any) => ({
+            tokenId: token.tokenId,
+            name: token.name,
+            description: token.description,
+            image: token.imageUrl,
+            attributes: token.attributes || [],
+            owner: token.topHolders?.[0]?.address
+          }))
+          setTokens(mappedTokens)
         }
       } catch (err) {
         console.error('Failed to load tokens:', err)
