@@ -378,36 +378,36 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
                     </div>
                   )}
 
-                  {/* Holders Section */}
-                  <div>
-                    <h3 className="font-semibold mb-2">Holders {selectedToken.holderCount && `(${selectedToken.holderCount})`}</h3>
-                    {loadingHolders ? (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                        <span className="text-sm">Loading holders...</span>
-                      </div>
-                    ) : selectedToken.holders && selectedToken.holders.length > 0 ? (
-                      <div className="space-y-2">
-                        {selectedToken.holders.slice(0, 5).map((holder, index) => (
-                          <div key={index} className="bg-card/50 rounded-lg p-2">
-                            <div className="flex items-center justify-between">
-                              <p className="text-xs font-mono text-muted-foreground truncate flex-1">
-                                {holder.address.slice(0, 6)}...{holder.address.slice(-4)}
-                              </p>
-                              <p className="text-xs font-medium">x{holder.balance}</p>
+                  {/* Holders Section - Only show if loading or data exists */}
+                  {(loadingHolders || (selectedToken.holders && selectedToken.holders.length > 0)) && (
+                    <div>
+                      <h3 className="font-semibold mb-2">Holders {selectedToken.holderCount && `(${selectedToken.holderCount})`}</h3>
+                      {loadingHolders ? (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                          <span className="text-sm">Loading holders...</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          {selectedToken.holders!.slice(0, 5).map((holder, index) => (
+                            <div key={index} className="bg-card/50 rounded-lg p-2">
+                              <div className="flex items-center justify-between">
+                                <p className="text-xs font-mono text-muted-foreground truncate flex-1">
+                                  {holder.address.slice(0, 6)}...{holder.address.slice(-4)}
+                                </p>
+                                <p className="text-xs font-medium">x{holder.balance}</p>
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                        {selectedToken.holderCount && selectedToken.holderCount > 5 && (
-                          <p className="text-xs text-muted-foreground text-center">
-                            +{selectedToken.holderCount - 5} more holders
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No holder data available in database</p>
-                    )}
-                  </div>
+                          ))}
+                          {selectedToken.holderCount && selectedToken.holderCount > 5 && (
+                            <p className="text-xs text-muted-foreground text-center">
+                              +{selectedToken.holderCount - 5} more holders
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {selectedToken.attributes && selectedToken.attributes.length > 0 && (
                     <div>
