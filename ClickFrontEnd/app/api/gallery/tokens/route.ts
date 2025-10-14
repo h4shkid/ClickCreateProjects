@@ -37,6 +37,8 @@ export async function GET(request: NextRequest) {
 
     // If no tokens in DB, fall back to OpenSea pagination
     if (dbTokens.length === 0) {
+      console.log('[Gallery] No tokens in DB, using OpenSea fallback for:', contractAddress)
+
       const response = await fetch(
         `https://api.opensea.io/api/v2/chain/ethereum/contract/${contractAddress}/nfts?limit=${limit}`,
         {
@@ -47,13 +49,17 @@ export async function GET(request: NextRequest) {
       )
 
       if (!response.ok) {
+        const errorText = await response.text()
+        console.error('[Gallery] OpenSea API error:', response.status, errorText)
         return NextResponse.json({
           success: false,
-          error: 'Failed to fetch NFTs from OpenSea'
+          error: `Failed to fetch NFTs from OpenSea: ${response.status}`
         }, { status: response.status })
       }
 
       const data = await response.json()
+      console.log('[Gallery] OpenSea returned:', data.nfts?.length, 'NFTs')
+
       const tokens = (data.nfts?.map((nft: any) => ({
         contractAddress: nft.contract,
         tokenId: nft.identifier,
