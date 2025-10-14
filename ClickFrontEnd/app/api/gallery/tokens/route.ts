@@ -6,7 +6,8 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const contractAddress = searchParams.get('contract')
-    const limit = parseInt(searchParams.get('limit') || '24')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const next = searchParams.get('next') // OpenSea pagination cursor
 
     if (!contractAddress) {
       return NextResponse.json({
@@ -22,15 +23,18 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
+    // Build OpenSea API URL with pagination
+    let url = `https://api.opensea.io/api/v2/chain/ethereum/contract/${contractAddress}/nfts?limit=${limit}`
+    if (next) {
+      url += `&next=${next}`
+    }
+
     // Fetch NFTs from OpenSea API
-    const response = await fetch(
-      `https://api.opensea.io/api/v2/chain/ethereum/contract/${contractAddress}/nfts?limit=${limit}`,
-      {
-        headers: {
-          'x-api-key': OPENSEA_API_KEY
-        }
+    const response = await fetch(url, {
+      headers: {
+        'x-api-key': OPENSEA_API_KEY
       }
-    )
+    })
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
@@ -43,8 +47,8 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json()
 
-    // Transform OpenSea data to our format
-    const tokens = data.nfts?.map((nft: any) => ({
+    // Transform OpenSea data to our format (reverse to show newest first)
+    const tokens = (data.nfts?.map((nft: any) => ({
       contractAddress: nft.contract,
       tokenId: nft.identifier,
       name: nft.name || `#${nft.identifier}`,
@@ -58,16 +62,15 @@ export async function GET(request: NextRequest) {
         name: nft.collection,
         imageUrl: nft.image_url
       }
-    })) || []
+    })) || []).reverse()
 
     return NextResponse.json({
       success: true,
       data: {
         tokens,
         pagination: {
-          total: tokens.length,
-          limit,
-          offset: 0,
+          next: data.next || null,
+          previous: data.previous || null,
           hasMore: data.next !== null
         }
       }

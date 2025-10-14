@@ -15,6 +15,11 @@ interface NFTToken {
     value: string
   }>
   owner?: string
+  holders?: Array<{
+    address: string
+    balance: string
+  }>
+  holderCount?: number
 }
 
 interface ContractGalleryProps {
@@ -25,38 +30,110 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
   const [tokens, setTokens] = useState<NFTToken[]>([])
   const [loadingTokens, setLoadingTokens] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [selectedToken, setSelectedToken] = useState<NFTToken | null>(null)
+  const [nextCursor, setNextCursor] = useState<string | null>(null)
+  const [previousCursor, setPreviousCursor] = useState<string | null>(null)
+  const [currentCursor, setCurrentCursor] = useState<string | null>(null)
+  const [loadingHolders, setLoadingHolders] = useState(false)
+  const [snapshotLoading, setSnapshotLoading] = useState(false)
+
+  const fetchTokens = async (cursor: string | null = null) => {
+    setLoadingTokens(true)
+    try {
+      let url = `/api/gallery/tokens?contract=${contractAddress}&limit=50`
+      if (cursor) {
+        url += `&next=${cursor}`
+      }
+
+      const response = await fetch(url)
+      const data = await response.json()
+
+      if (data.success) {
+        // Map the response to match our interface
+        const mappedTokens = data.data.tokens.map((token: any) => ({
+          tokenId: token.tokenId,
+          name: token.name,
+          description: token.description,
+          image: token.imageUrl,
+          attributes: token.attributes || []
+        }))
+        setTokens(mappedTokens)
+        setNextCursor(data.data.pagination.next)
+        setPreviousCursor(data.data.pagination.previous)
+      }
+    } catch (err) {
+      console.error('Failed to load tokens:', err)
+    } finally {
+      setLoadingTokens(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchTokens = async () => {
-      setLoadingTokens(true)
-      try {
-        const response = await fetch(`/api/gallery/tokens?contract=${contractAddress}&limit=100`)
-        const data = await response.json()
-
-        if (data.success) {
-          // Map the response to match our interface
-          const mappedTokens = data.data.tokens.map((token: any) => ({
-            tokenId: token.tokenId,
-            name: token.name,
-            description: token.description,
-            image: token.imageUrl,
-            attributes: token.attributes || []
-          }))
-          setTokens(mappedTokens)
-        }
-      } catch (err) {
-        console.error('Failed to load tokens:', err)
-      } finally {
-        setLoadingTokens(false)
-      }
-    }
-
     if (contractAddress) {
       fetchTokens()
     }
   }, [contractAddress])
+
+  const fetchTokenHolders = async (token: NFTToken) => {
+    setLoadingHolders(true)
+    try {
+      const response = await fetch(`/api/tokens/${contractAddress}/${token.tokenId}/holders`)
+      const data = await response.json()
+
+      if (data.success) {
+        setSelectedToken({
+          ...token,
+          holders: data.data.holders,
+          holderCount: data.data.holderCount
+        })
+      } else {
+        setSelectedToken(token)
+      }
+    } catch (err) {
+      console.error('Failed to load holders:', err)
+      setSelectedToken(token)
+    } finally {
+      setLoadingHolders(false)
+    }
+  }
+
+  const handleTokenClick = (token: NFTToken) => {
+    setSelectedToken(token)
+    fetchTokenHolders(token)
+  }
+
+  const handleSnapshot = async () => {
+    if (!selectedToken) return
+
+    setSnapshotLoading(true)
+    try {
+      const response = await fetch('/api/snapshot/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contractAddress,
+          tokenId: selectedToken.tokenId
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Download the snapshot
+        const blob = new Blob([JSON.stringify(data.data.snapshot, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `snapshot-${contractAddress}-${selectedToken.tokenId}.json`
+        a.click()
+      }
+    } catch (err) {
+      console.error('Failed to generate snapshot:', err)
+    } finally {
+      setSnapshotLoading(false)
+    }
+  }
 
   const filteredTokens = tokens.filter(token =>
     token.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -125,11 +202,20 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
         </div>
       </div>
 
-      {/* Results Count */}
+      {/* Results Count and Pagination */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {filteredTokens.length} {filteredTokens.length === 1 ? 'token' : 'tokens'} found
+          Showing {filteredTokens.length} {filteredTokens.length === 1 ? 'token' : 'tokens'}
         </p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => fetchTokens(nextCursor)}
+            disabled={!nextCursor || loadingTokens}
+            className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed text-sm px-4 py-2"
+          >
+            Next Page →
+          </button>
+        </div>
       </div>
 
       {/* Gallery Grid */}
@@ -139,7 +225,7 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
             <div
               key={token.tokenId}
               className="card-glass overflow-hidden cursor-pointer group"
-              onClick={() => setSelectedToken(token)}
+              onClick={() => handleTokenClick(token)}
             >
               <div className="aspect-square relative overflow-hidden rounded-t-lg">
                 {token.image ? (
@@ -189,10 +275,10 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
         /* List View */
         <div className="space-y-4">
           {filteredTokens.map((token) => (
-            <div 
+            <div
               key={token.tokenId}
               className="bg-card/20 backdrop-blur-sm border border-border rounded-lg p-4 hover:border-primary/50 transition-all duration-200 cursor-pointer"
-              onClick={() => setSelectedToken(token)}
+              onClick={() => handleTokenClick(token)}
             >
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 relative bg-background/50 rounded-lg overflow-hidden flex-shrink-0">
@@ -295,12 +381,36 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
                     </div>
                   )}
 
-                  {selectedToken.owner && (
-                    <div>
-                      <h3 className="font-semibold mb-1">Top Holder</h3>
-                      <p className="text-muted-foreground font-mono text-xs break-all">{selectedToken.owner}</p>
-                    </div>
-                  )}
+                  {/* Holders Section */}
+                  <div>
+                    <h3 className="font-semibold mb-2">Holders {selectedToken.holderCount && `(${selectedToken.holderCount})`}</h3>
+                    {loadingHolders ? (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        <span className="text-sm">Loading holders...</span>
+                      </div>
+                    ) : selectedToken.holders && selectedToken.holders.length > 0 ? (
+                      <div className="space-y-2">
+                        {selectedToken.holders.slice(0, 5).map((holder, index) => (
+                          <div key={index} className="bg-card/50 rounded-lg p-2">
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-mono text-muted-foreground truncate flex-1">
+                                {holder.address.slice(0, 6)}...{holder.address.slice(-4)}
+                              </p>
+                              <p className="text-xs font-medium">x{holder.balance}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {selectedToken.holderCount && selectedToken.holderCount > 5 && (
+                          <p className="text-xs text-muted-foreground text-center">
+                            +{selectedToken.holderCount - 5} more holders
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No holder data available in database</p>
+                    )}
+                  </div>
 
                   {selectedToken.attributes && selectedToken.attributes.length > 0 && (
                     <div>
@@ -316,21 +426,45 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
                     </div>
                   )}
 
-                  <div className="flex gap-3 pt-4">
-                    <Link
-                      href={`https://opensea.io/assets/ethereum/${contractAddress}/${selectedToken.tokenId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary flex-1 flex items-center justify-center gap-2"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      OpenSea
-                    </Link>
-                    <Link
-                      href={`https://etherscan.io/token/${contractAddress}?a=${selectedToken.tokenId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-secondary flex items-center justify-center gap-2"
+                  {/* Action Buttons */}
+                  <div className="space-y-3 pt-4">
+                    {selectedToken.holders && selectedToken.holders.length > 0 && (
+                      <button
+                        onClick={handleSnapshot}
+                        disabled={snapshotLoading}
+                        className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        {snapshotLoading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            <span>Generating Snapshot...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                            </svg>
+                            <span>Download Token Snapshot</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+
+                    <div className="flex gap-3">
+                      <Link
+                        href={`https://opensea.io/assets/ethereum/${contractAddress}/${selectedToken.tokenId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary flex-1 flex items-center justify-center gap-2"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        OpenSea
+                      </Link>
+                      <Link
+                        href={`https://etherscan.io/token/${contractAddress}?a=${selectedToken.tokenId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-secondary flex items-center justify-center gap-2"
                     >
                       <ExternalLink className="w-4 h-4" />
                       Etherscan
