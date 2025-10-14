@@ -27,8 +27,6 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedToken, setSelectedToken] = useState<NFTToken | null>(null)
-  const [needsSync, setNeedsSync] = useState(false)
-  const [syncing, setSyncing] = useState(false)
 
   useEffect(() => {
     const fetchTokens = async () => {
@@ -44,11 +42,9 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
             name: token.name,
             description: token.description,
             image: token.imageUrl,
-            attributes: token.attributes || [],
-            owner: token.topHolders?.[0]?.address
+            attributes: token.attributes || []
           }))
           setTokens(mappedTokens)
-          setNeedsSync(data.data.needsSync || false)
         }
       } catch (err) {
         console.error('Failed to load tokens:', err)
@@ -66,26 +62,6 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
     token.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     token.tokenId.includes(searchQuery)
   )
-
-  const handleSync = async () => {
-    setSyncing(true)
-    try {
-      const response = await fetch(`/api/contracts/${contractAddress}/sync`, {
-        method: 'POST'
-      })
-      const data = await response.json()
-
-      if (data.success) {
-        // Refresh tokens after a delay
-        setTimeout(() => {
-          window.location.reload()
-        }, 3000)
-      }
-    } catch (err) {
-      console.error('Failed to trigger sync:', err)
-      setSyncing(false)
-    }
-  }
 
   if (loadingTokens && tokens.length === 0) {
     return (
@@ -261,27 +237,11 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
         <div className="text-center py-12">
           <ImageIcon className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2">No tokens found</h3>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-muted-foreground">
             {searchQuery
               ? 'Try adjusting your search terms'
-              : needsSync
-                ? 'This collection has not been synced yet. Click below to start syncing blockchain data.'
-                : 'This contract has no tokens or they are still loading'}
+              : 'No NFTs found in this collection'}
           </p>
-          {needsSync && !syncing && (
-            <button
-              onClick={handleSync}
-              className="btn-primary"
-            >
-              Sync Collection Data
-            </button>
-          )}
-          {syncing && (
-            <div className="flex items-center justify-center gap-2 text-primary">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
-              <span>Starting sync...</span>
-            </div>
-          )}
         </div>
       )}
 
