@@ -4,18 +4,30 @@ import { useState, useEffect } from 'react'
 import { Search, Filter, Grid, List, Download, ExternalLink, RefreshCw, Image as ImageIcon } from 'lucide-react'
 import axios from 'axios'
 import NFTImage from '@/components/ui/NFTImage'
+import Link from 'next/link'
 
 interface NFTMetadata {
+  contractAddress: string
   tokenId: string
   name: string
   description: string
-  image: string
+  imageUrl: string
   attributes: Array<{
     trait_type: string
     value: string | number
   }>
-  owner?: string
-  balance?: string
+  totalSupply: string
+  holderCount: number
+  maxBalance: string
+  topHolders: Array<{
+    address: string
+    balance: string
+  }>
+  collection: {
+    name: string
+    symbol: string
+    imageUrl: string
+  }
 }
 
 interface GalleryData {
@@ -32,45 +44,55 @@ export default function GalleryPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [page, setPage] = useState(1)
   const [selectedNFT, setSelectedNFT] = useState<NFTMetadata | null>(null)
-  const [filterAttribute, setFilterAttribute] = useState<string>('')
+  const [selectedContract, setSelectedContract] = useState<string>('')
+  const [contracts, setContracts] = useState<Array<{ address: string; name: string; symbol: string }>>([])
   const [refreshing, setRefreshing] = useState(false)
-  const [itemsPerPage, setItemsPerPage] = useState(24) // Increased to show more items
+  const [itemsPerPage, setItemsPerPage] = useState(24)
   const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
+    fetchContracts()
+  }, [])
+
+  useEffect(() => {
     fetchGallery()
-  }, [page, itemsPerPage])
+  }, [page, itemsPerPage, selectedContract])
+
+  const fetchContracts = async () => {
+    try {
+      const response = await axios.get('/api/contracts')
+      if (response.data.success) {
+        setContracts(response.data.data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch contracts:', error)
+    }
+  }
 
   const fetchGallery = async () => {
     setLoading(true)
-    
+
     try {
-      const response = await axios.get('/api/nft/tokens', {
-        params: {
-          limit: showAll ? 1000 : itemsPerPage,
-          offset: showAll ? 0 : (page - 1) * itemsPerPage,
-          sortBy: 'holders'
-        }
-      })
-      
-      if (response.data.success && response.data.data.tokens) {
-        // Map tokens to gallery format
-        const nfts = response.data.data.tokens.map((token: any) => ({
-          tokenId: token.tokenId,
-          name: token.name || `Token #${token.tokenId.substring(0, 8)}`,
-          description: token.description || `ERC-1155 Token with ${token.holderCount} holders. Total supply: ${token.totalSupply}`,
-          image: token.imageUrl,
-          attributes: token.attributes?.length > 0 ? token.attributes : [
-            { trait_type: 'Holders', value: token.holderCount },
-            { trait_type: 'Supply', value: parseInt(token.totalSupply).toLocaleString() },
-            { trait_type: 'Max Balance', value: parseInt(token.maxBalance).toLocaleString() }
-          ],
-          owner: token.topHolders?.[0]?.address || null,
-          balance: token.topHolders?.[0]?.balance || '0'
-        }))
-        
+      const params: any = {
+        limit: showAll ? 1000 : itemsPerPage,
+        offset: showAll ? 0 : (page - 1) * itemsPerPage,
+        sortBy: 'holders'
+      }
+
+      if (selectedContract) {
+        params.contract = selectedContract
+      }
+
+      if (searchQuery) {
+        params.search = searchQuery
+      }
+
+      const response = await axios.get('/api/gallery/tokens', { params })
+
+      if (response.data.success) {
+        const nfts = response.data.data.tokens
         const totalPages = Math.ceil(response.data.data.pagination.total / itemsPerPage)
-        
+
         setGalleryData({
           nfts,
           totalCount: response.data.data.pagination.total,
@@ -137,20 +159,42 @@ export default function GalleryPage() {
 
         {/* Controls */}
         <div className="card-glass mb-8">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <form onSubmit={handleSearch} className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by name, ID, or attributes..."
-                  className="w-full pl-10 pr-4 py-3 input-glass"
-                />
+          <div className="flex flex-col gap-4">
+            {/* Search and Collection Filter */}
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <form onSubmit={handleSearch} className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by name, ID, or attributes..."
+                    className="w-full pl-10 pr-4 py-3 input-glass"
+                  />
+                </div>
+              </form>
+
+              {/* Collection Filter */}
+              <div className="lg:w-64">
+                <select
+                  value={selectedContract}
+                  onChange={(e) => {
+                    setSelectedContract(e.target.value)
+                    setPage(1)
+                  }}
+                  className="w-full py-3 px-4 input-glass"
+                >
+                  <option value="">All Collections</option>
+                  {contracts.map((contract) => (
+                    <option key={contract.address} value={contract.address}>
+                      {contract.name} ({contract.symbol})
+                    </option>
+                  ))}
+                </select>
               </div>
-            </form>
+            </div>
 
             {/* View Controls */}
             <div className="flex gap-2">
@@ -225,18 +269,21 @@ export default function GalleryPage() {
                     {/* Image */}
                     <div className="aspect-square relative overflow-hidden rounded-t-lg">
                       <NFTImage
-                        src={nft.image}
-                        alt={nft.name}
+                        src={nft.imageUrl}
+                        alt={nft.name || `Token #${nft.tokenId}`}
                         className="w-full h-full group-hover:scale-110 transition-transform duration-500"
-                        fallbackText={nft.name}
+                        fallbackText={nft.name || `#${nft.tokenId}`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     </div>
-                    
+
                     {/* Info */}
                     <div className="p-4">
-                      <h3 className="font-semibold text-lg mb-1">{nft.name || `NFT #${nft.tokenId}`}</h3>
-                      <p className="text-sm text-muted-foreground mb-3">Token ID: {nft.tokenId}</p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-lg">{nft.name || `Token #${nft.tokenId}`}</h3>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-1">{nft.collection.name}</p>
+                      <p className="text-sm text-muted-foreground mb-3">ID: {nft.tokenId}</p>
                       
                       {/* Attributes Preview */}
                       <div className="flex flex-wrap gap-2">
@@ -269,18 +316,19 @@ export default function GalleryPage() {
                     {/* Image */}
                     <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
                       <NFTImage
-                        src={nft.image}
-                        alt={nft.name}
+                        src={nft.imageUrl}
+                        alt={nft.name || `Token #${nft.tokenId}`}
                         className="w-full h-full"
-                        fallbackText=""
+                        fallbackText={nft.tokenId.substring(0, 4)}
                       />
                     </div>
-                    
+
                     {/* Info */}
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-1">{nft.name || `NFT #${nft.tokenId}`}</h3>
-                      <p className="text-sm text-muted-foreground mb-2">Token ID: {nft.tokenId}</p>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{nft.description}</p>
+                      <h3 className="font-semibold text-lg mb-1">{nft.name || `Token #${nft.tokenId}`}</h3>
+                      <p className="text-xs text-muted-foreground mb-1">{nft.collection.name}</p>
+                      <p className="text-sm text-muted-foreground mb-2">ID: {nft.tokenId}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{nft.description || `${nft.holderCount} holders, ${parseInt(nft.totalSupply).toLocaleString()} total supply`}</p>
                       
                       {/* Attributes */}
                       <div className="flex flex-wrap gap-2">
@@ -412,29 +460,47 @@ export default function GalleryPage() {
                 {/* Image */}
                 <div className="aspect-square rounded-lg overflow-hidden">
                   <NFTImage
-                    src={selectedNFT.image}
-                    alt={selectedNFT.name}
+                    src={selectedNFT.imageUrl}
+                    alt={selectedNFT.name || `Token #${selectedNFT.tokenId}`}
                     className="w-full h-full"
-                    fallbackText={selectedNFT.name}
+                    fallbackText={selectedNFT.name || `#${selectedNFT.tokenId}`}
                   />
                 </div>
-                
+
                 {/* Details */}
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">{selectedNFT.name || `NFT #${selectedNFT.tokenId}`}</h2>
+                  <div className="mb-4">
+                    <h2 className="text-2xl font-bold mb-1">{selectedNFT.name || `Token #${selectedNFT.tokenId}`}</h2>
+                    <p className="text-sm text-muted-foreground">{selectedNFT.collection.name}</p>
+                  </div>
                   <p className="text-muted-foreground mb-4">Token ID: {selectedNFT.tokenId}</p>
-                  
+
                   {selectedNFT.description && (
                     <div className="mb-6">
                       <h3 className="font-semibold mb-2">Description</h3>
                       <p className="text-muted-foreground">{selectedNFT.description}</p>
                     </div>
                   )}
-                  
-                  {selectedNFT.owner && (
+
+                  <div className="mb-6">
+                    <h3 className="font-semibold mb-2">Stats</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-card rounded-lg p-3">
+                        <p className="text-xs text-muted-foreground">Holders</p>
+                        <p className="font-medium">{selectedNFT.holderCount}</p>
+                      </div>
+                      <div className="bg-card rounded-lg p-3">
+                        <p className="text-xs text-muted-foreground">Total Supply</p>
+                        <p className="font-medium">{parseInt(selectedNFT.totalSupply).toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {selectedNFT.topHolders && selectedNFT.topHolders.length > 0 && (
                     <div className="mb-6">
-                      <h3 className="font-semibold mb-2">Owner</h3>
-                      <p className="font-mono text-sm">{selectedNFT.owner}</p>
+                      <h3 className="font-semibold mb-2">Top Holder</h3>
+                      <p className="font-mono text-sm">{selectedNFT.topHolders[0].address}</p>
+                      <p className="text-xs text-muted-foreground">Balance: {parseInt(selectedNFT.topHolders[0].balance).toLocaleString()}</p>
                     </div>
                   )}
                   
@@ -453,14 +519,24 @@ export default function GalleryPage() {
                   )}
                   
                   <div className="flex gap-3">
-                    <button className="btn-primary flex-1 flex items-center justify-center gap-2">
+                    <Link
+                      href={`https://opensea.io/assets/ethereum/${selectedNFT.contractAddress}/${selectedNFT.tokenId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary flex-1 flex items-center justify-center gap-2"
+                    >
                       <ExternalLink className="w-4 h-4" />
-                      View on Explorer
-                    </button>
-                    <button className="btn-secondary flex items-center justify-center gap-2">
-                      <Download className="w-4 h-4" />
-                      Download
-                    </button>
+                      View on OpenSea
+                    </Link>
+                    <Link
+                      href={`https://etherscan.io/token/${selectedNFT.contractAddress}?a=${selectedNFT.tokenId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-secondary flex items-center justify-center gap-2"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Etherscan
+                    </Link>
                   </div>
                 </div>
               </div>
