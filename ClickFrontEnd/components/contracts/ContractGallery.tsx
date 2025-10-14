@@ -465,10 +465,11 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn-secondary flex items-center justify-center gap-2"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      Etherscan
-                    </Link>
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Etherscan
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
