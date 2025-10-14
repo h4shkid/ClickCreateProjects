@@ -15,6 +15,22 @@ export async function GET(request: NextRequest) {
 
     const db = new Database(dbPath, { readonly: true })
 
+    // If specific contract requested, verify it exists
+    if (contractAddress) {
+      const contractExists = db.prepare(`
+        SELECT address, name FROM contracts
+        WHERE LOWER(address) = LOWER(?)
+      `).get(contractAddress) as { address: string; name: string } | undefined
+
+      if (!contractExists) {
+        db.close()
+        return NextResponse.json({
+          success: false,
+          error: 'Contract not found. Please add this collection first.'
+        }, { status: 404 })
+      }
+    }
+
     // Build WHERE clause
     let whereClause = '1=1'
     const params: any[] = []
@@ -148,7 +164,8 @@ export async function GET(request: NextRequest) {
           limit,
           offset,
           hasMore: offset + limit < total
-        }
+        },
+        needsSync: contractAddress && total === 0
       }
     })
 
