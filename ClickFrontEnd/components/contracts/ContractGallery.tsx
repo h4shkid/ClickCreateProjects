@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Search, Filter, Grid, List, ExternalLink, Image as ImageIcon } from 'lucide-react'
 import Link from 'next/link'
+import { resolveENSBatch } from '@/lib/ens/resolver'
 
 interface NFTToken {
   tokenId: string
@@ -18,6 +19,7 @@ interface NFTToken {
   holders?: Array<{
     address: string
     balance: string
+    ensName?: string | null
   }>
   holderCount?: number
 }
@@ -89,9 +91,21 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
       console.log('[Gallery] Holders response:', data)
 
       if (data.success && data.data.holders) {
+        const holders = data.data.holders
+
+        // Resolve ENS names for holders (batch request)
+        const addresses = holders.map((h: any) => h.address)
+        const ensMap = await resolveENSBatch(addresses)
+
+        // Add ENS names to holders
+        const holdersWithENS = holders.map((holder: any) => ({
+          ...holder,
+          ensName: ensMap.get(holder.address.toLowerCase()) || null
+        }))
+
         setSelectedToken({
           ...token,
-          holders: data.data.holders,
+          holders: holdersWithENS,
           holderCount: data.data.holderCount
         })
       } else {
@@ -467,9 +481,22 @@ export function ContractGallery({ contractAddress }: ContractGalleryProps) {
                                 }`}>
                                   {index + 1}
                                 </div>
-                                <p className="text-xs font-mono text-muted-foreground group-hover:text-foreground transition-colors truncate">
-                                  {holder.address}
-                                </p>
+                                <div className="flex flex-col flex-1 min-w-0">
+                                  {holder.ensName ? (
+                                    <>
+                                      <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                                        {holder.ensName}
+                                      </p>
+                                      <p className="text-xs font-mono text-muted-foreground truncate">
+                                        {holder.address}
+                                      </p>
+                                    </>
+                                  ) : (
+                                    <p className="text-xs font-mono text-muted-foreground group-hover:text-foreground transition-colors truncate">
+                                      {holder.address}
+                                    </p>
+                                  )}
+                                </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-1 rounded">
