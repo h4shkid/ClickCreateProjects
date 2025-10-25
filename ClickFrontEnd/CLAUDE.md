@@ -4,678 +4,642 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ClickFrontEnd** - A universal multi-contract NFT analytics platform built with Next.js 15, TypeScript, and Tailwind CSS. Originally designed for a single ClickCreate collection, it has been transformed into a comprehensive platform supporting any ERC-721/ERC-1155 contract across multiple blockchains. The application features wallet-based authentication, user profiles, shared blockchain data caching, and sophisticated contract discovery with OpenSea integration.
-
-## 🔴 CRITICAL: INTERNAL vs PUBLIC SNAPSHOT ACCESS - READ THIS FIRST! 🔴
-
-**The snapshot page has TWO different access levels:**
-
-### 1. **INTERNAL SNAPSHOT ACCESS** (Restricted - ClickCreate Team Only)
-- **Page**: `/collections/[address]/snapshot`
-- **Access Control**: Only accessible by authorized wallet (`0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC`)
-- **Purpose**: Internal use for ClickCreate team to generate advanced snapshots for ANY collection
-- **Advanced Features** (only available to internal wallet):
-  - Full Season mode (holders with ALL tokens in a season)
-  - Season quick-select buttons (Season 1, 2, 3, All Seasons, SubPasses Only, Entire Collection)
-  - Advanced token filtering with exact match options
-  - Historical snapshots with date range comparison
-  - Blockchain sync controls
-  - Data validation tools
-- **UI**: Compact single-column layout (max-w-4xl) with all advanced controls
-- **Recently Updated**: Redesigned to be more compact and easier to use
-
-### 2. **PUBLIC SNAPSHOT ACCESS** (User-facing)
-- **Page**: Same route `/collections/[address]/snapshot`
-- **Access Control**: Available to ALL authenticated users for collections in "My Collections"
-- **Entry Point**: Users click "Snapshot" button from their collection cards in "My Collections" page
-- **Purpose**: Allow users to generate basic snapshots for collections they've added to their profile
-- **Features** (standard users see):
-  - Same page as internal but WITHOUT wallet restriction check
-  - All features available but intended for simpler public use
-  - Users can only snapshot collections they've added to "My Collections"
-
-### Key Distinction:
-- **SAME PAGE** (`/collections/[address]/snapshot`) serves BOTH purposes
-- **INTERNAL ACCESS**: Bypasses "My Collections" requirement, shows to authorized wallet only
-- **PUBLIC ACCESS**: Users access via "My Collections" → click collection → "Snapshot" button
-- When user mentions "internal snapshot" = they mean the wallet-restricted version I just redesigned
-- When user mentions "public snapshot" or "My Collections snapshot" = they mean user-accessible version
-
-**When working on snapshot features, ALWAYS clarify if changes should affect:**
-- ✅ Internal access only (authorized wallet)
-- ✅ Public access only (all users)
-- ✅ Both (the entire snapshot page)
+**ClickFrontEnd** - Universal multi-contract NFT analytics platform. Analyzes any ERC-721/ERC-1155 contract across multiple blockchains with wallet authentication, OpenSea integration, and comprehensive data validation. Evolved from single-collection tool to full multi-contract platform.
 
 ## Essential Commands
 
 ```bash
 # Development
-npm run dev      # Start development server on http://localhost:3000
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run ESLint (run this after making changes)
+npm run dev      # Development server → http://localhost:3000
+npm run build    # Production build (always run before committing major changes)
+npm run lint     # Lint check (run before commits)
 
-# Database initialization
-npx tsx scripts/init-db.js                      # Initialize SQLite database (legacy)
+# Database Management
 npx tsx scripts/init-multi-contract-db.js       # Initialize multi-contract database
-npx tsx scripts/apply-enhanced-schema.js        # Apply enhanced schema
-npx tsx scripts/rebuild-state.js                # Rebuild current state from events
-
-# Blockchain synchronization
-npx tsx scripts/sync-blockchain.ts              # Full blockchain sync
-npx tsx scripts/comprehensive-sync.ts           # Comprehensive data sync with metadata
-
-# Metadata operations
-npx tsx scripts/fetch-metadata.ts               # Fetch single token metadata
-npx tsx scripts/fetch-all-metadata.ts           # Batch metadata fetching
-npx tsx scripts/fetch-all-missing-metadata.ts   # Fetch only missing metadata
-
-# Data validation
+npx tsx scripts/rebuild-state.js                # Rebuild current state from events (fixes balance issues)
 npx tsx scripts/validate-data.ts --verbose      # Comprehensive data validation
-npx tsx scripts/validate-data.ts --type balance # Quick balance validation
 
-# Contract management (Multi-contract platform)
-npx tsx scripts/add-internal-collection.js      # Add internal collection to database
-npx tsx scripts/remove-collection.js            # Remove collection from database
-npx tsx scripts/find-deployment-block.js        # Find contract deployment block
+# Blockchain Synchronization
+npx tsx scripts/sync-blockchain.ts              # Full blockchain event sync
+npx tsx scripts/comprehensive-sync.ts           # Sync + metadata fetching
+npx tsx scripts/fetch-all-missing-metadata.ts   # Fetch only missing token metadata
 
-# Database utilities
-npx tsx scripts/debug-sync-status.js            # Debug synchronization status
-npx tsx scripts/compare-holder-data.js          # Compare holder data snapshots
-npx tsx scripts/fix-duplicate-tokens.js         # Fix duplicate token entries
+# Data Validation (Critical before exports!)
+npx tsx scripts/validate-data.ts --verbose              # Full validation
+npx tsx scripts/validate-data.ts --type balance        # Quick balance check
+npx tsx scripts/validate-data.ts --type blocks --start-block X --end-block Y
+
+# Contract Management
+npx tsx scripts/check-active-contracts.ts       # List active contracts
+npx tsx scripts/verify-onchain-supply.ts        # Verify on-chain vs database totals
 ```
 
-## Available Scripts Reference
+## Script Organization
 
-**Database Setup & Migration:**
-- `init-db.js` - Legacy single-contract database initialization
-- `init-multi-contract-db.js` - Multi-contract platform database setup
-- `apply-enhanced-schema.js` - Apply schema enhancements
-- `migrate-to-multi-contract.js` - Migrate from single to multi-contract schema
-- `add-progress-column.js` - Database schema updates
+The `scripts/` directory contains 50+ utility scripts organized by purpose:
 
-**Blockchain Synchronization:**
-- `sync-blockchain.ts` - Full blockchain event synchronization
-- `comprehensive-sync.ts` - Complete sync with metadata fetching
-- `debug-sync-status.js` - Debug and inspect sync status
-- `find-deployment-block.js` - Find contract creation block
+### Database Management
+- `init-multi-contract-db.js` - Initialize multi-contract database
+- `rebuild-state.js` / `rebuild-contract-state.ts` - Rebuild current state from events
+- `rebuild-all-contracts.ts` - Rebuild state for all contracts
+- `migrate-to-new-db.ts` - Migrate between database versions
+- `check-postgres-schema.ts` - Verify PostgreSQL schema integrity
+- `fix-all-sequences.ts` - Fix PostgreSQL sequence issues
+- `deep-sequence-check.ts` - Deep check of all sequences
 
-**Data Processing:**
-- `rebuild-state.js` - Rebuild current state from blockchain events
-- `rebuild-current-state.js` - Alternative state rebuilding script
-- `fix-duplicate-tokens.js` - Clean duplicate token records
-- `compare-holder-data.js` - Compare holder snapshots
+### Blockchain Synchronization
+- `sync-blockchain.ts` - Full blockchain event sync
+- `comprehensive-sync.ts` - Sync + metadata fetching
+- `fill-sync-gaps.ts` - Fill missing block ranges
+- `full-resync-from-zero.ts` - Complete resync (use with caution!)
+- `auto-sync-and-validate.ts` - Automated sync with validation
+- `check-latest-blockchain-block.ts` - Verify latest synced block
 
-**Metadata Management:**
-- `fetch-metadata.ts` - Fetch metadata for specific token
-- `fetch-all-metadata.ts` - Batch fetch all token metadata
-- `fetch-all-missing-metadata.ts` - Fetch only missing metadata
+### Data Validation & Verification
+- `validate-data.ts` - Comprehensive validation suite
+- `verify-onchain-supply.ts` - Verify on-chain vs database totals
+- `validate-and-fix-contract.ts` - Contract-specific validation + fixes
+- `check-contract-events.ts` - Verify event data integrity
+- `check-current-state-schema.ts` - Verify current_state table
 
-**Validation & Testing:**
-- `validate-data.ts` - Comprehensive data validation
-- `test-wallet-integration.js` - Test wallet connection setup
-- `test-auth-database.js` - Test authentication database
+### Metadata & Collection Management
+- `fetch-all-missing-metadata.ts` - Fetch missing token metadata
+- `fetch-all-metadata.ts` - Fetch all metadata (force refresh)
+- `fetch-metadata.ts` - Fetch metadata for specific tokens
+- `check-collection.ts` - Verify collection data
+- `fix-all-collections.ts` - Repair collection metadata
+- `fix-all-collections-fast.ts` - Fast collection repair
 
-**Contract Management:**
-- `add-internal-collection.js` - Register internal collections
-- `remove-collection.js` - Remove collections from platform
-- `download-all-holders.js` - Export holder data
-- `quick-complete-holders.js` - Quick holder analysis
+### Contract Management
+- `check-active-contracts.ts` - List active contracts
+- `check-contract-exists.ts` - Verify contract in database
+- `check-contract-type.ts` - Verify contract type detection
+- `check-contracts-addresses.ts` - List all contract addresses
+
+### PostgreSQL-Specific
+- `export-sqlite-to-json.ts` - Export SQLite to JSON
+- `import-json-to-postgres.ts` - Import JSON to PostgreSQL
+- `fast-import-to-postgres.ts` - Fast bulk import
+- `verify-postgres-data.ts` - Verify PostgreSQL data integrity
+- `fix-postgres-balance-types.ts` - Fix balance column types
+- `fix-postgres-sequences.ts` - Fix sequence numbering
+
+**Usage Pattern:**
+```bash
+# List all available scripts
+ls scripts/*.ts scripts/*.js
+
+# Run any script with tsx (TypeScript) or node (JavaScript)
+npx tsx scripts/[script-name].ts
+node scripts/[script-name].js
+```
 
 ## High-Level Architecture
 
-### Multi-Contract Platform Architecture
+### 1. Multi-Contract Platform Design
 
-The platform underwent a complete transformation from single-collection to universal multi-contract support. Key architectural changes:
+**Core Principle:** Single application supporting unlimited ERC-721/ERC-1155 contracts with shared blockchain data cache.
 
-1. **Multi-Contract Database Layer** (`lib/database/`)
-   - **Primary Schema**: `multi-contract-schema.sql` - Complete multi-contract database design
-   - **Legacy Schema**: `enhanced-schema.sql` - Enhanced single-collection schema  
-   - **Core Tables**: `contracts`, `user_profiles`, `user_snapshots`, `contract_sync_status`, `blockchain_cache`
-   - **Shared Data**: Blockchain data cache shared across users to reduce API usage
-   - **User System**: Wallet-based authentication with profiles and snapshot history
-   - SQLite with WAL mode for concurrent access and TEXT fields for BigInt compatibility
+**Key Tables:**
+- `contracts` - Registry of all supported contracts
+- `user_profiles` - Wallet-based authentication and user data
+- `blockchain_cache` - Shared event data across all users/contracts (reduces RPC calls)
+- `current_state` - Real-time holder balances per contract
+- `user_snapshots` - Historical snapshot history per user
 
-1a. **Date-Based Snapshot Architecture** (`lib/utils/date-to-block.ts`)
-   - **User-Friendly Interface**: Frontend uses date inputs (YYYY-MM-DD), backend handles block conversion
-   - **DateToBlockConverter**: Automatic date-to-block conversion using ~12 second Ethereum block time
-   - **Date Range Support**: Single date or date range comparisons with block accuracy verification
-   - **API Flexibility**: All historical endpoints accept both `date` and `blockNumber` parameters
-   - **Validation Integration**: All date-based operations include automatic data validation
+**Critical Pattern:** Event sourcing architecture
+- Blockchain events stored in `blockchain_cache` table
+- Current state rebuilt from events via `rebuild-state.js`
+- Never modify `current_state` directly; always process through events
+- Use `validate-data.ts` to verify integrity
 
-2. **Contract Management System** (`lib/contracts/`)
-   - **Contract Detection**: `detector.ts` - Automatic ERC-721/ERC-1155 standard detection
-   - **Contract Registry**: `registry.ts` - Registration and validation of new contracts
-   - **ABI Management**: `abi-manager.ts` - Dynamic ABI loading for standard and custom contracts
+### 2. Database Layer (`lib/database/`)
+
+**Schema Evolution:**
+- `schema.sql` - Legacy single-contract schema (deprecated)
+- `enhanced-schema.sql` - Enhanced single-contract (deprecated)
+- **`multi-contract-schema.sql`** - Current multi-contract design ✅
+
+**Database Adapter Pattern:**
+- `adapter.ts` - Unified interface for SQLite (dev) and PostgreSQL (prod)
+- **Auto-detection**: Uses `POSTGRES_URL` env variable to choose database type
+- **Development**: SQLite in `./data/nft-snapshot.db` (no setup required)
+- **Production**: PostgreSQL via connection string (deployed on Vercel/Railway)
+- Handles BigInt as TEXT (SQLite limitation)
+- WAL mode for concurrent reads (SQLite only)
+- Always parse BigInt values in JavaScript: `BigInt(value)`
+
+**Serverless Optimization (Vercel/Railway):**
+```typescript
+// PostgreSQL pool config for serverless
+max: 1,                        // Minimize connections
+idleTimeoutMillis: 10000,      // Release idle connections quickly
+connectionTimeoutMillis: 10000, // Handle cold starts
+allowExitOnIdle: true          // Allow process to exit
+```
+
+**Best Practices:**
+- Keep API routes lightweight (< 10s execution)
+- Use background jobs for long-running syncs (sync-worker service)
+- Cache aggressively (15min snapshots, 1hr metadata)
+- Minimize database connection time
+
+**Critical Tables Structure:**
+```sql
+contracts (id, address, name, symbol, contract_type, chain_id, ...)
+user_profiles (id, wallet_address, username, ...)
+blockchain_cache (contract_address, event_type, block_number, ...)
+current_state (contract_address, owner_address, token_id, balance)
+user_snapshots (user_id, contract_id, snapshot_data, ...)
+```
+
+### 3. Contract Management System (`lib/contracts/`)
+
+**Three-Layer Architecture:**
+
+1. **Detection (`detector.ts`)** - Auto-detect ERC-721/ERC-1155 standards
+   - Probes contract for standard function signatures
+   - Validates token compliance before registration
    - Multi-chain support: Ethereum, Polygon, Arbitrum, Base, Shape
 
-3. **Wallet Integration & Authentication** (`lib/wagmi/`, `lib/auth/`)
-   - **RainbowKit Integration**: Complete wallet connection with Reown project ID
-   - **Multi-Chain Support**: Ethereum, Polygon, Arbitrum, Base, and custom Shape chain
-   - **Wallet-Based Auth**: JWT-based authentication using wallet signatures
-   - **User Profiles**: Username, display name, bio, profile images
+2. **Registry (`registry.ts`)** - Contract registration and validation
+   - Stores contract metadata in `contracts` table
+   - Manages contract lifecycle (active/inactive)
+   - Tracks usage statistics for trending contracts
 
-4. **OpenSea Integration** (`app/api/opensea/`)
-   - **OpenSea API v2**: Complete integration with proper API key authentication
-   - **Collection Metadata**: Fetches collection names, descriptions, logos, social links
-   - **Multi-Endpoint Strategy**: Contract → Collection → NFT endpoint fallbacks
-   - **Chain Support**: Ethereum, Polygon, Arbitrum, Base (Shape fallback to Ethereum)
-   - **Image Domain Configuration**: `i.seadn.io`, `i2.seadn.io`, `i3.seadn.io` configured in Next.js
+3. **ABI Manager (`abi-manager.ts`)** - Dynamic ABI loading
+   - Standard ABI templates for ERC-721/ERC-1155
+   - Custom ABI support for non-standard contracts
+   - Event signature mapping for Transfer/TransferSingle/TransferBatch
 
-5. **Blockchain Integration** (`lib/blockchain/`)
-   - Dual provider setup with automatic failover (QuickNode → Alchemy → Public RPCs)
-   - Automatic retry logic with exponential backoff (max 3 retries)
-   - ERC-721/ERC-1155 token standard support
-   - Block range chunking (default: 1000 blocks, max: 5000, min: 100)
+### 4. Blockchain Integration (`lib/blockchain/`)
 
-6. **Processing Pipeline** (`lib/processing/`)
-   - Event-to-database processing with automatic deduplication
-   - Current and historical snapshot generation
-   - Multi-token balance calculation across multiple token IDs
-   - Batch processing with configurable concurrency limits
+**Provider Hierarchy with Automatic Failover:**
+1. QuickNode (if `NEXT_PUBLIC_QUICKNODE_ENDPOINT` set)
+2. Alchemy (if `NEXT_PUBLIC_ALCHEMY_API_KEY` set)
+3. Public RPCs (fallback)
 
-7. **Advanced Features** (`lib/advanced/`)
-   - Merkle tree generation for airdrops (keccak256)
-   - Analytics engine with holder distribution, whale tracking, Gini coefficient
-   - Multi-tier caching system (L1 memory, L2 disk)
-   - Rate limiting with sliding window and token bucket strategies
+**Key Files:**
+- `provider.ts` - Provider setup with retry logic (max 3 retries, exponential backoff)
+- `event-fetcher.ts` - Block range chunking (default: 1000 blocks, max: 5000, min: 100)
+- `sync.ts` - Sync orchestration with progress tracking
+- `hybrid-snapshot-generator.ts` - Snapshot generation combining cached + live data
 
-8. **Data Validation System** (`lib/validation/`, `VALIDATION_GUIDE.md`)
-   - **Comprehensive Validation**: `data-validator.ts` - Multi-layer data integrity verification
-   - **Auto-Validation**: Historical snapshots include validation metadata automatically
-   - **Manual Validation**: "Validate Data" button for on-demand comprehensive checks
-   - **Balance Validation**: Recalculates holder balances from events and cross-validates  
-   - **Block Range Validation**: Ensures completeness of blockchain event data
-   - **CSV Export Validation**: Optional validation with `?validate=true` parameter
-   - **Health Status**: Color-coded indicators (GOOD/FAIR/POOR) with error/warning counts
-   - **Validation Types**: Full, balance, blocks, snapshot, CSV structure validation
+**Critical Pattern:** Always use chunked fetching for large block ranges to avoid RPC timeouts.
 
-### API Routes (Next.js 15 App Router)
+### 5. OpenSea Integration (`app/api/opensea/`)
 
-**Core Analytics APIs** (`app/api/`):
-- `/snapshot/current` - Get current holder snapshot
-- `/snapshot/historical` - Get historical snapshot with date or block parameter
-- `/snapshot/date-range` - Date range comparison snapshots
-- `/analytics/summary` - Analytics summary data
-- `/analytics/transfers` - Transfer activity analytics
-- `/export/csv` & `/export/json` - Data export endpoints with optional validation
+**Multi-Endpoint Fallback Strategy:**
+1. Contract endpoint (preferred) - `/api/v2/chain/{chain}/contract/{address}`
+2. Collection endpoint - `/api/v2/collections/{slug}`
+3. NFT endpoint (fallback) - `/api/v2/chain/{chain}/contract/{address}/nfts/{tokenId}`
 
-**Multi-Contract APIs**:
-- `/contracts/search` - Search and filter contracts with pagination
-- `/contracts/register` - Register new ERC-721/ERC-1155 contracts with wallet auth
-- `/contracts/trending` - Get trending/popular contracts
-- `/contracts/[address]` - Get individual contract details
-- `/contracts/[address]/snapshot/historical` - Historical snapshots with date range support
-- `/contracts/[address]/validate` - Data validation endpoints (full, balance, blocks, snapshot)
-- `/contracts/[address]/date-range` - Get available date range for contract data
+**Configuration:**
+- Requires `OPENSEA_API_KEY` in environment
+- Rate limit: 4 requests/second (built-in throttling)
+- Chain support: Ethereum, Polygon, Arbitrum, Base (Shape falls back to Ethereum)
+- Image domains configured in `next.config.js`: `i.seadn.io`, `i2.seadn.io`, `i3.seadn.io`
 
-**Utility APIs**:
-- `/utils/date-to-block` - Convert dates to block numbers and vice versa
+**Response Caching:** Collection metadata cached for 1 hour to reduce API usage.
 
-**Authentication APIs**:
-- `/auth/session` - Get current user session
-- `/auth/verify-signature` - Verify wallet signature for authentication
-- `/auth/logout` - User logout
+### 6. Wallet Integration (`lib/wagmi/`, `lib/auth/`)
 
-**User Management APIs**:
-- `/users/profile` - User profile management
-- `/users/contracts` - User's tracked contracts and snapshots
+**RainbowKit + Wagmi Stack:**
+- **WalletConnect Project ID Required:** `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` (from Reown)
+- Custom Shape chain configuration (chain ID 360)
+- JWT-based authentication using wallet signatures
+- Session management with `jose` library
 
-**External Integration APIs**:
-- `/opensea/collection` - OpenSea API v2 integration for collection metadata
-- `/dashboard/stats` - Real-time platform statistics (contracts, users, snapshots)
+**Auth Flow:**
+1. User connects wallet via RainbowKit
+2. Request signature for authentication message
+3. Backend verifies signature and issues JWT
+4. JWT stored in httpOnly cookie for API authentication
+5. Protected routes check JWT before rendering
 
-### Frontend Pages
+### 7. ENS (Ethereum Name Service) Integration (`lib/ens/`)
 
-**Public Pages**:
-- `/` - Dashboard with real-time system stats and feature overview
-- `/contracts` - **Primary Interface**: Contract discovery with search, filtering, and registration
+**Server-Side ENS Resolution:**
+- ENS lookups happen server-side to avoid CORS errors
+- Batch resolution API: `/api/ens/batch`
+- Caching: 1 hour TTL for resolved addresses
+- Fallback: Returns original address if ENS resolution fails
+
+**Usage in Components:**
+- Display ENS names instead of truncated addresses
+- Automatic resolution in holder tables
+- Maintains address checksums for Ethereum standards
+
+**Example:**
+```typescript
+// Batch resolve multiple addresses
+const response = await fetch('/api/ens/batch', {
+  method: 'POST',
+  body: JSON.stringify({ addresses: ['0x...', '0x...'] })
+})
+// Returns: { '0x...': 'vitalik.eth', '0x...': null }
+```
+
+### 8. Data Validation System (`lib/validation/`, see VALIDATION_GUIDE.md)
+
+**Critical for Data Integrity:**
+
+**Validation Types:**
+- **Balance Validation:** Recalculates from events, compares with database
+- **Block Range Validation:** Detects missing blocks in event data
+- **Snapshot Validation:** Cross-validates with live blockchain
+- **CSV Validation:** Verifies export data structure and calculations
+
+**When to Validate:**
+- ✅ Before important CSV exports (mandatory)
+- ✅ After major blockchain sync operations
+- ✅ When troubleshooting balance discrepancies
+- ✅ Before generating historical snapshots
+
+**Auto-Validation:** Historical snapshots include validation metadata automatically.
+
+### 9. API Route Architecture (Next.js 15 App Router)
+
+**Route Organization:**
+```
+app/api/
+├── snapshot/           # Legacy single-contract endpoints
+├── contracts/
+│   ├── search/        # Multi-contract discovery
+│   ├── register/      # New contract registration
+│   └── [address]/
+│       ├── snapshot/  # Contract-specific snapshots
+│       └── validate/  # Data validation endpoints
+├── auth/              # Authentication (session, verify, logout)
+├── opensea/           # OpenSea API proxy
+└── utils/             # Utility endpoints (date-to-block conversion)
+```
+
+**API Patterns:**
+- **Legacy Routes**: `/api/snapshot/*` (single ClickCreate contract)
+- **Multi-Contract Routes**: `/api/contracts/[address]/*` (any contract)
+- Internal calls: Use `fetch()` (same application, faster)
+- External calls: Use `axios` (timeout/retry logic, better error handling)
+- Response format: `{ success: boolean, data?: any, error?: string }`
+- Historical endpoints: Accept both `date` (user-friendly) and `blockNumber` (precise)
+
+### 10. Frontend Page Structure
+
+**Route Patterns:**
+- `/contracts` - Primary interface for contract discovery and registration
 - `/contracts/[address]` - Universal contract analytics (any ERC-721/ERC-1155)
-- `/collections/[address]` - Special collection pages with ClickCreate-specific features
-- `/gallery` - NFT gallery with metadata display
-- `/analytics` - Comprehensive analytics dashboard  
-- `/monitor` - Real-time blockchain event monitoring
+- `/collections/[address]` - Special ClickCreate collections with season features
+- `/collections/[address]/snapshot` - Snapshot generation (authorized wallet only)
 
-**Protected Pages** (Wallet Authentication Required):
-- `/snapshot` - Internal snapshot tool (authorized wallet only)
-- `/contracts/[address]/snapshot` - Contract snapshot generation (authorized wallet only)
-- `/collections/[address]/snapshot` - Collection snapshot with full season features (authorized wallet only)
-- `/profile` - User profile management
-- `/my-collections` - User's tracked contracts
+**Component Architecture:**
+```
+components/
+├── layout/            # Navigation, Footer
+├── contracts/         # Contract discovery, search, registration
+│   ├── ContractDiscovery.tsx    # Main contract card grid
+│   └── ContractSnapshot.tsx     # Snapshot generation UI
+├── ui/                # Reusable UI components
+└── wallet/            # Wallet connection components
+```
 
-### Key UI Components
+**Design System:**
+- Dark theme: Background `#0A0A0A`, Primary `#FF6B35` (orange), Accent `#FFA500`
+- Glassmorphism effects: `backdrop-blur` with transparency (limit to 2-3 per viewport)
+- Professional icons: Lucide React only (no emojis unless explicitly requested)
+- Typography: Inter font via Google Fonts
 
-**Contract Discovery** (`components/contracts/`):
-- `ContractDiscovery.tsx` - **Core Component**: Visually appealing contract cards with OpenSea integration
-  - Search and filtering capabilities
-  - Contract registration form
-  - Collection logos and descriptions from OpenSea API v2
-  - Chain icons with tooltips
-  - Verification badges and contract details
-- `ContractSnapshot.tsx` - **Enhanced Snapshot Component**: Full-featured snapshot generation
-  - Date range comparison functionality (start/end date selection)
-  - Integrated data validation with visual status indicators
-  - CSV export with automatic validation
-  - Support for any ERC-721/ERC-1155 contract
+## Critical Development Patterns
 
-**Layout & Navigation** (`components/layout/`):
-- `Navigation.tsx` - Main navigation with wallet connection integration
-- `Footer.tsx` - Footer with professional Lucide icons
+### React Hooks Order (Strict!)
+```typescript
+// 1. All useState hooks first
+const [data, setData] = useState()
+const [loading, setLoading] = useState(false)
 
-**Wallet Integration** (`components/wallet/`):
-- `WalletConnection.tsx` - RainbowKit integration with custom styling
+// 2. All useEffect hooks
+useEffect(() => { ... }, [deps])
 
-## Performance Requirements
+// 3. Custom hooks
+const { user } = useAuth()
 
-- Current snapshot generation: < 3 seconds
-- Historical snapshot generation: < 10 seconds  
-- Support for 100,000+ events, 10,000+ holders
-- Real-time WebSocket updates with auto-reconnection
-- Cache TTL: 15 minutes for snapshots, 1 hour for metadata
-- Database in WAL mode for concurrent reads
+// 4. Handler functions
+const handleClick = () => { ... }
+
+// 5. Early returns AFTER all hooks
+if (!data) return <Loading />
+```
+
+**Never:** Call hooks conditionally or inside loops.
+
+### Database Operations
+```typescript
+// ❌ WRONG - Direct state modification
+db.run("UPDATE current_state SET balance = ?", [newBalance])
+
+// ✅ CORRECT - Event sourcing
+db.run("INSERT INTO events (...) VALUES (...)", [eventData])
+// Then run: npx tsx scripts/rebuild-state.js
+```
+
+### API Consistency
+```typescript
+// Internal Next.js API calls
+const response = await fetch('/api/snapshot/current')
+
+// External API calls (OpenSea, Alchemy, etc.)
+const response = await axios.get(url, { timeout: 10000 })
+```
+
+### BigInt Handling
+```typescript
+// SQLite stores BigInt as TEXT
+const balance = BigInt(row.balance) // Always parse
+db.run("INSERT INTO current_state (balance) VALUES (?)", [balance.toString()])
+```
+
+### Logging Standards
+Use emoji prefixes for visual identification:
+- 🎯 Start of operation
+- 📡 API call
+- ✅ Success
+- ❌ Error
+- 🔍 Validation
+- 📊 Statistics
+
+### Contract Card Design Pattern
+Follow the established pattern in `ContractDiscovery.tsx`:
+- Gradient backgrounds: `bg-gradient-to-br from-card/40 to-card/20`
+- Collection logos: 80px with verification badges
+- Chain icons with `group/icon` tooltips (prevents parent hover interference)
+- Hover effects: `hover:border-primary/50 hover:shadow-xl`
 
 ## Environment Configuration
 
 Required in `.env.local`:
+
 ```env
-# Blockchain RPC Providers (at least one required)
+# Blockchain RPC (at least one required)
 NEXT_PUBLIC_ALCHEMY_API_KEY=your_alchemy_key
 NEXT_PUBLIC_QUICKNODE_ENDPOINT=https://your-endpoint.quiknode.pro/
 
-# Legacy Contract Configuration (for migration)
-NEXT_PUBLIC_CONTRACT_ADDRESS=0x300e7a5fb0ab08af367d5fb3915930791bb08c2b
-NEXT_PUBLIC_CHAIN_ID=1
-
-# WebSocket Endpoints (optional)
-NEXT_PUBLIC_ALCHEMY_WS_URL=wss://eth-mainnet.g.alchemy.com/v2/key
-NEXT_PUBLIC_QUICKNODE_WS_URL=wss://your-endpoint.quiknode.pro/
-
-# Database
-DATABASE_PATH=./data/nft-snapshot.db
-
-# External APIs (REQUIRED)
-OPENSEA_API_KEY=your_opensea_api_key  # Required for collection metadata
-
-# Wallet Integration (REQUIRED)
-NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your-reown-project-id
+# External APIs (REQUIRED for full functionality)
+OPENSEA_API_KEY=your_opensea_api_key                    # Required for collection metadata
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_reown_id     # Required for wallet connection
 
 # Authentication
-JWT_SECRET=your-super-secret-jwt-key-for-production
+JWT_SECRET=your-super-secret-jwt-key                    # Required for auth
+
+# Database
+DATABASE_PATH=./data/nft-snapshot.db                    # SQLite path (dev)
+POSTGRES_URL=postgres://...                              # PostgreSQL (prod, optional)
+
+# Optional WebSocket
+NEXT_PUBLIC_ALCHEMY_WS_URL=wss://eth-mainnet.g.alchemy.com/v2/key
 ```
 
-## Design System
+## Common Workflows
 
-### Color Palette (Dark Theme)
-- Background: `#0A0A0A` (Rich Black)
-- Foreground: `#FAFAFA` (White)
-- Primary: `#FF6B35` (Vibrant Orange)
-- Accent: `#FFA500` (Amber)
-- Card: `#1A1A1A` (Elevated surfaces)
-- Border: `#2A2A2A` (Subtle borders)
-- Muted Text: `#9CA3AF` (Secondary text)
-
-### UI Implementation
-- **Glassmorphism Effects**: `backdrop-filter: blur()` with transparency for cards and overlays
-- **Orange Gradient Accents**: CTAs and highlights using `bg-gradient-to-r from-primary to-accent`
-- **Professional Icons**: Lucide React icons throughout (no emojis)
-- **Responsive Design**: Mobile-first approach with Tailwind breakpoints
-- **Smooth Transitions**: `cubic-bezier(0.4, 0, 0.2, 1)` for all interactions
-- **Typography**: Inter font via Google Fonts
-
-### Contract Card Design
-- **Gradient Backgrounds**: `bg-gradient-to-br from-card/40 to-card/20` with glassmorphism
-- **Collection Logos**: 80px images with verification badges and fallbacks
-- **Prominent Descriptions**: Styled containers with `bg-background/30 backdrop-blur-sm`
-- **Chain Icons**: Hover tooltips using Tailwind's `group/icon` modifier pattern
-- **Interactive Elements**: Hover effects with `hover:border-primary/50` and `hover:shadow-xl`
-
-## Development Guidelines
-
-### Multi-Contract Platform Patterns
-1. **Contract Validation**: Always validate contract addresses and detect ERC standard before registration
-2. **Database Schema**: Use `multi-contract-schema.sql` for new features, maintain backward compatibility
-3. **User Authentication**: Implement wallet-based authentication for all user-specific features
-4. **Shared Caching**: Leverage `blockchain_cache` table to reduce API usage across users
-5. **OpenSea Integration**: Use API v2 endpoints with proper error handling and image domain configuration
-6. **Data Validation**: Use validation system before critical operations - run `npx tsx scripts/validate-data.ts` before important CSV exports
-
-### React Hooks Best Practices
-7. **Hook Order**: Always declare hooks in consistent order: `useState`, `useEffect`, custom hooks, followed by handler functions
-8. **Effect Dependencies**: Include all contract addresses and critical state in useEffect dependency arrays
-9. **State Management**: Separate loading states, data states, and error states for clear component behavior
-10. **Conditional Hooks**: Never use hooks inside conditions - use early returns after all hooks are declared
-
-### API Consistency Patterns  
-11. **Backend APIs**: Use `fetch()` for internal Next.js API route calls within the same application
-12. **Frontend Components**: Use `axios` for external API calls and complex requests with timeout/retry logic
-13. **Error Handling**: Always wrap in try-catch with `console.error()` and user-friendly error messages
-14. **Response Format**: Use standardized `{ success: boolean, data?: any, error?: string }` format
-15. **Parameter Flexibility**: Accept both `date` (user-friendly) and `blockNumber` (precise) parameters in historical APIs
-
-### Page Routing Patterns
-16. **Universal Contracts**: Use `/contracts/[address]` for any ERC-721/ERC-1155 contract analytics
-17. **Special Collections**: Use `/collections/[address]` for ClickCreate collections with season features
-18. **Access Control**: Snapshot pages require specific wallet authorization (`AUTHORIZED_SNAPSHOT_WALLET`)
-19. **Route Consistency**: Always include breadcrumbs and back navigation for sub-pages
-
-### Debugging and Logging Standards
-20. **Emoji Logging**: Use emojis for visual log identification: 🎯 (start), 📡 (API), ✅ (success), ❌ (error), 🔍 (validation), 📊 (stats)
-21. **Error Context**: Always log full error context including axios response data and stack traces
-22. **Progress Tracking**: Implement real-time progress updates with percentage indicators for long operations
-23. **Demo Data Handling**: Use robust demo data detection to avoid false error alerts
-24. **Network Error Handling**: Implement graceful degradation for auto-polling intervals with timeout control
-
-### Code Standards
-25. **TypeScript**: Strict mode enabled, all code must be properly typed
-26. **Database Operations**: Always use TEXT for BigInt values, parse in JavaScript using `BigInt()`
-27. **Error Handling**: All blockchain operations need retry logic with exponential backoff
-28. **Component Patterns**: Follow existing patterns, especially the contract card design in `ContractDiscovery.tsx`
-29. **Performance**: Limit glassmorphism to 2-3 elements per viewport for GPU performance
-30. **Data Integrity**: Always run `npx tsx scripts/rebuild-state.js` after major blockchain sync operations
-
-### UI/UX Guidelines
-31. **Professional Design**: Use Lucide React icons, no emojis unless explicitly requested
-32. **Tooltip Implementation**: Use `group/icon` pattern for isolated hover triggers
-33. **Image Optimization**: Configure Next.js image domains for external services (OpenSea, IPFS)
-34. **Responsive Design**: Mobile-first approach with proper breakpoint handling
-35. **Validation UI**: Include validation status indicators and error displays for data-critical components
-36. **Date Range UI**: Implement radio button toggles for single vs range date selection with clear labeling
-37. **Dashboard Stats**: Display real database statistics with meaningful trend indicators and fallback states
-
-## Common Development Tasks
-
+### Adding a New Feature
 ```bash
-# After making changes
-npm run lint
-npm run build
-
-# Verify blockchain connection
-npx tsx scripts/sync-blockchain.ts
-
-# Full data refresh
-npx tsx scripts/comprehensive-sync.ts
-
-# Fetch missing metadata only
-npx tsx scripts/fetch-all-missing-metadata.ts
-
-# Database inspection
-sqlite3 ./data/nft-snapshot.db ".schema"
-sqlite3 ./data/nft-snapshot.db "SELECT COUNT(*) FROM events;"
-sqlite3 ./data/nft-snapshot.db "SELECT COUNT(*) FROM nft_metadata WHERE image_url IS NOT NULL;"
-
-# Check sync status
-sqlite3 ./data/nft-snapshot.db "SELECT * FROM contract_sync_status;"
-
-# Data validation workflow (CRITICAL BEFORE EXPORTS)
-npx tsx scripts/validate-data.ts --verbose              # Full comprehensive validation
-npx tsx scripts/validate-data.ts --type balance        # Quick balance validation
-npx tsx scripts/validate-data.ts --type blocks --start-block 18400000 --end-block 18500000  # Block range validation
-npx tsx scripts/validate-data.ts --contract 0x123...   # Validate specific contract
-
-# Fix data issues
-npx tsx scripts/rebuild-state.js                       # Fix balance discrepancies
-npx tsx scripts/validate-data.ts --type balance        # Re-verify after fixes
-
-# Date-to-block utilities
-curl "http://localhost:3000/api/utils/date-to-block?date=2023-10-15"      # Convert date to block
-curl "http://localhost:3000/api/utils/date-to-block?block=18500000"       # Convert block to date
-
-# CSV export with validation
-curl "http://localhost:3000/api/export/csv?type=snapshot&validate=true"   # Safe CSV export
-
-# Dashboard statistics
-curl "http://localhost:3000/api/dashboard/stats"                          # Get real platform stats
+npm run dev                          # Start dev server
+# Make changes to code
+npm run lint                         # Check for issues
+npm run build                        # Ensure production build works
+# Test in browser
+git add . && git commit -m "feat: description"
 ```
 
-## Troubleshooting Common Issues
+### Debugging Balance Issues
+```bash
+# Step 1: Validate current data
+npx tsx scripts/validate-data.ts --type balance
+
+# Step 2: If errors found, rebuild from events
+npx tsx scripts/rebuild-state.js
+
+# Step 3: Re-validate
+npx tsx scripts/validate-data.ts --type balance
+
+# Step 4: Check specific contract
+npx tsx scripts/verify-onchain-supply.ts
+```
+
+### Adding a New Contract
+```bash
+# Option 1: Via UI (recommended)
+# Navigate to /contracts page → Click "Add Contract" → Enter address
+
+# Option 2: Via API
+curl -X POST http://localhost:3000/api/contracts/register \
+  -H "Content-Type: application/json" \
+  -d '{"address":"0x...", "chainId":1}'
+
+# Option 3: Via script (internal collections)
+npx tsx scripts/add-internal-collection.js
+
+# Then sync blockchain data
+npx tsx scripts/sync-blockchain.ts
+```
+
+### Generating Safe CSV Exports
+```bash
+# Step 1: Validate data first
+npx tsx scripts/validate-data.ts --verbose
+
+# Step 2: Fix any errors
+npx tsx scripts/rebuild-state.js
+
+# Step 3: Export with validation
+curl "http://localhost:3000/api/export/csv?type=snapshot&validate=true" > export.csv
+```
+
+## Troubleshooting
 
 ### Build Errors
-
-**TypeScript compilation errors:**
 ```bash
-# Clear Next.js cache and rebuild
+# Clear cache and rebuild
 rm -rf .next
 npm run build
-```
 
-**Module resolution issues:**
-```bash
-# Reinstall dependencies
+# Module resolution issues
 rm -rf node_modules package-lock.json
 npm install
 ```
 
-### Database Problems
-
-**Database locked errors:**
+### Database Issues
 ```bash
-# Check for processes holding database lock
-lsof | grep nft-snapshot.db
-# Kill any blocking processes and restart dev server
-```
+# Database locked (SQLite)
+lsof | grep nft-snapshot.db    # Find blocking processes
+# Kill processes and restart
 
-**Missing tables or schema issues:**
-```bash
-# Reinitialize database with multi-contract schema
-npx tsx scripts/init-db.js
-npx tsx scripts/apply-enhanced-schema.js
-```
+# Schema issues
+npx tsx scripts/init-multi-contract-db.js
 
-**Balance discrepancies:**
-```bash
-# Rebuild state from events (recommended)
+# Balance discrepancies
 npx tsx scripts/rebuild-state.js
-# Validate fix
 npx tsx scripts/validate-data.ts --type balance
+
+# Sequence/ID Issues (PostgreSQL only)
+npx tsx scripts/fix-all-sequences.ts         # Fix out-of-sync sequences
+npx tsx scripts/deep-sequence-check.ts       # Verify sequence integrity
+
+# Contract-specific issues
+npx tsx scripts/verify-onchain-supply.ts     # Check on-chain vs database
+npx tsx scripts/rebuild-contract-state.ts    # Rebuild specific contract
+npx tsx scripts/validate-and-fix-contract.ts # Validate + auto-fix
 ```
 
 ### Blockchain Sync Issues
-
-**Rate limiting errors (429):**
-- Check RPC provider quotas (Alchemy/QuickNode dashboards)
-- Reduce chunk size in sync scripts (default: 1000 blocks)
-- Implement longer delays between requests
-
-**Missing events/gaps in data:**
 ```bash
-# Force resync with smaller block ranges
+# Rate limiting (429 errors)
+# - Reduce chunk size in sync scripts
+# - Check provider quotas
+# - Add delays between requests
+
+# Missing events/gaps
 npx tsx scripts/sync-blockchain.ts
-# Verify completeness
 npx tsx scripts/validate-data.ts --type blocks
+
+# Provider failures
+# - Verify API keys in .env.local
+# - Check provider status pages
+# - Test endpoints with curl
 ```
 
-**Provider connection failures:**
-- Verify `NEXT_PUBLIC_ALCHEMY_API_KEY` and `NEXT_PUBLIC_QUICKNODE_ENDPOINT` in `.env.local`
-- Test provider endpoints manually with curl
-- Check provider status pages for outages
-
-### OpenSea Integration Issues
-
-**Collection metadata not loading:**
-- Verify `OPENSEA_API_KEY` is set in `.env.local`
-- Check OpenSea API rate limits (4 requests/second)
-- Ensure contract address is valid on the specified chain
-
-**Image loading failures:**
-- Add new OpenSea CDN domains to `next.config.js` `images.domains`
-- Check browser console for CORS errors
-- Verify image URLs are accessible directly
-
-### Wallet Connection Problems
-
-**WalletConnect/RainbowKit not working:**
-- Verify `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` is configured
-- Get new project ID from https://cloud.reown.com
-- Clear browser cache and reconnect wallet
-
-**Authentication failures:**
-- Check `JWT_SECRET` is set in `.env.local`
-- Verify wallet signature message format
-- Check browser console for signature errors
-
-### Performance Issues
-
-**Slow snapshot generation:**
-- Run `npx tsx scripts/rebuild-state.js` to optimize database
-- Check database indexes: `sqlite3 ./data/nft-snapshot.db ".indexes"`
-- Monitor database file size (WAL file cleanup may be needed)
-
-**High memory usage:**
-- Reduce batch sizes in processing scripts
-- Implement pagination for large datasets
-- Clear Next.js cache: `rm -rf .next`
-
-### Development Server Issues
-
-**Port 3000 already in use:**
+### OpenSea Integration
 ```bash
-# Kill process on port 3000
-lsof -ti:3000 | xargs kill -9
-# Or use alternative port
-PORT=3001 npm run dev
+# Metadata not loading
+# - Verify OPENSEA_API_KEY in .env.local
+# - Check rate limits (4 req/sec)
+# - Ensure contract exists on chain
+
+# Image loading failures
+# - Add CDN domains to next.config.js
+# - Check browser console for CORS
+# - Verify URLs are accessible
 ```
 
-**Hot reload not working:**
+### Wallet Connection
 ```bash
-# Restart dev server with clean cache
-rm -rf .next
-npm run dev
+# WalletConnect not working
+# - Verify NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+# - Get new ID from https://cloud.reown.com
+# - Clear browser cache
+
+# Auth failures
+# - Check JWT_SECRET in .env.local
+# - Verify signature format
+# - Check browser console
 ```
 
 ## Testing
 
-### Manual Testing Strategy
+**Current Approach:** Manual testing via scripts and API endpoints.
 
-This project currently uses manual testing via scripts and API endpoint verification. No formal test framework is configured.
-
-**API Endpoint Testing:**
+### Quick Smoke Tests
 ```bash
 # Start dev server
 npm run dev
 
-# Test snapshot endpoints
-curl http://localhost:3000/api/snapshot/current
-curl http://localhost:3000/api/snapshot/historical?date=2023-10-15
-
-# Test contract endpoints
-curl http://localhost:3000/api/contracts/search?chain=1
+# Test contract endpoints (replace with actual contract address)
 curl http://localhost:3000/api/contracts/0x300e7a5fb0ab08af367d5fb3915930791bb08c2b
+curl http://localhost:3000/api/contracts/search?chain=1
 
-# Test validation endpoints
-curl "http://localhost:3000/api/contracts/0x300e7a5fb0ab08af367d5fb3915930791bb08c2b/validate?type=balance"
+# Test legacy endpoints
+curl http://localhost:3000/api/snapshot/current
 
 # Test utility endpoints
 curl "http://localhost:3000/api/utils/date-to-block?date=2023-10-15"
-curl "http://localhost:3000/api/dashboard/stats"
-```
 
-**Database Validation Scripts:**
-```bash
-# Test database integrity
+# Test ENS resolution
+curl -X POST http://localhost:3000/api/ens/batch \
+  -H "Content-Type: application/json" \
+  -d '{"addresses":["0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"]}'
+
+# Database validation
 npx tsx scripts/validate-data.ts --verbose
 
-# Test blockchain sync
+# Blockchain sync test (small range)
 npx tsx scripts/sync-blockchain.ts
-
-# Test state rebuilding
-npx tsx scripts/rebuild-state.js
 ```
 
-**Smoke Testing Checklist:**
-- [ ] Development server starts without errors
+### Manual Testing Checklist
+**Core Functionality:**
+- [ ] Dev server starts without errors (`npm run dev`)
+- [ ] Production build succeeds (`npm run build`)
+- [ ] Linting passes (`npm run lint`)
+
+**UI/UX:**
 - [ ] Home page loads with correct styling
-- [ ] Contract discovery page shows contracts
-- [ ] Wallet connection works (RainbowKit modal appears)
-- [ ] OpenSea metadata loads for contracts
-- [ ] Snapshot generation completes successfully
-- [ ] Data validation runs without errors
-- [ ] CSV export downloads correctly
-- [ ] Analytics charts render properly
+- [ ] Contract discovery shows contracts with OpenSea metadata
+- [ ] Wallet connection (RainbowKit modal opens and connects)
+- [ ] ENS resolution shows in holder tables (e.g., vitalik.eth)
+- [ ] Contract cards display collection images correctly
 
-### Adding Automated Tests (Future)
+**Data Operations:**
+- [ ] Snapshot generation completes for test contract
+- [ ] Data validation passes (`validate-data.ts`)
+- [ ] CSV export downloads with valid data
+- [ ] Analytics charts render with correct data
+- [ ] Historical snapshots work with date picker
 
-If implementing automated tests, recommended structure:
-```
-ClickFrontEnd/
-├── __tests__/
-│   ├── api/              # API route tests
-│   ├── lib/              # Library function tests
-│   └── components/       # React component tests
-├── jest.config.js        # Jest configuration
-└── setupTests.ts         # Test setup file
-```
+**API Endpoints:**
+- [ ] Multi-contract endpoints respond (`/api/contracts/[address]/*`)
+- [ ] Legacy endpoints still work (`/api/snapshot/*`)
+- [ ] Auth endpoints handle wallet signatures
+- [ ] OpenSea metadata loads correctly
 
-Recommended testing libraries:
-- `jest` - Test runner
-- `@testing-library/react` - Component testing
-- `@testing-library/jest-dom` - DOM matchers
-- `msw` - API mocking
+## 🔴 Critical: Internal vs Public Snapshot Access
 
-## Project Dependencies
+**The snapshot page has TWO access levels:**
 
-**Core Framework:**
-- Next.js 15.5+ (App Router)
-- React 19.1+
-- TypeScript 5.9+
-- Tailwind CSS 3.4+
+### Internal Snapshot Access (Authorized Wallet Only)
+- **Route:** `/collections/[address]/snapshot`
+- **Access:** Only wallet `0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC`
+- **Features:** Full season mode, advanced filtering, historical comparisons, validation tools
+- **Purpose:** ClickCreate team internal use for ANY collection
 
-**Wallet Integration:**
-- @rainbow-me/rainbowkit 2.2+ (Wallet connection UI)
-- @reown/appkit 1.8+ (Reown integration)
-- wagmi 2.16+ (Ethereum React hooks)
-- viem 2.37+ (TypeScript Ethereum library)
+### Public Snapshot Access (All Users)
+- **Route:** Same `/collections/[address]/snapshot`
+- **Access:** All authenticated users via "My Collections"
+- **Entry:** Users click "Snapshot" from collection cards in "My Collections" page
+- **Features:** Same page, standard snapshot generation
 
-**Blockchain & Database:**
-- ethers 6.15+ (Ethereum interaction)
-- better-sqlite3 12.2+ (SQLite interface)
-- ws 8.18+ (WebSocket client)
+**When working on snapshots, always clarify if changes affect:**
+- ✅ Internal access only (authorized wallet)
+- ✅ Public access only (all users)
+- ✅ Both (entire snapshot page)
 
-**UI & Authentication:**
-- lucide-react (Professional icons)
-- recharts (Analytics charts)
-- jose 6.1+ (JWT handling)
-- zustand 5.0+ (State management)
+## Performance Requirements
 
-**Utilities:**
-- axios (HTTP client)
-- uuid (ID generation)
-- sharp (Image processing)
-- keccak256 (Hashing for airdrops)
-- merkletreejs (Merkle tree generation)
+- Current snapshot: < 3 seconds
+- Historical snapshot: < 10 seconds
+- Support: 100,000+ events, 10,000+ holders
+- Cache TTL: 15 min (snapshots), 1 hour (metadata)
+- Database: WAL mode for concurrent reads
 
-## Critical Architecture Notes
+## Important Files Reference
 
-### Multi-Contract Platform Requirements
-1. **Database Migration**: Use `multi-contract-schema.sql` for new deployments, maintain legacy support
-2. **User Authentication**: All user-specific features require wallet connection and JWT validation
-3. **Contract Registration**: Validate ERC standards using `lib/contracts/detector.ts` before adding
-4. **Shared Caching**: Implement `blockchain_cache` table usage to optimize API calls across users
-5. **OpenSea API Key**: Required for collection metadata - configure in environment variables
+**Architecture:**
+- `lib/database/multi-contract-schema.sql` - Database schema (read this first!)
+- `lib/database/adapter.ts` - Database abstraction layer
+- `lib/contracts/detector.ts` - Contract standard detection
+- `lib/blockchain/provider.ts` - RPC provider setup with failover
 
-### Date-Based Architecture & Data Integrity
-6. **Date-First Design**: Always provide date parameters alongside block numbers for user-friendly interfaces
-7. **Block Conversion**: Use `DateToBlockConverter` for accurate date-to-block conversions with 12-second estimation
-8. **Validation Workflow**: MANDATORY validation before critical CSV exports using `npx tsx scripts/validate-data.ts --verbose`
-9. **Auto-Validation**: Historical snapshots include validation metadata automatically
-10. **Health Monitoring**: Implement GOOD/FAIR/POOR health status with color-coded UI indicators
-11. **Balance Integrity**: Run `npx tsx scripts/rebuild-state.js` if validation shows balance discrepancies
+**Key Components:**
+- `components/contracts/ContractDiscovery.tsx` - Main discovery interface
+- `components/contracts/ContractSnapshot.tsx` - Snapshot generation UI
+- `app/api/contracts/[address]/snapshot/historical/route.ts` - Historical snapshots
 
-### API & Performance Standards
-12. **API Consistency**: Use `fetch()` for internal APIs, `axios` for external APIs with timeout/retry
-13. **Error Logging**: Always use emoji logging system (🎯📡✅❌🔍) for visual debugging
-14. **Rate Limiting**: OpenSea API has rate limits - implement proper caching and error handling
-15. **Image Domains**: Add new OpenSea CDN domains to `next.config.js` when they appear
-16. **BigInt Handling**: SQLite stores as TEXT, always parse in JavaScript using `BigInt()`
-17. **Provider Failover**: Automatic switching between QuickNode → Alchemy → Public RPCs
-18. **Database Integrity**: WAL mode for concurrent access, event sourcing pattern for blockchain data
+**Critical Scripts:**
+- `scripts/init-multi-contract-db.js` - Database initialization
+- `scripts/rebuild-state.js` - Fix data integrity
+- `scripts/validate-data.ts` - Comprehensive validation
+- `scripts/sync-blockchain.ts` - Blockchain synchronization
 
-### UI/UX Critical Requirements  
-19. **Professional Design**: Strict "no emojis" policy - use Lucide React icons only
-20. **Tooltip Isolation**: Use `group/icon` pattern to prevent parent hover interference
-21. **Contract Cards**: Follow established visual patterns in `ContractDiscovery.tsx`
-22. **Chain Support**: Ethereum, Polygon, Arbitrum, Base, Shape (custom chain configuration)
-23. **Responsive Design**: All components must work on mobile with proper touch targets
-24. **Date Range UI**: Implement radio button toggles for single vs range date selection with clear labels
-25. **Validation Display**: Use color-coded status indicators (green=valid, yellow=warnings, red=errors)
-26. **Route Patterns**: Use `/contracts/[address]` for universal, `/collections/[address]` for special features
-27. **Access Control**: Implement wallet-based authorization for snapshot pages (`AUTHORIZED_SNAPSHOT_WALLET`)
+## Additional Documentation
+
+- **[VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)** - Detailed validation system documentation
+- **[QUICKNODE-OPTIMIZATION.md](QUICKNODE-OPTIMIZATION.md)** - RPC optimization strategies
+- **[../IMPLEMENTATION_PROGRESS.md](../IMPLEMENTATION_PROGRESS.md)** - Platform evolution history
+- **[../AGENTS.md](../AGENTS.md)** - Repository-wide coding standards

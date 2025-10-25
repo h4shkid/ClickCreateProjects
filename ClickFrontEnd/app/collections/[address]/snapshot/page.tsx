@@ -1073,7 +1073,7 @@ export default function CollectionSnapshotPage() {
                     }}
                     className="btn-secondary text-sm"
                   >
-                    {showAllHolders ? 'Show Top 20' : 'Show All'}
+                    {showAllHolders ? 'Show Top 20' : 'Show Top 50'}
                   </button>
                 </div>
               </div>
@@ -1155,7 +1155,7 @@ export default function CollectionSnapshotPage() {
               )}
               {!showAllHolders && snapshotData.holders.length > 20 && (
                 <div className="p-4 text-center text-sm text-muted-foreground border-t border-border">
-                  Showing top 20 of {snapshotData.holders.length} holders. Click &quot;Show All&quot; to see more.
+                  Showing top 20 of {snapshotData.holders.length} holders. Click &quot;Show Top 50&quot; to see more.
                 </div>
               )}
             </div>

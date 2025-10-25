@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useContract } from '@/lib/contracts/ContractContext'
 import { Camera, Calendar, Download, Users, BarChart3, Clock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import axios from 'axios'
+import { parseTokenRanges, validateTokenRangeInput } from '@/lib/utils/token-range-parser'
 
 interface SnapshotRequest {
   type: 'current' | 'historical'
@@ -54,6 +55,8 @@ export function ContractSnapshot({ contractAddress }: ContractSnapshotProps) {
   // Token filtering state
   const [tokenIds, setTokenIds] = useState<string>('')
   const [exactMatch, setExactMatch] = useState<boolean | null>(null)
+  const [tokenInputError, setTokenInputError] = useState<string>('')
+  const [parsedTokenCount, setParsedTokenCount] = useState<number>(0)
 
   // Function to refresh date range
   const refreshDateRange = async () => {
@@ -127,7 +130,17 @@ export function ContractSnapshot({ contractAddress }: ContractSnapshotProps) {
 
         // Add token filtering parameters if provided
         if (tokenIds.trim()) {
-          params.tokenIds = tokenIds.trim()
+          // Parse the token ranges to individual token IDs
+          const parseResult = parseTokenRanges(tokenIds.trim())
+
+          if (!parseResult.success) {
+            setError(parseResult.error || 'Invalid token ID format')
+            setGeneratingSnapshot(false)
+            return
+          }
+
+          // Convert parsed tokens back to comma-separated string for API
+          params.tokenIds = parseResult.tokens.join(',')
           if (exactMatch !== null) {
             params.exactMatch = exactMatch.toString()
           }
@@ -326,21 +339,62 @@ export function ContractSnapshot({ contractAddress }: ContractSnapshotProps) {
           {snapshotForm.type === 'historical' && (
             <div>
               <label className="block text-xs font-medium text-foreground mb-1.5">
-                Token IDs (optional, comma-separated)
+                Token IDs (optional)
               </label>
               <input
                 type="text"
                 value={tokenIds}
                 onChange={(e) => {
-                  setTokenIds(e.target.value)
+                  const newValue = e.target.value
+                  setTokenIds(newValue)
+
+                  // Real-time validation
+                  if (newValue.trim()) {
+                    const validation = validateTokenRangeInput(newValue.trim())
+                    if (validation.isValid) {
+                      const parseResult = parseTokenRanges(newValue.trim())
+                      setTokenInputError('')
+                      setParsedTokenCount(parseResult.parsedCount)
+                    } else {
+                      setTokenInputError(validation.error || 'Invalid format')
+                      setParsedTokenCount(0)
+                    }
+                  } else {
+                    setTokenInputError('')
+                    setParsedTokenCount(0)
+                  }
+
                   // Reset exact match when tokens change
-                  if (e.target.value !== tokenIds) {
+                  if (newValue !== tokenIds) {
                     setExactMatch(null)
                   }
                 }}
-                placeholder="e.g., 1, 2, 3"
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="e.g., 1-100, 150, 200-250"
+                className={`w-full px-3 py-2 bg-background border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:border-transparent ${
+                  tokenInputError
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-border focus:ring-primary'
+                }`}
               />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Supports ranges (1-100) and individual IDs (1,2,3). Example: 1-10,15,20-25
+              </p>
+
+              {/* Token count display */}
+              {parsedTokenCount > 0 && !tokenInputError && (
+                <div className="mt-1.5 text-xs text-green-400 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" />
+                  <span>{parsedTokenCount.toLocaleString()} token{parsedTokenCount !== 1 ? 's' : ''} will be included</span>
+                </div>
+              )}
+
+              {/* Error display */}
+              {tokenInputError && (
+                <div className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{tokenInputError}</span>
+                </div>
+              )}
 
               {/* Exact Match Selection */}
               {tokenIds.trim() && (
@@ -524,7 +578,8 @@ export function ContractSnapshot({ contractAddress }: ContractSnapshotProps) {
             disabled={
               generatingSnapshot ||
               (snapshotForm.type === 'historical' && !snapshotForm.date && (!snapshotForm.startDate || !snapshotForm.endDate)) ||
-              (!!tokenIds.trim() && exactMatch === null) // Disable if token IDs provided but match type not selected
+              (!!tokenIds.trim() && exactMatch === null) || // Disable if token IDs provided but match type not selected
+              !!tokenInputError // Disable if there's a validation error
             }
             className="w-full px-4 py-2 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white rounded-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
           >
