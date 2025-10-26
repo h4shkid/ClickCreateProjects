@@ -118,100 +118,27 @@ export default function ContractDiscovery() {
 
   const getChainName = (chainId: number) => {
     const chains: Record<number, string> = {
-      1: 'Ethereum',
-      137: 'Polygon',
-      42161: 'Arbitrum',
-      8453: 'Base',
-      360: 'Shape'
+      1: 'Ethereum'
     }
-    return chains[chainId] || 'Unknown'
+    return chains[chainId] || 'Ethereum'
   }
 
   const getChainIcon = (chainId: number) => {
-    switch (chainId) {
-      case 1: // Ethereum
-        return (
-          <div className="group/icon relative">
-            <svg 
-              className="w-4 h-4 text-blue-500 cursor-help" 
-              viewBox="0 0 24 24" 
-              fill="currentColor"
-            >
-              <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
-            </svg>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-              {getChainName(chainId)}
-            </div>
-          </div>
-        )
-      case 137: // Polygon
-        return (
-          <div className="group/icon relative">
-            <svg 
-              className="w-4 h-4 text-purple-500 cursor-help" 
-              viewBox="0 0 24 24" 
-              fill="currentColor"
-            >
-              <path d="M12 0L1.608 6v12L12 24l10.392-6V6L12 0zm-1.575 4.5L18 8.25v7.5l-7.575 3.75L18 8.25v7.5l-7.575 3.75L2.425 15.75v-7.5L10.425 4.5z"/>
-            </svg>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-              {getChainName(chainId)}
-            </div>
-          </div>
-        )
-      case 42161: // Arbitrum
-        return (
-          <div className="group/icon relative">
-            <svg 
-              className="w-4 h-4 text-blue-400 cursor-help" 
-              viewBox="0 0 24 24" 
-              fill="currentColor"
-            >
-              <path d="M12 0l12 7v10l-12 7L0 17V7l12-7zm0 2.3L2.3 7.7v8.6L12 21.7l9.7-5.4V7.7L12 2.3z"/>
-            </svg>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-              {getChainName(chainId)}
-            </div>
-          </div>
-        )
-      case 8453: // Base
-        return (
-          <div className="group/icon relative">
-            <svg 
-              className="w-4 h-4 text-blue-600 cursor-help" 
-              viewBox="0 0 24 24" 
-              fill="currentColor"
-            >
-              <circle cx="12" cy="12" r="11" fill="currentColor"/>
-              <path d="M12 4a8 8 0 100 16 8 8 0 000-16z" fill="white"/>
-            </svg>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-              {getChainName(chainId)}
-            </div>
-          </div>
-        )
-      case 360: // Shape
-        return (
-          <div className="group/icon relative">
-            <svg 
-              className="w-4 h-4 text-orange-500 cursor-help" 
-              viewBox="0 0 24 24" 
-              fill="currentColor"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-              {getChainName(chainId)}
-            </div>
-          </div>
-        )
-      default:
-        return (
-          <span className="text-xs text-muted-foreground">
-            {getChainName(chainId)}
-          </span>
-        )
-    }
+    // Only Ethereum is supported
+    return (
+      <div className="group/icon relative">
+        <svg
+          className="w-4 h-4 text-blue-500 cursor-help"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+        </svg>
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+          Ethereum
+        </div>
+      </div>
+    )
   }
 
   const formatNumber = (num: number | string) => {
@@ -599,12 +526,7 @@ export default function ContractDiscovery() {
                     }))}
                     className="w-full px-3 py-2 bg-background/50 border border-border rounded-md text-foreground text-sm focus:outline-none focus:border-primary/50"
                   >
-                    <option value="">All Chains</option>
                     <option value="1">Ethereum</option>
-                    <option value="137">Polygon</option>
-                    <option value="42161">Arbitrum</option>
-                    <option value="8453">Base</option>
-                    <option value="360">Shape</option>
                   </select>
                 </div>
 
@@ -859,10 +781,6 @@ function ContractRegisterForm({ onClose, onSuccess }: ContractRegisterFormProps)
               className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground focus:outline-none focus:border-primary/50"
             >
               <option value={1}>Ethereum</option>
-              <option value={137}>Polygon</option>
-              <option value={42161}>Arbitrum</option>
-              <option value={8453}>Base</option>
-              <option value={360}>Shape</option>
             </select>
           </div>
 
