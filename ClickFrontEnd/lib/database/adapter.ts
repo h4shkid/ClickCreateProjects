@@ -61,9 +61,14 @@ class PostgresAdapter implements DatabaseAdapter {
     this.pool = new Pool({
       connectionString,
       max: 1, // Serverless: minimize connections
-      idleTimeoutMillis: 10000, // Release idle connections quickly
+      idleTimeoutMillis: 1000, // Release idle connections immediately (1 second)
       connectionTimeoutMillis: 10000, // Longer timeout for serverless cold starts
       allowExitOnIdle: true, // Allow process to exit when idle
+    })
+
+    // Force pool to use fresh connections (prevent stale data)
+    this.pool.on('connect', (client) => {
+      client.query('SET SESSION CHARACTERISTICS AS TRANSACTION READ COMMITTED')
     })
   }
 
