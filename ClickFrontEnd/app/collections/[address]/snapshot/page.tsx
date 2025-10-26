@@ -760,6 +760,36 @@ export default function CollectionSnapshotPage() {
                 </div>
               )}
 
+              {/* Help Section - Prominent User Guide */}
+              <div className="mb-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-primary text-xs font-bold">?</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-foreground mb-1.5">How to use Token Range:</p>
+                    <ul className="space-y-1 text-[10px] text-muted-foreground">
+                      <li className="flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span><strong className="text-foreground">Single:</strong> <code className="px-1 py-0.5 bg-background/50 rounded text-primary font-mono">42</code></span>
+                      </li>
+                      <li className="flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span><strong className="text-foreground">Multiple:</strong> <code className="px-1 py-0.5 bg-background/50 rounded text-primary font-mono">1, 5, 10</code></span>
+                      </li>
+                      <li className="flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span><strong className="text-foreground">Range:</strong> <code className="px-1 py-0.5 bg-background/50 rounded text-primary font-mono">1-100</code> (all tokens 1-100)</span>
+                      </li>
+                      <li className="flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span><strong className="text-foreground">Mixed:</strong> <code className="px-1 py-0.5 bg-background/50 rounded text-primary font-mono">1-10, 15, 20-25</code></span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
               <input
                 type="text"
                 value={tokenIds}
@@ -769,7 +799,7 @@ export default function CollectionSnapshotPage() {
                     setExactMatch(null)
                   }
                 }}
-                placeholder="e.g., 1, 2, 3"
+                placeholder="e.g., 1-100, 150, 200-250"
                 className="w-full input-glass text-sm"
               />
 

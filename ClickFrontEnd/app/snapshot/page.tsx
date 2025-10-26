@@ -695,6 +695,39 @@ export default function SnapshotPage() {
                 Token IDs (optional)
               </label>
 
+              {/* Help Section - Prominent User Guide */}
+              <div className="mb-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-primary text-sm font-bold">?</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground mb-2">How to use Token Range:</p>
+                    <ul className="space-y-1.5 text-xs text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5 font-bold">•</span>
+                        <span><strong className="text-foreground">Single token:</strong> <code className="px-1.5 py-0.5 bg-background/50 rounded text-primary font-mono">42</code></span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5 font-bold">•</span>
+                        <span><strong className="text-foreground">Multiple tokens:</strong> <code className="px-1.5 py-0.5 bg-background/50 rounded text-primary font-mono">1, 5, 10</code></span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5 font-bold">•</span>
+                        <span><strong className="text-foreground">Range:</strong> <code className="px-1.5 py-0.5 bg-background/50 rounded text-primary font-mono">1-100</code> (includes all tokens from 1 to 100)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5 font-bold">•</span>
+                        <span><strong className="text-foreground">Mixed format:</strong> <code className="px-1.5 py-0.5 bg-background/50 rounded text-primary font-mono">1-10, 15, 20-25, 50</code></span>
+                      </li>
+                    </ul>
+                    <p className="text-xs text-primary/70 mt-2 italic">
+                      💡 The parser will automatically expand ranges and combine all tokens for you!
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Full Season Mode Toggle */}
               <div className="flex items-center gap-2 mb-2">
                 <input

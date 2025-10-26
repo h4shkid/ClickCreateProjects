@@ -341,6 +341,37 @@ export function ContractSnapshot({ contractAddress }: ContractSnapshotProps) {
               <label className="block text-xs font-medium text-foreground mb-1.5">
                 Token IDs (optional)
               </label>
+
+              {/* Help Section - Prominent User Guide */}
+              <div className="mb-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-primary text-xs font-bold">?</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-foreground mb-1.5">How to use Token Range:</p>
+                    <ul className="space-y-1 text-[11px] text-muted-foreground">
+                      <li className="flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span><strong className="text-foreground">Single token:</strong> <code className="px-1 py-0.5 bg-background/50 rounded text-primary">42</code></span>
+                      </li>
+                      <li className="flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span><strong className="text-foreground">Multiple tokens:</strong> <code className="px-1 py-0.5 bg-background/50 rounded text-primary">1, 5, 10</code></span>
+                      </li>
+                      <li className="flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span><strong className="text-foreground">Range:</strong> <code className="px-1 py-0.5 bg-background/50 rounded text-primary">1-100</code> (includes tokens 1 through 100)</span>
+                      </li>
+                      <li className="flex items-start gap-1.5">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span><strong className="text-foreground">Mixed format:</strong> <code className="px-1 py-0.5 bg-background/50 rounded text-primary">1-10, 15, 20-25, 50</code></span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
               <input
                 type="text"
                 value={tokenIds}
@@ -376,9 +407,6 @@ export function ContractSnapshot({ contractAddress }: ContractSnapshotProps) {
                     : 'border-border focus:ring-primary'
                 }`}
               />
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Supports ranges (1-100) and individual IDs (1,2,3). Example: 1-10,15,20-25
-              </p>
 
               {/* Token count display */}
               {parsedTokenCount > 0 && !tokenInputError && (
