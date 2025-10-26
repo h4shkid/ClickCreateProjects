@@ -136,6 +136,12 @@ export async function GET(
           lastSync: eventStats?.last_timestamp || eventStats?.['last_timestamp'] || null
         }
       }
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     })
 
   } catch (error: any) {
