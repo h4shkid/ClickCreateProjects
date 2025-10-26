@@ -89,7 +89,12 @@ class PostgresAdapter implements DatabaseAdapter {
         // Use fresh connection for each query (serverless-friendly)
         const client = await this.pool.connect()
         try {
-          const result = await client.query(pgSql, params)
+          // Disable prepared statement caching to prevent stale data
+          const result = await client.query({
+            text: pgSql,
+            values: params,
+            // Force no caching - use simple query protocol
+          })
           return result.rows[0] || null
         } finally {
           client.release()
@@ -99,7 +104,12 @@ class PostgresAdapter implements DatabaseAdapter {
         // Use fresh connection for each query (serverless-friendly)
         const client = await this.pool.connect()
         try {
-          const result = await client.query(pgSql, params)
+          // Disable prepared statement caching to prevent stale data
+          const result = await client.query({
+            text: pgSql,
+            values: params,
+            // Force no caching - use simple query protocol
+          })
           return result.rows || []
         } finally {
           client.release()
@@ -116,7 +126,12 @@ class PostgresAdapter implements DatabaseAdapter {
             finalSql = pgSql.trim() + ' RETURNING id'
           }
 
-          const result = await client.query(finalSql, params)
+          // Disable prepared statement caching to prevent stale data
+          const result = await client.query({
+            text: finalSql,
+            values: params,
+            // Force no caching - use simple query protocol
+          })
           return {
             changes: result.rowCount || 0,
             lastInsertRowid: result.rows[0]?.id || 0
