@@ -66,10 +66,8 @@ class PostgresAdapter implements DatabaseAdapter {
       allowExitOnIdle: true, // Allow process to exit when idle
     })
 
-    // Force pool to use fresh connections (prevent stale data)
-    this.pool.on('connect', (client) => {
-      client.query('SET SESSION CHARACTERISTICS AS TRANSACTION READ COMMITTED')
-    })
+    // Note: Removed pool-level transaction isolation setting
+    // Query-object format already disables prepared statement caching
   }
 
   prepare(sql: string): PreparedStatement {
