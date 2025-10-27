@@ -128,9 +128,12 @@ export async function GET(
     }
 
     // Get holder distribution for this contract
+    // For ERC-721: Group addresses by how many NFTs they own
+    // For ERC-1155: Group addresses by their balance of a specific token
     let distribution = [];
     try {
       if (tokenId) {
+        // For specific token, show distribution of balances
         distribution = await db.prepare(`
           SELECT
             CASE
@@ -149,22 +152,30 @@ export async function GET(
           ORDER BY MIN(${balanceCast})
         `).all(contractAddress, tokenId) as any[];
       } else {
+        // For collection-wide: First count NFTs per address, then group by count ranges
         distribution = await db.prepare(`
+          WITH holder_counts AS (
+            SELECT
+              address,
+              COUNT(*) as nft_count
+            FROM current_state
+            WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ?
+            GROUP BY address
+          )
           SELECT
             CASE
-              WHEN ${balanceCast} = 1 THEN '1'
-              WHEN ${balanceCast} BETWEEN 2 AND 5 THEN '2-5'
-              WHEN ${balanceCast} BETWEEN 6 AND 10 THEN '6-10'
-              WHEN ${balanceCast} BETWEEN 11 AND 50 THEN '11-50'
-              WHEN ${balanceCast} BETWEEN 51 AND 100 THEN '51-100'
-              WHEN ${balanceCast} > 100 THEN '100+'
+              WHEN nft_count = 1 THEN '1'
+              WHEN nft_count BETWEEN 2 AND 5 THEN '2-5'
+              WHEN nft_count BETWEEN 6 AND 10 THEN '6-10'
+              WHEN nft_count BETWEEN 11 AND 50 THEN '11-50'
+              WHEN nft_count BETWEEN 51 AND 100 THEN '51-100'
+              WHEN nft_count > 100 THEN '100+'
             END as range,
             COUNT(*) as holders,
-            COALESCE(SUM(${balanceCast}), 0) as total_balance
-          FROM current_state
-          WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ?
+            COALESCE(SUM(nft_count), 0) as total_balance
+          FROM holder_counts
           GROUP BY range
-          ORDER BY MIN(${balanceCast})
+          ORDER BY MIN(nft_count)
         `).all(contractAddress) as any[];
       }
     } catch (err) {
@@ -337,7 +348,11 @@ export async function GET(
           firstBlock: eventStats?.first_block || null,
           lastBlock: eventStats?.last_block || null
         },
-        distribution: distribution || [],
+        distribution: (distribution || []).map((d: any) => ({
+          range: d.range,
+          holders: parseInt(d.holders) || 0,
+          total_balance: parseInt(d.total_balance) || 0
+        })),
         topHolders: (topHolders || []).map((h: any) => {
           const balance = h.balance || '0';
           const totalSupply = overallStats?.total_supply || 0;
