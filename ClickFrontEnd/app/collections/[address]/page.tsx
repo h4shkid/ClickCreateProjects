@@ -77,11 +77,12 @@ export default function CollectionOverviewPage() {
         // Map API response structure to component's expected structure
         const data = analyticsData.analytics
         setAnalytics({
-          totalHolders: data.overview?.totalHolders,
-          totalSupply: data.overview?.totalSupply,
-          totalTransfers: data.events?.totalTransfers,
-          last24hTransfers: data.events?.last24hTransfers,
-          avgHoldingPerUser: data.overview?.avgHoldingPerUser,
+          totalHolders: data.overview?.totalHolders || 0,
+          totalSupply: data.overview?.totalSupply || '0',
+          totalTransfers: data.events?.totalTransfers || 0,
+          last24hTransfers: data.events?.last24hTransfers || 0,
+          avgHoldingPerUser: data.overview?.avgHoldingPerUser || '0',
+          topHolders: data.topHolders || [],
           recentActivity: data.timeSeries?.slice(0, 5) || []
         })
       }
