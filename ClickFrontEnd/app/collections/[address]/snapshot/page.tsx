@@ -197,12 +197,18 @@ export default function CollectionSnapshotPage() {
       } else if (tokenIds) {
         // For current snapshot API, send tokenIds
         const tokenIdList = tokenIds.split(',').map(id => id.trim())
-        if (tokenIdList.length === 1) {
+
+        // Check if any item is a range (contains '-')
+        const hasRange = tokenIdList.some(id => id.includes('-'))
+
+        if (tokenIdList.length === 1 && !hasRange) {
+          // Single token ID, no range
           params.tokenId = tokenIdList[0]
         } else {
+          // Multiple tokens or range - always use tokenIds (plural)
           params.tokenIds = tokenIds
         }
-        
+
         // Add exact match parameter
         if (exactMatch !== null) {
           params.exactMatch = exactMatch ? 'true' : 'false'
