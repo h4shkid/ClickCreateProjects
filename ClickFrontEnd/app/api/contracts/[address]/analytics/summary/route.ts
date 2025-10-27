@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseAdapter } from '@/lib/database/adapter';
 
+// Detect database type from environment
+const isPostgres = !!process.env.POSTGRES_URL;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
@@ -28,7 +31,7 @@ export async function GET(
     const contractInfo = await db.prepare(`
       SELECT id, name, symbol, contract_type, total_supply, is_verified
       FROM contracts
-      WHERE LOWER(address) = ?
+      WHERE LOWER(address) = $1
     `).get(contractAddress) as any;
 
     if (!contractInfo) {
@@ -38,6 +41,9 @@ export async function GET(
       );
     }
 
+    // Prepare CAST for balance (TEXT in both DBs, but need to handle differently)
+    const balanceCast = isPostgres ? 'CAST(balance AS NUMERIC)' : 'CAST(balance AS INTEGER)';
+
     // Get overall statistics for this contract
     let overallStats;
     if (tokenId) {
@@ -45,24 +51,24 @@ export async function GET(
         SELECT
           COUNT(DISTINCT address) as unique_holders,
           COUNT(DISTINCT token_id) as unique_tokens,
-          SUM(balance) as total_supply,
-          AVG(balance) as avg_balance,
-          MAX(balance) as max_balance,
-          MIN(CASE WHEN balance > 0 THEN balance END) as min_balance
+          SUM(${balanceCast}) as total_supply,
+          AVG(${balanceCast}) as avg_balance,
+          MAX(${balanceCast}) as max_balance,
+          MIN(CASE WHEN ${balanceCast} > 0 THEN ${balanceCast} END) as min_balance
         FROM current_state
-        WHERE balance > 0 AND LOWER(contract_address) = ? AND token_id = ?
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1 AND token_id = $2
       `).get(contractAddress, tokenId) as any;
     } else {
       overallStats = await db.prepare(`
         SELECT
           COUNT(DISTINCT address) as unique_holders,
           COUNT(DISTINCT token_id) as unique_tokens,
-          SUM(balance) as total_supply,
-          AVG(balance) as avg_balance,
-          MAX(balance) as max_balance,
-          MIN(CASE WHEN balance > 0 THEN balance END) as min_balance
+          SUM(${balanceCast}) as total_supply,
+          AVG(${balanceCast}) as avg_balance,
+          MAX(${balanceCast}) as max_balance,
+          MIN(CASE WHEN ${balanceCast} > 0 THEN ${balanceCast} END) as min_balance
         FROM current_state
-        WHERE balance > 0 AND LOWER(contract_address) = ?
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1
       `).get(contractAddress) as any;
     }
 
@@ -79,7 +85,7 @@ export async function GET(
           MIN(block_timestamp) as first_event,
           MAX(block_timestamp) as last_event
         FROM events
-        WHERE LOWER(contract_address) = ? AND token_id = ?
+        WHERE LOWER(contract_address) = $1 AND token_id = $2
       `).get(contractAddress, tokenId) as any;
     } else {
       eventStats = await db.prepare(`
@@ -92,7 +98,7 @@ export async function GET(
           MIN(block_timestamp) as first_event,
           MAX(block_timestamp) as last_event
         FROM events
-        WHERE LOWER(contract_address) = ?
+        WHERE LOWER(contract_address) = $1
       `).get(contractAddress) as any;
     }
 
@@ -102,37 +108,37 @@ export async function GET(
       distribution = await db.prepare(`
         SELECT
           CASE
-            WHEN balance = 1 THEN '1'
-            WHEN balance BETWEEN 2 AND 5 THEN '2-5'
-            WHEN balance BETWEEN 6 AND 10 THEN '6-10'
-            WHEN balance BETWEEN 11 AND 50 THEN '11-50'
-            WHEN balance BETWEEN 51 AND 100 THEN '51-100'
-            WHEN balance > 100 THEN '100+'
+            WHEN ${balanceCast} = 1 THEN '1'
+            WHEN ${balanceCast} BETWEEN 2 AND 5 THEN '2-5'
+            WHEN ${balanceCast} BETWEEN 6 AND 10 THEN '6-10'
+            WHEN ${balanceCast} BETWEEN 11 AND 50 THEN '11-50'
+            WHEN ${balanceCast} BETWEEN 51 AND 100 THEN '51-100'
+            WHEN ${balanceCast} > 100 THEN '100+'
           END as range,
           COUNT(*) as holders,
-          SUM(balance) as total_balance
+          SUM(${balanceCast}) as total_balance
         FROM current_state
-        WHERE balance > 0 AND LOWER(contract_address) = ? AND token_id = ?
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1 AND token_id = $2
         GROUP BY range
-        ORDER BY MIN(balance)
+        ORDER BY MIN(${balanceCast})
       `).all(contractAddress, tokenId) as any[];
     } else {
       distribution = await db.prepare(`
         SELECT
           CASE
-            WHEN balance = 1 THEN '1'
-            WHEN balance BETWEEN 2 AND 5 THEN '2-5'
-            WHEN balance BETWEEN 6 AND 10 THEN '6-10'
-            WHEN balance BETWEEN 11 AND 50 THEN '11-50'
-            WHEN balance BETWEEN 51 AND 100 THEN '51-100'
-            WHEN balance > 100 THEN '100+'
+            WHEN ${balanceCast} = 1 THEN '1'
+            WHEN ${balanceCast} BETWEEN 2 AND 5 THEN '2-5'
+            WHEN ${balanceCast} BETWEEN 6 AND 10 THEN '6-10'
+            WHEN ${balanceCast} BETWEEN 11 AND 50 THEN '11-50'
+            WHEN ${balanceCast} BETWEEN 51 AND 100 THEN '51-100'
+            WHEN ${balanceCast} > 100 THEN '100+'
           END as range,
           COUNT(*) as holders,
-          SUM(balance) as total_balance
+          SUM(${balanceCast}) as total_balance
         FROM current_state
-        WHERE balance > 0 AND LOWER(contract_address) = ?
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1
         GROUP BY range
-        ORDER BY MIN(balance)
+        ORDER BY MIN(${balanceCast})
       `).all(contractAddress) as any[];
     }
 
@@ -145,20 +151,20 @@ export async function GET(
           balance,
           1 as token_count
         FROM current_state
-        WHERE balance > 0 AND LOWER(contract_address) = ? AND token_id = ?
-        ORDER BY balance DESC
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1 AND token_id = $2
+        ORDER BY ${balanceCast} DESC
         LIMIT 10
       `).all(contractAddress, tokenId) as any[];
     } else {
       topHolders = await db.prepare(`
         SELECT
           address,
-          SUM(balance) as balance,
+          SUM(${balanceCast}) as balance,
           COUNT(DISTINCT token_id) as token_count
         FROM current_state
-        WHERE balance > 0 AND LOWER(contract_address) = ?
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1
         GROUP BY address
-        ORDER BY balance DESC
+        ORDER BY SUM(${balanceCast}) DESC
         LIMIT 10
       `).all(contractAddress) as any[];
     }
@@ -170,10 +176,10 @@ export async function GET(
         SELECT
           token_id,
           COUNT(DISTINCT address) as holders,
-          SUM(balance) as total_supply,
-          MAX(balance) as max_holding
+          SUM(${balanceCast}) as total_supply,
+          MAX(${balanceCast}) as max_holding
         FROM current_state
-        WHERE balance > 0 AND LOWER(contract_address) = ?
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1
         GROUP BY token_id
         ORDER BY holders DESC
         LIMIT 10
@@ -181,41 +187,50 @@ export async function GET(
     }
 
     // Get time series data based on timeRange for this contract
-    const timeCondition = {
-      '24h': "datetime('now', '-1 day')",
-      '7d': "datetime('now', '-7 days')",
-      '30d': "datetime('now', '-30 days')",
-      '90d': "datetime('now', '-90 days')",
-      'all': '0'
-    }[timeRange] || "datetime('now', '-7 days')";
+    // Calculate the timestamp for filtering
+    const now = Math.floor(Date.now() / 1000);
+    const timeOffsets = {
+      '24h': 24 * 60 * 60,
+      '7d': 7 * 24 * 60 * 60,
+      '30d': 30 * 24 * 60 * 60,
+      '90d': 90 * 24 * 60 * 60,
+      'all': now
+    };
+    const timeOffset = timeOffsets[timeRange as keyof typeof timeOffsets] || timeOffsets['7d'];
+    const startTimestamp = timeRange === 'all' ? 0 : now - timeOffset;
+
+    // Date formatting differs between SQLite and PostgreSQL
+    const dateFormat = isPostgres
+      ? "TO_CHAR(TO_TIMESTAMP(block_timestamp), 'YYYY-MM-DD')"
+      : "DATE(block_timestamp, 'unixepoch')";
 
     let timeSeries;
     if (tokenId) {
       timeSeries = await db.prepare(`
         SELECT
-          DATE(block_timestamp, 'unixepoch') as date,
+          ${dateFormat} as date,
           COUNT(*) as events,
           COUNT(DISTINCT from_address) as unique_from,
           COUNT(DISTINCT to_address) as unique_to
         FROM events
-        WHERE block_timestamp >= strftime('%s', ${timeCondition})
-          AND LOWER(contract_address) = ? AND token_id = ?
-        GROUP BY date
-        ORDER BY date DESC
-      `).all(contractAddress, tokenId) as any[];
+        WHERE block_timestamp >= $1
+          AND LOWER(contract_address) = $2 AND token_id = $3
+        GROUP BY ${dateFormat}
+        ORDER BY ${dateFormat} DESC
+      `).all(startTimestamp, contractAddress, tokenId) as any[];
     } else {
       timeSeries = await db.prepare(`
         SELECT
-          DATE(block_timestamp, 'unixepoch') as date,
+          ${dateFormat} as date,
           COUNT(*) as events,
           COUNT(DISTINCT from_address) as unique_from,
           COUNT(DISTINCT to_address) as unique_to
         FROM events
-        WHERE block_timestamp >= strftime('%s', ${timeCondition})
-          AND LOWER(contract_address) = ?
-        GROUP BY date
-        ORDER BY date DESC
-      `).all(contractAddress) as any[];
+        WHERE block_timestamp >= $1
+          AND LOWER(contract_address) = $2
+        GROUP BY ${dateFormat}
+        ORDER BY ${dateFormat} DESC
+      `).all(startTimestamp, contractAddress) as any[];
     }
 
     // Get latest contract analytics if available
@@ -232,7 +247,7 @@ export async function GET(
         avg_holding_period
       FROM contract_analytics ca
       JOIN contracts c ON ca.contract_id = c.id
-      WHERE LOWER(c.address) = ?
+      WHERE LOWER(c.address) = $1
       ORDER BY ca.analysis_date DESC
       LIMIT 1
     `).get(contractAddress) as any;
@@ -245,12 +260,12 @@ export async function GET(
       activeAddresses24h: 0
     };
 
-    if (timeSeries.length > 0) {
+    if (timeSeries && timeSeries.length > 0) {
       const recent = timeSeries.slice(0, 7);
-      growth.newHolders7d = recent.reduce((sum: number, day) => sum + day.unique_to, 0);
+      growth.newHolders7d = recent.reduce((sum: number, day) => sum + (day.unique_to || 0), 0);
       if (timeSeries.length > 0) {
-        growth.newHolders24h = timeSeries[0].unique_to;
-        growth.activeAddresses24h = timeSeries[0].unique_from + timeSeries[0].unique_to;
+        growth.newHolders24h = timeSeries[0]?.unique_to || 0;
+        growth.activeAddresses24h = (timeSeries[0]?.unique_from || 0) + (timeSeries[0]?.unique_to || 0);
       }
     }
 
@@ -272,23 +287,23 @@ export async function GET(
         },
         events: {
           totalTransfers: eventStats?.total_events || 0,
-          last24hTransfers: timeSeries[0]?.events || 0,
+          last24hTransfers: (timeSeries && timeSeries.length > 0) ? timeSeries[0]?.events || 0 : 0,
           uniqueSenders: eventStats?.unique_senders || 0,
           uniqueReceivers: eventStats?.unique_receivers || 0,
           firstBlock: eventStats?.first_block,
           lastBlock: eventStats?.last_block
         },
-        distribution,
-        topHolders: topHolders?.map((h: any) => ({
+        distribution: distribution || [],
+        topHolders: (topHolders || []).map((h: any) => ({
           address: h.address,
-          balance: h.balance.toString(),
-          tokenCount: h.token_count,
-          percentage: overallStats?.total_supply && overallStats.total_supply !== '0' 
-            ? ((BigInt(h.balance) * BigInt(10000)) / BigInt(overallStats.total_supply)) / BigInt(100)
+          balance: h.balance?.toString() || '0',
+          tokenCount: h.token_count || 0,
+          percentage: overallStats?.total_supply && overallStats.total_supply !== '0'
+            ? ((BigInt(h.balance || '0') * BigInt(10000)) / BigInt(overallStats.total_supply)) / BigInt(100)
             : '0'
-        })) || [],
-        tokenActivity,
-        timeSeries,
+        })),
+        tokenActivity: tokenActivity || [],
+        timeSeries: timeSeries || [],
         growth,
         advanced: contractAnalytics ? {
           giniCoefficient: contractAnalytics.gini_coefficient,
