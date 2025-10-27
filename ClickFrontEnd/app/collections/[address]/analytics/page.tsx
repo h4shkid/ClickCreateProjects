@@ -74,7 +74,8 @@ const COLORS = {
   accent: '#FFA500',
   erc721: '#FF6B35',
   erc1155: '#00D9FF',
-  gradient: ['#FF6B35', '#FFA500', '#FF8C42', '#CC5528', '#FF5500']
+  // More distinct colors for pie chart - better contrast between slices
+  gradient: ['#FF6B35', '#FFA500', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899']
 }
 
 export default function CollectionAnalyticsPage() {
@@ -344,7 +345,14 @@ export default function CollectionAnalyticsPage() {
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#1A1A1A', border: '1px solid #2A2A2A', borderRadius: '8px' }}
+                  contentStyle={{
+                    backgroundColor: '#1A1A1A',
+                    border: '1px solid #2A2A2A',
+                    borderRadius: '8px',
+                    color: '#FAFAFA'
+                  }}
+                  itemStyle={{ color: '#FAFAFA' }}
+                  labelStyle={{ color: '#FAFAFA' }}
                   formatter={(value: any, name: any, props: any) => [
                     `${props.payload.holders.toLocaleString()} holders (${value}%)`,
                     `${props.payload.range} NFT${props.payload.range === '1' ? '' : 's'}`
