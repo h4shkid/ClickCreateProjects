@@ -9,6 +9,10 @@ export async function GET(
     const db = createDatabaseAdapter()
     const { address } = await params
     const { searchParams } = new URL(request.url)
+
+    // Detect database type
+    const isPostgres = !!process.env.POSTGRES_URL
+    const balanceCast = isPostgres ? 'balance::numeric' : 'CAST(balance AS INTEGER)'
     
     const tokenId = searchParams.get('tokenId')
     const tokenIds = searchParams.get('tokenIds')
@@ -110,12 +114,12 @@ export async function GET(
           query = `
             SELECT
               address as holder_address,
-              SUM(CAST(balance AS INTEGER)) as balance,
+              SUM(${balanceCast}) as balance,
               COUNT(DISTINCT token_id) as owned_tokens
             FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
             AND token_id IN (${placeholders})
-            AND CAST(balance AS INTEGER) > 0
+            AND ${balanceCast} > 0
             GROUP BY address
             HAVING COUNT(DISTINCT token_id) = ?
             ORDER BY balance DESC
@@ -129,12 +133,12 @@ export async function GET(
         query = `
           SELECT
             address as holder_address,
-            SUM(CAST(balance AS INTEGER)) as balance
+            SUM(${balanceCast}) as balance
           FROM current_state
           WHERE contract_address = ? COLLATE NOCASE
           ${tokenFilter}
           GROUP BY address
-          HAVING SUM(CAST(balance AS INTEGER)) > 0
+          HAVING SUM(${balanceCast}) > 0
           ORDER BY balance DESC
           ${limit > 0 ? `LIMIT ${limit}` : ''}
         `
@@ -189,11 +193,11 @@ export async function GET(
                 COUNT(DISTINCT address) as total_holders,
                 SUM(balance_sum) as total_supply
               FROM (
-                SELECT address, SUM(CAST(balance AS INTEGER)) as balance_sum
+                SELECT address, SUM(${balanceCast}) as balance_sum
                 FROM current_state
                 WHERE contract_address = ? COLLATE NOCASE
                 AND token_id IN (${placeholders})
-                AND CAST(balance AS INTEGER) > 0
+                AND ${balanceCast} > 0
                 GROUP BY address
                 HAVING COUNT(DISTINCT token_id) = ?
               ) AS subquery
@@ -207,12 +211,12 @@ export async function GET(
               COUNT(DISTINCT address) as total_holders,
               SUM(balance_sum) as total_supply
             FROM (
-              SELECT address, SUM(CAST(balance AS INTEGER)) as balance_sum
+              SELECT address, SUM(${balanceCast}) as balance_sum
               FROM current_state
               WHERE contract_address = ? COLLATE NOCASE
               ${tokenFilter || ''}
               GROUP BY address
-              HAVING SUM(CAST(balance AS INTEGER)) > 0
+              HAVING SUM(${balanceCast}) > 0
             ) AS subquery
           `
           totalStatsParams = [address.toLowerCase(), ...tokenParams]
@@ -267,11 +271,11 @@ export async function GET(
               COUNT(DISTINCT address) as total_holders,
               SUM(balance_sum) as total_supply
             FROM (
-              SELECT address, SUM(CAST(balance AS INTEGER)) as balance_sum
+              SELECT address, SUM(${balanceCast}) as balance_sum
               FROM current_state
               WHERE contract_address = ? COLLATE NOCASE
               AND token_id IN (${placeholders})
-              AND CAST(balance AS INTEGER) > 0
+              AND ${balanceCast} > 0
               GROUP BY address
               HAVING COUNT(DISTINCT token_id) = ?
             ) AS subquery
@@ -285,12 +289,12 @@ export async function GET(
             COUNT(DISTINCT address) as total_holders,
             SUM(balance_sum) as total_supply
           FROM (
-            SELECT address, SUM(CAST(balance AS INTEGER)) as balance_sum
+            SELECT address, SUM(${balanceCast}) as balance_sum
             FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
             ${tokenFilter}
             GROUP BY address
-            HAVING SUM(CAST(balance AS INTEGER)) > 0
+            HAVING SUM(${balanceCast}) > 0
           ) AS subquery
         `
         totalStatsParams = [address.toLowerCase(), ...tokenParams]
