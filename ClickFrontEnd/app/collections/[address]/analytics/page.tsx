@@ -160,7 +160,7 @@ export default function CollectionAnalyticsPage() {
   const isERC721 = data.contract.contractType === 'ERC721'
 
   // Process distribution data for charts
-  const distributionData = data.distribution.map((d) => ({
+  const distributionData = (data.distribution || []).map((d) => ({
     range: d.range,
     holders: d.holders,
     percentage: data.overview.totalHolders > 0
@@ -169,7 +169,7 @@ export default function CollectionAnalyticsPage() {
   }))
 
   // Process time series for charts
-  const timeSeriesData = data.timeSeries.map((ts) => {
+  const timeSeriesData = (data.timeSeries || []).map((ts) => {
     // Handle both old date format and new block range format
     let displayDate = 'Unknown';
 
@@ -433,7 +433,7 @@ export default function CollectionAnalyticsPage() {
         </div>
 
         {/* Token Activity (ERC1155 only) */}
-        {!isERC721 && data.tokenActivity.length > 0 && (
+        {!isERC721 && data.tokenActivity && data.tokenActivity.length > 0 && (
           <div className="card-glass mb-8">
             <h2 className="text-xl font-semibold mb-6">Most Popular Token IDs</h2>
             <div className="space-y-3">

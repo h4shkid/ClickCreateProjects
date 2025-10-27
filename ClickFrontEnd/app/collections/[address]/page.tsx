@@ -343,7 +343,7 @@ export default function CollectionOverviewPage() {
         </div>
 
         {/* Recent Activity Preview */}
-        {analytics && analytics.recentActivity.length > 0 && (
+        {analytics && analytics.recentActivity && analytics.recentActivity.length > 0 && (
           <div className="bg-card/20 backdrop-blur-sm border border-border rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-foreground">Recent Activity</h3>
