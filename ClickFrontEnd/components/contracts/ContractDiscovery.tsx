@@ -515,21 +515,6 @@ export default function ContractDiscovery() {
                   </select>
                 </div>
 
-                {/* Chain */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Chain</label>
-                  <select
-                    value={filters.chainId || ''}
-                    onChange={(e) => setFilters(prev => ({ 
-                      ...prev, 
-                      chainId: e.target.value ? parseInt(e.target.value) : undefined 
-                    }))}
-                    className="w-full px-3 py-2 bg-background/50 border border-border rounded-md text-foreground text-sm focus:outline-none focus:border-primary/50"
-                  >
-                    <option value="1">Ethereum</option>
-                  </select>
-                </div>
-
                 {/* Verification Status */}
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">Verification</label>

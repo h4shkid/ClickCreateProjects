@@ -142,14 +142,9 @@ export default function QuickAddCollection({ isOpen, onClose, onSuccess }: Quick
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Blockchain
                 </label>
-                <select
-                  value={chainId}
-                  onChange={(e) => setChainId(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground focus:outline-none focus:border-primary/50"
-                  disabled={loading}
-                >
-                  <option value={1}>Ethereum</option>
-                </select>
+                <div className="w-full px-3 py-2 bg-background/50 border border-border rounded-md text-muted-foreground text-sm">
+                  Ethereum Mainnet
+                </div>
               </div>
 
               {error && (
