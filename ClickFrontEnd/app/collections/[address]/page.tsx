@@ -72,9 +72,18 @@ export default function CollectionOverviewPage() {
       // Fetch analytics
       const analyticsResponse = await fetch(`/api/contracts/${address}/analytics/summary`)
       const analyticsData = await analyticsResponse.json()
-      
-      if (analyticsData.success) {
-        setAnalytics(analyticsData.analytics)
+
+      if (analyticsData.success && analyticsData.analytics) {
+        // Map API response structure to component's expected structure
+        const data = analyticsData.analytics
+        setAnalytics({
+          totalHolders: data.overview?.totalHolders,
+          totalSupply: data.overview?.totalSupply,
+          totalTransfers: data.events?.totalTransfers,
+          last24hTransfers: data.events?.last24hTransfers,
+          avgHoldingPerUser: data.overview?.avgHoldingPerUser,
+          recentActivity: data.timeSeries?.slice(0, 5) || []
+        })
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load collection data')
