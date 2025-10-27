@@ -44,10 +44,15 @@ interface ContractAnalytics {
     max_holding: string
   }>
   timeSeries: Array<{
-    date: string
+    blockRange?: number
+    minBlock?: number
+    maxBlock?: number
+    date?: string
     events: number
-    unique_from: number
-    unique_to: number
+    uniqueFrom?: number
+    uniqueTo?: number
+    unique_from?: number
+    unique_to?: number
   }>
   growth: {
     newHolders24h: number
@@ -162,11 +167,25 @@ export default function CollectionAnalyticsPage() {
   }))
 
   // Process time series for charts
-  const timeSeriesData = data.timeSeries.map((ts) => ({
-    date: new Date(ts.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    transfers: ts.events,
-    traders: ts.unique_from + ts.unique_to
-  })).reverse()
+  const timeSeriesData = data.timeSeries.map((ts) => {
+    // Handle both old date format and new block range format
+    let displayDate = 'Unknown';
+
+    if (ts.date) {
+      // Old format with actual dates
+      displayDate = new Date(ts.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else if (ts.blockRange !== undefined) {
+      // New format with block ranges - show block number ranges
+      const blockRange = ts.blockRange || 0;
+      displayDate = `Block ${(blockRange / 1000000).toFixed(1)}M`;
+    }
+
+    return {
+      date: displayDate,
+      transfers: ts.events || 0,
+      traders: (ts.uniqueFrom || ts.unique_from || 0) + (ts.uniqueTo || ts.unique_to || 0)
+    };
+  }).reverse()
 
   return (
     <div className="min-h-screen pt-24 px-6 lg:px-8">
