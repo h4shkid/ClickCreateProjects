@@ -353,10 +353,15 @@ export default function CollectionAnalyticsPage() {
                   }}
                   itemStyle={{ color: '#FAFAFA' }}
                   labelStyle={{ color: '#FAFAFA' }}
-                  formatter={(value: any, name: any, props: any) => [
-                    `${props.payload.holders.toLocaleString()} holders (${value}%)`,
-                    `${props.payload.range} NFT${props.payload.range === '1' ? '' : 's'}`
-                  ]}
+                  formatter={(value: any, name: any, props: any) => {
+                    if (!props || !props.payload) return ['', ''];
+                    const holders = props.payload.holders || 0;
+                    const range = props.payload.range || '';
+                    return [
+                      `${holders.toLocaleString()} holders (${value || 0}%)`,
+                      `${range} NFT${range === '1' ? '' : 's'}`
+                    ];
+                  }}
                 />
                 <Legend
                   verticalAlign="bottom"
