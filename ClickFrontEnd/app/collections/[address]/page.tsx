@@ -32,15 +32,6 @@ interface CollectionAnalytics {
     balance: string
     percentage: string
   }>
-  recentActivity: Array<{
-    type: 'mint' | 'transfer' | 'burn'
-    from?: string
-    to?: string
-    tokenId?: string
-    amount?: string
-    timestamp: string
-    txHash: string
-  }>
 }
 
 export default function CollectionOverviewPage() {
@@ -82,8 +73,7 @@ export default function CollectionOverviewPage() {
           totalTransfers: data.events?.totalTransfers || 0,
           last24hTransfers: data.events?.last24hTransfers || 0,
           avgHoldingPerUser: data.overview?.avgHoldingPerUser || '0',
-          topHolders: data.topHolders || [],
-          recentActivity: data.timeSeries?.slice(0, 5) || []
+          topHolders: data.topHolders || []
         })
       }
     } catch (err: any) {
@@ -352,45 +342,6 @@ export default function CollectionOverviewPage() {
           </div>
         </div>
 
-        {/* Recent Activity Preview */}
-        {analytics && analytics.recentActivity && analytics.recentActivity.length > 0 && (
-          <div className="bg-card/20 backdrop-blur-sm border border-border rounded-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">Recent Activity</h3>
-              <Link
-                href={`/collections/${collection.address}/monitor`}
-                className="text-sm text-primary hover:underline"
-              >
-                View all
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {analytics.recentActivity.slice(0, 5).map((activity, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      activity.type === 'mint' ? 'bg-green-500' :
-                      activity.type === 'transfer' ? 'bg-blue-500' : 'bg-red-500'
-                    }`} />
-                    <div>
-                      <p className="text-foreground capitalize font-medium">{activity.type}</p>
-                      {activity.tokenId && (
-                        <p className="text-sm text-muted-foreground">
-                          Token #{activity.tokenId}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(activity.timestamp).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
