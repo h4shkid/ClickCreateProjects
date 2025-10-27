@@ -24,7 +24,6 @@ interface Collection {
 interface CollectionAnalytics {
   totalHolders: number
   totalSupply: string
-  avgHoldingPerUser: string
   totalTransfers: number
   last24hTransfers: number
   topHolders: Array<{
@@ -72,7 +71,6 @@ export default function CollectionOverviewPage() {
           totalSupply: data.overview?.totalSupply || '0',
           totalTransfers: data.events?.totalTransfers || 0,
           last24hTransfers: data.events?.last24hTransfers || 0,
-          avgHoldingPerUser: data.overview?.avgHoldingPerUser || '0',
           topHolders: data.topHolders || []
         })
       }
@@ -316,14 +314,6 @@ export default function CollectionOverviewPage() {
           <div className="bg-card/20 backdrop-blur-sm border border-border rounded-lg p-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">Collection Information</h3>
             <div className="space-y-3">
-              {analytics && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Average Holdings</span>
-                  <span className="text-foreground font-medium">
-                    {formatNumber(analytics?.avgHoldingPerUser)}
-                  </span>
-                </div>
-              )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Symbol</span>
                 <span className="text-foreground font-medium">{collection.symbol}</span>
