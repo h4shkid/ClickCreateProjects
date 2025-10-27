@@ -129,19 +129,40 @@ export async function GET(
           console.log(`🎯 Complete season query: must own all ${expectedTokenCount} tokens`)
         }
       } else {
-        // Regular query for partial ownership
-        query = `
-          SELECT
-            address as holder_address,
-            SUM(${balanceCast}) as balance
-          FROM current_state
-          WHERE contract_address = ? COLLATE NOCASE
-          ${tokenFilter}
-          GROUP BY address
-          HAVING SUM(${balanceCast}) > 0
-          ORDER BY balance DESC
-          ${limit > 0 ? `LIMIT ${limit}` : ''}
-        `
+        // Regular query for partial or complete ownership
+        if (exactMatch && tokenParams.length > 0) {
+          // Exact match: holder must own ALL specified tokens
+          query = `
+            SELECT
+              address as holder_address,
+              SUM(${balanceCast}) as balance,
+              COUNT(DISTINCT token_id) as owned_tokens
+            FROM current_state
+            WHERE contract_address = ? COLLATE NOCASE
+            ${tokenFilter}
+            AND ${balanceCast} > 0
+            GROUP BY address
+            HAVING COUNT(DISTINCT token_id) = ${tokenParams.length}
+            ORDER BY balance DESC
+            ${limit > 0 ? `LIMIT ${limit}` : ''}
+          `
+          console.log(`🎯 Exact match mode: must own all ${tokenParams.length} tokens`)
+        } else {
+          // No exact match: holder can own ANY of the specified tokens
+          query = `
+            SELECT
+              address as holder_address,
+              SUM(${balanceCast}) as balance
+            FROM current_state
+            WHERE contract_address = ? COLLATE NOCASE
+            ${tokenFilter}
+            GROUP BY address
+            HAVING SUM(${balanceCast}) > 0
+            ORDER BY balance DESC
+            ${limit > 0 ? `LIMIT ${limit}` : ''}
+          `
+          console.log(`🎯 No exact match mode: can own any of ${tokenParams.length} tokens`)
+        }
       }
       
       console.log(`🔍 SQL Query: ${query.replace(tokenFilter, tokenFilter ? `AND token_id IN (${tokenParams.slice(0, 3).join(',')}${tokenParams.length > 3 ? '...' : ''})` : '')}`)
