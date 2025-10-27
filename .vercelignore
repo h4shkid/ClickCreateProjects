@@ -1,0 +1,6 @@
+# Ignore all subdirectories except ClickFrontEnd
+sync-worker
+clickcreate-sync-worker
+nft-snapshot-tool
+_archive
+.claude
