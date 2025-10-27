@@ -64,7 +64,7 @@ export default function CollectionSnapshotPage() {
   const [error, setError] = useState<string>('')
   const [syncStatus, setSyncStatus] = useState({ syncing: false, progress: 0, eta: '' })
   const [syncInfo, setSyncInfo] = useState<any>(null)
-  const [showAllHolders, setShowAllHolders] = useState(false)
+  const [showAllHolders] = useState(true) // Always show paginated view (50 per page)
   const [currentPage, setCurrentPage] = useState(1)
   const [fullSeasonMode, setFullSeasonMode] = useState(false)
   const [selectedSeason, setSelectedSeason] = useState<string>('')
@@ -1102,15 +1102,6 @@ export default function CollectionSnapshotPage() {
               <div className="p-6 border-b border-border flex justify-between items-center">
                 <h2 className="text-xl font-semibold">Holders ({snapshotData.totalHolders || snapshotData.holders.length})</h2>
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      setShowAllHolders(!showAllHolders)
-                      setCurrentPage(1)
-                    }}
-                    className="btn-secondary text-sm"
-                  >
-                    {showAllHolders ? 'Show Top 20' : 'Show Top 50'}
-                  </button>
                 </div>
               </div>
               <div className="overflow-x-auto">
@@ -1187,11 +1178,6 @@ export default function CollectionSnapshotPage() {
                       </button>
                     </div>
                   </div>
-                </div>
-              )}
-              {!showAllHolders && snapshotData.holders.length > 20 && (
-                <div className="p-4 text-center text-sm text-muted-foreground border-t border-border">
-                  Showing top 20 of {snapshotData.holders.length} holders. Click &quot;Show Top 50&quot; to see more.
                 </div>
               )}
             </div>
