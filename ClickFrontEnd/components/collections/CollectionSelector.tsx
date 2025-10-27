@@ -63,13 +63,9 @@ export default function CollectionSelector({
 
   const getChainName = (chainId: number) => {
     const chains: Record<number, string> = {
-      1: 'Ethereum',
-      137: 'Polygon', 
-      42161: 'Arbitrum',
-      8453: 'Base',
-      360: 'Shape'
+      1: 'Ethereum'
     }
-    return chains[chainId] || 'Unknown'
+    return chains[chainId] || 'Ethereum'
   }
 
   const filteredCollections = collections.filter(collection =>

@@ -123,20 +123,8 @@ export function ContractComparison({ onClose, initialContracts = [] }: ContractC
   const formatAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`
 
   const getChainIcon = (chainId: number) => {
-    switch (chainId) {
-      case 1:
-        return <div className="w-4 h-4 bg-blue-500 rounded-full" title="Ethereum" />
-      case 137:
-        return <div className="w-4 h-4 bg-purple-500 rounded-full" title="Polygon" />
-      case 42161:
-        return <div className="w-4 h-4 bg-blue-400 rounded-full" title="Arbitrum" />
-      case 8453:
-        return <div className="w-4 h-4 bg-blue-600 rounded-full" title="Base" />
-      case 360:
-        return <div className="w-4 h-4 bg-orange-500 rounded-full" title="Shape" />
-      default:
-        return <div className="w-4 h-4 bg-gray-500 rounded-full" title={`Chain ${chainId}`} />
-    }
+    // Only Ethereum is supported
+    return <div className="w-4 h-4 bg-blue-500 rounded-full" title="Ethereum" />
   }
 
   return (

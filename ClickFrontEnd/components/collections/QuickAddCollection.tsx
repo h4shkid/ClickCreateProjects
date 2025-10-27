@@ -149,10 +149,6 @@ export default function QuickAddCollection({ isOpen, onClose, onSuccess }: Quick
                   disabled={loading}
                 >
                   <option value={1}>Ethereum</option>
-                  <option value={137}>Polygon</option>
-                  <option value={42161}>Arbitrum</option>
-                  <option value={8453}>Base</option>
-                  <option value={360}>Shape</option>
                 </select>
               </div>
 

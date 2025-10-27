@@ -29,36 +29,17 @@ export function ContractHeader() {
   }
 
   const getChainIcon = (chainId: number) => {
-    switch (chainId) {
-      case 1:
-        return (
-          <div className="group/icon relative">
-            <svg className="w-5 h-5 text-blue-500 cursor-help" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
-            </svg>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-              Ethereum
-            </div>
-          </div>
-        )
-      case 137:
-        return (
-          <div className="group/icon relative">
-            <svg className="w-5 h-5 text-purple-500 cursor-help" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0L1.608 6v12L12 24l10.392-6V6L12 0zm-1.575 4.5L18 8.25v7.5l-7.575 3.75L18 8.25v7.5l-7.575 3.75L2.425 15.75v-7.5L10.425 4.5z"/>
-            </svg>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-              Polygon
-            </div>
-          </div>
-        )
-      default:
-        return (
-          <span className="text-xs text-muted-foreground">
-            Chain {chainId}
-          </span>
-        )
-    }
+    // Only Ethereum is supported
+    return (
+      <div className="group/icon relative">
+        <svg className="w-5 h-5 text-blue-500 cursor-help" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/>
+        </svg>
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover/icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+          Ethereum
+        </div>
+      </div>
+    )
   }
 
   if (isLoading) {
