@@ -63,8 +63,26 @@ export async function GET(
           console.log(`🎯 Checking for complete ownership of tokens: ${seasonGroup.tokenIds.slice(0, 5).join(',')}${seasonGroup.tokenIds.length > 5 ? '...' : ''}`)
         }
       } else if (tokenIds) {
-        // Handle specific token IDs
-        const tokenIdList = tokenIds.split(',').map(id => id.trim()).filter(id => id)
+        // Handle specific token IDs and ranges (e.g., "1-100" or "1,2,5-10")
+        const tokenIdList: string[] = []
+        const parts = tokenIds.split(',').map(id => id.trim()).filter(id => id)
+
+        for (const part of parts) {
+          if (part.includes('-')) {
+            // Parse range (e.g., "1-100")
+            const [start, end] = part.split('-').map(n => parseInt(n.trim()))
+            if (!isNaN(start) && !isNaN(end) && start <= end) {
+              for (let i = start; i <= end; i++) {
+                tokenIdList.push(i.toString())
+              }
+              console.log(`🎯 Expanded range ${start}-${end} to ${end - start + 1} tokens`)
+            }
+          } else {
+            // Single token ID
+            tokenIdList.push(part)
+          }
+        }
+
         if (tokenIdList.length > 0) {
           const placeholders = tokenIdList.map(() => '?').join(',')
           tokenFilter = `AND token_id IN (${placeholders})`
