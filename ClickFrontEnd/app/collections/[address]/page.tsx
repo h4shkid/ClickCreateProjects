@@ -83,8 +83,10 @@ export default function CollectionOverviewPage() {
     }
   }
 
-  const formatNumber = (num: number | string) => {
+  const formatNumber = (num: number | string | undefined) => {
+    if (num === undefined || num === null) return '0'
     const n = typeof num === 'string' ? parseFloat(num) : num
+    if (isNaN(n)) return '0'
     if (n >= 1000000) return `${(n / 1000000).toFixed(2)}M`
     if (n >= 1000) return `${(n / 1000).toFixed(2)}K`
     return n.toLocaleString()
@@ -234,7 +236,7 @@ export default function CollectionOverviewPage() {
               <div className="flex items-center justify-between mb-2">
                 <Users className="w-5 h-5 text-primary" />
                 <span className="text-2xl font-bold text-foreground">
-                  {formatNumber(analytics.totalHolders)}
+                  {formatNumber(analytics?.totalHolders)}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">Total Holders</p>
@@ -244,7 +246,7 @@ export default function CollectionOverviewPage() {
               <div className="flex items-center justify-between mb-2">
                 <TrendingUp className="w-5 h-5 text-primary" />
                 <span className="text-2xl font-bold text-foreground">
-                  {formatNumber(analytics.totalSupply)}
+                  {formatNumber(analytics?.totalSupply)}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">Total Supply</p>
@@ -254,7 +256,7 @@ export default function CollectionOverviewPage() {
               <div className="flex items-center justify-between mb-2">
                 <Activity className="w-5 h-5 text-primary" />
                 <span className="text-2xl font-bold text-foreground">
-                  {formatNumber(analytics.totalTransfers)}
+                  {formatNumber(analytics?.totalTransfers)}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">Total Transfers</p>
@@ -264,7 +266,7 @@ export default function CollectionOverviewPage() {
               <div className="flex items-center justify-between mb-2">
                 <Calendar className="w-5 h-5 text-primary" />
                 <span className="text-2xl font-bold text-foreground">
-                  {formatNumber(analytics.last24hTransfers)}
+                  {formatNumber(analytics?.last24hTransfers)}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">24h Transfers</p>
@@ -318,7 +320,7 @@ export default function CollectionOverviewPage() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Average Holdings</span>
                   <span className="text-foreground font-medium">
-                    {formatNumber(analytics.avgHoldingPerUser)}
+                    {formatNumber(analytics?.avgHoldingPerUser)}
                   </span>
                 </div>
               )}

@@ -115,7 +115,8 @@ export default function CollectionAnalyticsPage() {
     }
   }
 
-  const formatNumber = (num: number | string) => {
+  const formatNumber = (num: number | string | undefined) => {
+    if (num === undefined || num === null) return '0'
     const n = typeof num === 'string' ? parseFloat(num) : num
     if (isNaN(n)) return '0'
     if (n >= 1000000) return `${(n / 1000000).toFixed(2)}M`
