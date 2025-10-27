@@ -331,7 +331,10 @@ export default function CollectionAnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={(entry) => `${entry.range}: ${entry.percentage}%`}
+                  label={(entry) => {
+                    // Only show label for slices > 10% to avoid overlap
+                    return entry.percentage > 10 ? `${entry.range}: ${entry.percentage}%` : ''
+                  }}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="percentage"
@@ -342,6 +345,15 @@ export default function CollectionAnalyticsPage() {
                 </Pie>
                 <Tooltip
                   contentStyle={{ backgroundColor: '#1A1A1A', border: '1px solid #2A2A2A', borderRadius: '8px' }}
+                  formatter={(value: any, name: any, props: any) => [
+                    `${props.payload.holders.toLocaleString()} holders (${value}%)`,
+                    `${props.payload.range} NFT${props.payload.range === '1' ? '' : 's'}`
+                  ]}
+                />
+                <Legend
+                  verticalAlign="bottom"
+                  height={36}
+                  formatter={(value, entry: any) => `${entry.payload.range} NFT${entry.payload.range === '1' ? '' : 's'}: ${entry.payload.percentage}%`}
                 />
               </PieChart>
             </ResponsiveContainer>
