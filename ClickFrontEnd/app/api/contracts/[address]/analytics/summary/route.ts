@@ -31,7 +31,7 @@ export async function GET(
     const contractInfo = await db.prepare(`
       SELECT id, name, symbol, contract_type, total_supply, is_verified
       FROM contracts
-      WHERE LOWER(address) = $1
+      WHERE LOWER(address) = ?
     `).get(contractAddress) as any;
 
     if (!contractInfo) {
@@ -56,7 +56,7 @@ export async function GET(
           MAX(${balanceCast}) as max_balance,
           MIN(CASE WHEN ${balanceCast} > 0 THEN ${balanceCast} END) as min_balance
         FROM current_state
-        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1 AND token_id = $2
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ? AND token_id = ?
       `).get(contractAddress, tokenId) as any;
     } else {
       overallStats = await db.prepare(`
@@ -68,7 +68,7 @@ export async function GET(
           MAX(${balanceCast}) as max_balance,
           MIN(CASE WHEN ${balanceCast} > 0 THEN ${balanceCast} END) as min_balance
         FROM current_state
-        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ?
       `).get(contractAddress) as any;
     }
 
@@ -85,7 +85,7 @@ export async function GET(
           MIN(block_timestamp) as first_event,
           MAX(block_timestamp) as last_event
         FROM events
-        WHERE LOWER(contract_address) = $1 AND token_id = $2
+        WHERE LOWER(contract_address) = ? AND token_id = ?
       `).get(contractAddress, tokenId) as any;
     } else {
       eventStats = await db.prepare(`
@@ -98,7 +98,7 @@ export async function GET(
           MIN(block_timestamp) as first_event,
           MAX(block_timestamp) as last_event
         FROM events
-        WHERE LOWER(contract_address) = $1
+        WHERE LOWER(contract_address) = ?
       `).get(contractAddress) as any;
     }
 
@@ -118,7 +118,7 @@ export async function GET(
           COUNT(*) as holders,
           SUM(${balanceCast}) as total_balance
         FROM current_state
-        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1 AND token_id = $2
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ? AND token_id = ?
         GROUP BY range
         ORDER BY MIN(${balanceCast})
       `).all(contractAddress, tokenId) as any[];
@@ -136,7 +136,7 @@ export async function GET(
           COUNT(*) as holders,
           SUM(${balanceCast}) as total_balance
         FROM current_state
-        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ?
         GROUP BY range
         ORDER BY MIN(${balanceCast})
       `).all(contractAddress) as any[];
@@ -151,7 +151,7 @@ export async function GET(
           balance,
           1 as token_count
         FROM current_state
-        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1 AND token_id = $2
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ? AND token_id = ?
         ORDER BY ${balanceCast} DESC
         LIMIT 10
       `).all(contractAddress, tokenId) as any[];
@@ -162,7 +162,7 @@ export async function GET(
           SUM(${balanceCast}) as balance,
           COUNT(DISTINCT token_id) as token_count
         FROM current_state
-        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ?
         GROUP BY address
         ORDER BY SUM(${balanceCast}) DESC
         LIMIT 10
@@ -179,7 +179,7 @@ export async function GET(
           SUM(${balanceCast}) as total_supply,
           MAX(${balanceCast}) as max_holding
         FROM current_state
-        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = $1
+        WHERE ${balanceCast} > 0 AND LOWER(contract_address) = ?
         GROUP BY token_id
         ORDER BY holders DESC
         LIMIT 10
@@ -213,8 +213,8 @@ export async function GET(
           COUNT(DISTINCT from_address) as unique_from,
           COUNT(DISTINCT to_address) as unique_to
         FROM events
-        WHERE block_timestamp >= $1
-          AND LOWER(contract_address) = $2 AND token_id = $3
+        WHERE block_timestamp >= ?
+          AND LOWER(contract_address) = ? AND token_id = ?
         GROUP BY ${dateFormat}
         ORDER BY ${dateFormat} DESC
       `).all(startTimestamp, contractAddress, tokenId) as any[];
@@ -226,8 +226,8 @@ export async function GET(
           COUNT(DISTINCT from_address) as unique_from,
           COUNT(DISTINCT to_address) as unique_to
         FROM events
-        WHERE block_timestamp >= $1
-          AND LOWER(contract_address) = $2
+        WHERE block_timestamp >= ?
+          AND LOWER(contract_address) = ?
         GROUP BY ${dateFormat}
         ORDER BY ${dateFormat} DESC
       `).all(startTimestamp, contractAddress) as any[];
@@ -247,7 +247,7 @@ export async function GET(
         avg_holding_period
       FROM contract_analytics ca
       JOIN contracts c ON ca.contract_id = c.id
-      WHERE LOWER(c.address) = $1
+      WHERE LOWER(c.address) = ?
       ORDER BY ca.analysis_date DESC
       LIMIT 1
     `).get(contractAddress) as any;
