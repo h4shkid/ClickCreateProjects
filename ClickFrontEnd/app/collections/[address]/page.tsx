@@ -252,7 +252,7 @@ export default function CollectionOverviewPage() {
 
             <div className="bg-card/20 backdrop-blur-sm border border-border rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
-                <Activity className="w-5 h-5 text-primary" />
+                <TrendingUp className="w-5 h-5 text-primary" />
                 <span className="text-2xl font-bold text-foreground">
                   {formatNumber(analytics?.totalTransfers)}
                 </span>
