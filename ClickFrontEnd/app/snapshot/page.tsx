@@ -259,126 +259,78 @@ export default function SnapshotPage() {
   // Export snapshot data
   const exportData = async (format: 'csv' | 'json') => {
     if (!snapshotData) return
-    
+
     try {
-      // For the internal snapshot page, export the data directly from snapshotData
-      // instead of calling the export API which has contract address issues
-      
-      if (format === 'csv') {
-        // Generate CSV with proper format including sets calculation
-        const headers = ['wallet_id', 'number_of_sets', 'total_tokens_held', 'token_ids_held', 'snapshot_time', 'token_id_list']
-        const csvHeaders = headers.join(',')
-        
-        const csvRows = snapshotData.holders.map(holder => {
-          const totalTokensHeld = parseInt(holder.balance)
-          const snapshotTime = snapshotData.timestamp
-          
-          // Calculate number of sets based on mode
-          let numberOfSets = totalTokensHeld
-          let tokenIdList = 'all'
-          
-          if (fullSeasonMode && selectedSeason) {
-            // For complete season holders, they have 1 complete set of the season
-            // But they might own multiple copies, so calculate how many complete sets
-            const { getSeasonGroup } = require('@/lib/constants/season-tokens')
-            const seasonGroup = getSeasonGroup(selectedSeason)
-            if (seasonGroup) {
-              const seasonTokenCount = seasonGroup.tokenIds.length
-              numberOfSets = Math.floor(totalTokensHeld / seasonTokenCount)
-            } else {
-              numberOfSets = 1 // Default to 1 complete season set
-            }
-            tokenIdList = `${selectedSeason}_complete_holders`
-          } else if (tokenIds) {
-            // For specific token queries
-            const queryTokensArray = tokenIds.split(',').map(id => id.trim())
-            if (exactMatch === true) {
-              // Exact match: they have exactly the queried tokens
-              numberOfSets = Math.floor(totalTokensHeld / queryTokensArray.length)
-            } else {
-              // Any match: number of sets = total tokens (each token is a set)
-              numberOfSets = totalTokensHeld
-            }
-            tokenIdList = tokenIds.replace(/\s/g, '')
-          } else {
-            // All holders: each token is considered a set
-            numberOfSets = totalTokensHeld
-          }
-          
-          return [
-            holder.address,
-            numberOfSets, // number_of_sets (calculated based on query type)
-            totalTokensHeld, // total_tokens_held (actual balance)
-            '', // token_ids_held (would need detailed query to populate)
-            snapshotTime,
-            tokenIdList
-          ].join(',')
-        })
-        
-        const csvContent = [csvHeaders, ...csvRows].join('\n')
-        
-        const blob = new Blob([csvContent], { type: 'text/csv' })
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        
-        // Generate filename based on snapshot type and parameters
-        let filename = 'snapshot'
-        if (fullSeasonMode && selectedSeason) {
-          filename = `snapshot_${selectedSeason}_complete_holders`
-        } else if (tokenIds && exactMatch !== null) {
-          filename = `snapshot_tokens_${exactMatch ? 'exact' : 'any'}_match`
-        } else if (tokenIds) {
-          filename = `snapshot_multi_tokens`
-        } else {
-          filename = 'snapshot_all_holders'
-        }
-        
-        if (snapshotData.blockNumber > 0) {
-          filename += `_block_${snapshotData.blockNumber}`
-        } else {
-          filename += '_current'
-        }
-        
-        a.download = `${filename}_${Date.now()}.csv`
-        document.body.appendChild(a)
-        a.click()
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(a)
-        
-      } else {
-        // JSON export
-        const jsonData = {
-          metadata: {
-            exportTime: new Date().toISOString(),
-            snapshotType: snapshotType,
-            blockNumber: snapshotData.blockNumber,
-            totalHolders: snapshotData.totalHolders,
-            totalSupply: snapshotData.totalSupply,
-            contractAddress: INTERNAL_COLLECTION_ADDRESS,
-            parameters: {
-              tokenIds: tokenIds || 'all',
-              fullSeasonMode,
-              selectedSeason,
-              exactMatch,
-              startDate: startDate || undefined,
-              endDate: endDate || undefined
-            }
-          },
-          holders: snapshotData.holders
-        }
-        
-        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' })
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `snapshot_${Date.now()}.json`
-        document.body.appendChild(a)
-        a.click()
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(a)
+      // Use export API to get full snapshot data (not limited by UI pagination)
+      const params: any = {
+        type: 'snapshot',
+        contract: INTERNAL_COLLECTION_ADDRESS
       }
-      
+
+      // Add token filtering parameters
+      if (fullSeasonMode && selectedSeason) {
+        params.fullSeason = 'true'
+        params.season = selectedSeason
+      } else if (tokenIds) {
+        // Send tokenIds as-is (API will handle range expansion)
+        const tokenIdList = tokenIds.split(',').map(id => id.trim())
+        const hasRange = tokenIdList.some(id => id.includes('-'))
+
+        if (tokenIdList.length === 1 && !hasRange) {
+          params.tokenId = tokenIdList[0]
+        } else {
+          params.tokenIds = tokenIds
+        }
+
+        if (exactMatch !== null) {
+          params.exactMatch = exactMatch ? 'true' : 'false'
+        }
+      }
+
+      // Add block number for historical snapshots
+      if (snapshotType === 'historical' && snapshotData.blockNumber) {
+        params.blockNumber = snapshotData.blockNumber
+      }
+
+      console.log('📤 Exporting with params:', params)
+
+      const response = await axios.get(`/api/export/${format}`, {
+        params,
+        responseType: format === 'csv' ? 'text' : 'json'
+      })
+
+      const blob = new Blob(
+        [format === 'csv' ? response.data : JSON.stringify(response.data, null, 2)],
+        { type: format === 'csv' ? 'text/csv' : 'application/json' }
+      )
+
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+
+      // Generate filename
+      let filename = 'clickcreate_snapshot'
+      if (fullSeasonMode && selectedSeason) {
+        filename = `clickcreate_${selectedSeason}_complete`
+      } else if (tokenIds && exactMatch !== null) {
+        filename = `clickcreate_tokens_${exactMatch ? 'exact' : 'any'}`
+      } else if (tokenIds) {
+        filename = `clickcreate_tokens`
+      }
+
+      if (snapshotData.blockNumber > 0) {
+        filename += `_block_${snapshotData.blockNumber}`
+      } else {
+        filename += '_current'
+      }
+
+      a.download = `${filename}_${Date.now()}.${format}`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+
+      console.log(`✅ ${format.toUpperCase()} export completed`)
     } catch (err) {
       console.error('Export error:', err)
       setError('Failed to export data')

@@ -84,12 +84,12 @@ export async function GET(request: NextRequest) {
         // Extract holders from the response
         holders = result.data.snapshot || result.data.holders || [];
 
-        // Check if this is the ClickCreate collection (only one that should have number_of_sets)
-        const CLICKCREATE_COLLECTION_ADDRESS = '0x300e7a5fb0ab08af367d5fb3915930791bb08c2b';
-        const isClickCreateCollection = contractAddress?.toLowerCase() === CLICKCREATE_COLLECTION_ADDRESS.toLowerCase();
+        // Determine if we should include number_of_sets column
+        // ONLY for full season mode - not for regular snapshots
+        const includeNumberOfSets = fullSeasonMode && seasonName;
 
-        // Define headers based on collection type
-        const csvHeaders = isClickCreateCollection
+        // Define headers based on mode
+        const csvHeaders = includeNumberOfSets
           ? ['wallet_id', 'number_of_sets', 'total_tokens_held', 'token_ids_held', 'snapshot_time', 'token_id_list']
           : ['wallet_id', 'total_tokens_held', 'token_ids_held', 'snapshot_time', 'token_id_list'];
 
@@ -103,17 +103,22 @@ export async function GET(request: NextRequest) {
                                 tokenIds || tokenId || 'all';
 
           const csvRows = holders.map((holder: any) => {
+            const totalTokensHeld = holder.totalTokensHeld || holder.balance || 0;
+
             const row: any = {
               wallet_id: holder.holderAddress || holder.address,
-              total_tokens_held: holder.totalTokensHeld || holder.balance || 0,
+              total_tokens_held: totalTokensHeld,
               token_ids_held: holder.tokensOwned ? holder.tokensOwned.join(';') : holder.tokenIds?.join(';') || '',
               snapshot_time: timestamp,
               token_id_list: tokenIdListStr
             };
 
-            // Only include number_of_sets for ClickCreate collection
-            if (isClickCreateCollection) {
-              row.number_of_sets = holder.numberOfSets || 0;
+            // Calculate number_of_sets ONLY for full season mode
+            if (includeNumberOfSets) {
+              // For full season mode, holder owns complete set(s) of a season
+              // number_of_sets = how many complete season sets they own
+              // This is already calculated in the snapshot API response
+              row.number_of_sets = holder.numberOfSets || 1;
             }
 
             return row;
