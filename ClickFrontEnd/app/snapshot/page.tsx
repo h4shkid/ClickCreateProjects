@@ -127,14 +127,19 @@ export default function SnapshotPage() {
         params.fullSeason = 'true'
         params.season = selectedSeason
       } else if (tokenIds) {
-        // For current snapshot API, send tokenIds
+        // Detect if input contains ranges (e.g., "1-100")
         const tokenIdList = tokenIds.split(',').map(id => id.trim())
-        if (tokenIdList.length === 1) {
+        const hasRange = tokenIdList.some(id => id.includes('-'))
+
+        // For single token without range, use tokenId (singular)
+        // For ranges or multiple tokens, use tokenIds (plural)
+        if (tokenIdList.length === 1 && !hasRange) {
           params.tokenId = tokenIdList[0]
         } else {
+          // Multiple tokens or range - always use tokenIds (plural)
           params.tokenIds = tokenIds
         }
-        
+
         // Add exact match parameter
         if (exactMatch !== null) {
           params.exactMatch = exactMatch ? 'true' : 'false'
