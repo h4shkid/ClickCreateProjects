@@ -466,15 +466,15 @@ async function generateDateRangeSnapshot(
   // Create maps for comparison
   const startMap = new Map(startHolders.map((h: any) => [h.holderAddress, h]))
   const endMap = new Map(endHolders.map((h: any) => [h.holderAddress, h]))
-  
+
   // Find new and removed holders
-  const newHolders = endHolders.filter(h => !startMap.has(h.holderAddress))
-  const removedHolders = startHolders.filter(h => !endMap.has(h.holderAddress))
-  
+  const newHolders = endHolders.filter((h: any) => !startMap.has(h.holderAddress))
+  const removedHolders = startHolders.filter((h: any) => !endMap.has(h.holderAddress))
+
   // Find holders with balance changes
   const balanceChanges = []
   for (const endHolder of endHolders) {
-    const startHolder = startMap.get(endHolder.holderAddress)
+    const startHolder = startMap.get(endHolder.holderAddress) as any
     if (startHolder) {
       const startBalance = parseInt(startHolder.balance)
       const endBalance = parseInt(endHolder.balance)
