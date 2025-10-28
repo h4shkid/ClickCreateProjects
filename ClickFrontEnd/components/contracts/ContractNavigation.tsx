@@ -2,12 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { 
-  BarChart3, 
-  Images, 
-  Camera, 
-  Activity, 
-  Users, 
+import {
+  BarChart3,
+  Images,
+  Camera,
+  Users,
   Home,
   ArrowLeft
 } from 'lucide-react'
@@ -40,11 +39,6 @@ export function ContractNavigation({ contractAddress }: ContractNavigationProps)
       label: 'Snapshot',
       href: `/contracts/${contractAddress}/snapshot`,
       icon: Camera
-    },
-    {
-      label: 'Monitor',
-      href: `/contracts/${contractAddress}/monitor`,
-      icon: Activity
     },
     {
       label: 'Holders',

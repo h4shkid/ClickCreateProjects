@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { TrendingUp, Users, Activity, Calendar, Camera, BarChart3, Images, ExternalLink, CheckCircle } from 'lucide-react'
+import { TrendingUp, Users, Calendar, Camera, BarChart3, Images, ExternalLink, CheckCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 
@@ -299,14 +299,6 @@ export default function CollectionOverviewPage() {
               >
                 <Images className="w-5 h-5" />
                 <span className="font-medium">Gallery</span>
-              </Link>
-              
-              <Link
-                href={`/collections/${collection.address}/monitor`}
-                className="flex items-center gap-2 p-3 bg-card/20 backdrop-blur-sm border border-border hover:border-primary/40 text-foreground rounded-lg transition-colors group"
-              >
-                <Activity className="w-5 h-5" />
-                <span className="font-medium">Monitor</span>
               </Link>
             </div>
           </div>
