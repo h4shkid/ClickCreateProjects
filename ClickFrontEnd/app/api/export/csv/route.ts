@@ -31,11 +31,6 @@ export async function GET(request: NextRequest) {
     const seasonName = searchParams.get('season');
     const exactMatch = searchParams.get('exactMatch');
 
-    // Initialize database
-    const dbManager = getDatabase();
-    await dbManager.initialize();
-    const db = dbManager.getDb();
-
     let csvData = '';
     let filename = '';
     let holders: any[] = [];
@@ -43,6 +38,7 @@ export async function GET(request: NextRequest) {
 
     switch (type) {
       case 'snapshot': {
+        // Snapshot export uses snapshot API, no direct database access needed
         // Build query parameters for snapshot API
         const params = new URLSearchParams();
         if (tokenId) params.append('tokenId', tokenId);
@@ -146,6 +142,11 @@ export async function GET(request: NextRequest) {
       }
 
       case 'transfers': {
+        // Initialize database for direct queries
+        const dbManager = getDatabase();
+        await dbManager.initialize();
+        const db = dbManager.getDb();
+
         // Export transfer history
         const query = `
           SELECT 
@@ -184,6 +185,11 @@ export async function GET(request: NextRequest) {
       }
 
       case 'holders': {
+        // Initialize database for direct queries
+        const dbManager = getDatabase();
+        await dbManager.initialize();
+        const db = dbManager.getDb();
+
         // Export all holders with their balances
         const query = `
           SELECT 
@@ -209,6 +215,11 @@ export async function GET(request: NextRequest) {
       }
 
       case 'analytics': {
+        // Initialize database for direct queries
+        const dbManager = getDatabase();
+        await dbManager.initialize();
+        const db = dbManager.getDb();
+
         // Export analytics summary
         const stats = db.prepare(`
           SELECT 
