@@ -492,8 +492,8 @@ async function generateDateRangeSnapshot(
     }
   }
 
-  const startTotalSupply = startHolders.reduce((sum: number, h) => sum + parseInt(h.balance), 0)
-  const endTotalSupply = endHolders.reduce((sum: number, h) => sum + parseInt(h.balance), 0)
+  const startTotalSupply = startHolders.reduce((sum: number, h: any) => sum + parseInt(h.balance), 0)
+  const endTotalSupply = endHolders.reduce((sum: number, h: any) => sum + parseInt(h.balance), 0)
 
   return NextResponse.json({
     success: true,
