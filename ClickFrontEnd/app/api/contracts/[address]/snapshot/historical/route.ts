@@ -91,13 +91,48 @@ export async function GET(
           converter.blockToDate(endBlock)
         ])
 
+        // Parse token IDs if provided (with range expansion support)
+        const tokenIdList: string[] = []
+        if (tokenId) {
+          tokenIdList.push(tokenId)
+        } else if (tokenIds) {
+          const parts = tokenIds.split(',').map(id => id.trim()).filter(id => id)
+
+          for (const part of parts) {
+            if (part.includes('-')) {
+              // Parse range (e.g., "1-100")
+              const [rangeStart, rangeEnd] = part.split('-').map(n => parseInt(n.trim()))
+              if (!isNaN(rangeStart) && !isNaN(rangeEnd) && rangeStart <= rangeEnd) {
+                for (let i = rangeStart; i <= rangeEnd; i++) {
+                  tokenIdList.push(i.toString())
+                }
+                console.log(`📊 Expanded range ${rangeStart}-${rangeEnd} to ${rangeEnd - rangeStart + 1} tokens`)
+              } else {
+                console.warn(`⚠️ Invalid range: ${part}`)
+              }
+            } else {
+              tokenIdList.push(part)
+            }
+          }
+        }
+
         console.log(`📅 Date range snapshot:`)
         console.log(`   Requested: ${startDate} to ${endDate}`)
         console.log(`   Blocks: ${startBlock} to ${endBlock}`)
         console.log(`   Actual: ${actualStartDate.toISOString()} to ${actualEndDate.toISOString()}`)
+        console.log(`   Tokens: ${tokenIdList.length > 0 ? tokenIdList.length : 'all'}, exactMatch=${exactMatch}`)
 
         // Generate comparison between start and end dates
-        return await generateDateRangeSnapshot(address, startBlock, endBlock, actualStartDate, actualEndDate, { startDate, endDate })
+        return await generateDateRangeSnapshot(
+          address,
+          startBlock,
+          endBlock,
+          actualStartDate,
+          actualEndDate,
+          { startDate, endDate },
+          tokenIdList,
+          exactMatch
+        )
 
       } catch (error: any) {
         return NextResponse.json({
@@ -412,15 +447,21 @@ async function generateDateRangeSnapshot(
   endBlock: number,
   actualStartDate: Date,
   actualEndDate: Date,
-  requestedDates: { startDate: string, endDate: string }
+  requestedDates: { startDate: string, endDate: string },
+  tokenIdList: string[] = [],
+  exactMatch: boolean = false
 ) {
   const db = createDatabaseAdapter()
 
-  // Generate snapshots for both start and end dates
+  console.log(`🔄 Generating optimized date range snapshot for ${tokenIdList.length > 0 ? tokenIdList.length + ' tokens' : 'all tokens'}`)
+
+  // Use optimized query instead of generateSnapshotAtBlock for better performance
   const [startHolders, endHolders] = await Promise.all([
-    generateSnapshotAtBlock(db, address, startBlock),
-    generateSnapshotAtBlock(db, address, endBlock)
+    getOptimizedSnapshot(db, address, startBlock, tokenIdList, exactMatch),
+    getOptimizedSnapshot(db, address, endBlock, tokenIdList, exactMatch)
   ])
+
+  console.log(`✅ Snapshots generated: Start=${startHolders.length} holders, End=${endHolders.length} holders`)
 
   // Create maps for comparison
   const startMap = new Map(startHolders.map((h: any) => [h.holderAddress, h]))
@@ -500,6 +541,156 @@ async function generateDateRangeSnapshot(
       }
     }
   })
+}
+
+// Optimized helper function for generating snapshot with token filtering
+async function getOptimizedSnapshot(
+  db: any,
+  address: string,
+  blockNumber: number,
+  tokenIdList: string[] = [],
+  exactMatch: boolean = false
+) {
+  let balanceQuery: string
+  let balanceParams: any[]
+
+  if (tokenIdList.length > 0) {
+    const placeholders = tokenIdList.map(() => '?').join(', ')
+
+    if (exactMatch) {
+      // Exact match query
+      balanceQuery = `
+        SELECT
+          holder_address,
+          SUM(balance) as balance,
+          COUNT(DISTINCT token_id) as owned_tokens
+        FROM (
+          SELECT
+            to_address as holder_address,
+            token_id,
+            COUNT(*) as balance
+          FROM events
+          WHERE contract_address = ? COLLATE NOCASE
+          AND block_number <= ?
+          AND token_id IN (${placeholders})
+          AND to_address != '0x0000000000000000000000000000000000000000'
+          GROUP BY to_address, token_id
+
+          UNION ALL
+
+          SELECT
+            from_address as holder_address,
+            token_id,
+            -COUNT(*) as balance
+          FROM events
+          WHERE contract_address = ? COLLATE NOCASE
+          AND block_number <= ?
+          AND token_id IN (${placeholders})
+          AND from_address != '0x0000000000000000000000000000000000000000'
+          GROUP BY from_address, token_id
+        )
+        GROUP BY holder_address
+        HAVING SUM(balance) > 0 AND COUNT(DISTINCT token_id) = ${tokenIdList.length}
+        ORDER BY SUM(balance) DESC
+      `
+    } else {
+      // Any match query
+      balanceQuery = `
+        SELECT
+          holder_address,
+          SUM(balance) as balance
+        FROM (
+          SELECT
+            to_address as holder_address,
+            COUNT(*) as balance
+          FROM events
+          WHERE contract_address = ? COLLATE NOCASE
+          AND block_number <= ?
+          AND token_id IN (${placeholders})
+          AND to_address != '0x0000000000000000000000000000000000000000'
+          GROUP BY to_address
+
+          UNION ALL
+
+          SELECT
+            from_address as holder_address,
+            -COUNT(*) as balance
+          FROM events
+          WHERE contract_address = ? COLLATE NOCASE
+          AND block_number <= ?
+          AND token_id IN (${placeholders})
+          AND from_address != '0x0000000000000000000000000000000000000000'
+          GROUP BY from_address
+        )
+        GROUP BY holder_address
+        HAVING SUM(balance) > 0
+        ORDER BY SUM(balance) DESC
+      `
+    }
+
+    balanceParams = [
+      address.toLowerCase(),
+      blockNumber,
+      ...tokenIdList,
+      address.toLowerCase(),
+      blockNumber,
+      ...tokenIdList
+    ]
+  } else {
+    // All tokens query
+    balanceQuery = `
+      SELECT
+        holder_address,
+        SUM(balance) as balance
+      FROM (
+        SELECT
+          to_address as holder_address,
+          COUNT(*) as balance
+        FROM events
+        WHERE contract_address = ? COLLATE NOCASE
+        AND block_number <= ?
+        AND to_address != '0x0000000000000000000000000000000000000000'
+        GROUP BY to_address
+
+        UNION ALL
+
+        SELECT
+          from_address as holder_address,
+          -COUNT(*) as balance
+        FROM events
+        WHERE contract_address = ? COLLATE NOCASE
+        AND block_number <= ?
+        AND from_address != '0x0000000000000000000000000000000000000000'
+        GROUP BY from_address
+      )
+      GROUP BY holder_address
+      HAVING SUM(balance) > 0
+      ORDER BY SUM(balance) DESC
+    `
+    balanceParams = [
+      address.toLowerCase(),
+      blockNumber,
+      address.toLowerCase(),
+      blockNumber
+    ]
+  }
+
+  const holderBalances = await db.prepare(balanceQuery).all(...balanceParams) as any
+
+  const holders = holderBalances.map((row: any) => ({
+    holderAddress: row.holder_address,
+    balance: row.balance.toString(),
+    percentage: 0, // Will calculate after we have total
+    rank: 0 // Will set after sorting
+  }))
+
+  const totalSupply = holders.reduce((sum: number, h: any) => sum + parseInt(h.balance), 0)
+
+  return holders.map((holder: any, index: number) => ({
+    ...holder,
+    percentage: totalSupply > 0 ? (parseInt(holder.balance) / totalSupply) * 100 : 0,
+    rank: index + 1
+  }))
 }
 
 // Helper function to generate snapshot at specific block
