@@ -8,8 +8,11 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useAccount } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 
-// Authorized wallet address for Snapshot page access
-const AUTHORIZED_SNAPSHOT_WALLET = '0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC'
+// Authorized wallet addresses for Snapshot page access
+const AUTHORIZED_SNAPSHOT_WALLETS = [
+  '0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC',
+  '0x8d2a43ff7e015c55c2BE316A52Bec176A4328a9b'
+]
 
 // Internal collection address for snapshot operations
 const INTERNAL_COLLECTION_ADDRESS = '0x300e7a5fb0ab08af367d5fb3915930791bb08c2b'
@@ -55,7 +58,9 @@ export default function SnapshotPage() {
   const holdersPerPage = 50
   
   // Check if connected wallet is authorized for Snapshot access
-  const isAuthorizedForSnapshot = address?.toLowerCase() === AUTHORIZED_SNAPSHOT_WALLET.toLowerCase()
+  const isAuthorizedForSnapshot = address ?
+    AUTHORIZED_SNAPSHOT_WALLETS.some(wallet => wallet.toLowerCase() === address.toLowerCase()) :
+    false
   
   // Function to refresh date range
   const refreshDateRange = async () => {

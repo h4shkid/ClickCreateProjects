@@ -50,8 +50,8 @@ export async function GET(
     }
 
     // Get contract from database
-    const contract = db.prepare(`
-      SELECT id, name, symbol, contract_type FROM contracts 
+    const contract = await db.prepare(`
+      SELECT id, name, symbol, contract_type FROM contracts
       WHERE address = ? COLLATE NOCASE
     `).get(address.toLowerCase()) as any
 
@@ -155,12 +155,29 @@ export async function GET(
       }, { status: 400 })
     }
 
-    // Parse token IDs if provided
+    // Parse token IDs if provided (with range expansion support)
     const tokenIdList: string[] = []
     if (tokenId) {
       tokenIdList.push(tokenId)
     } else if (tokenIds) {
-      tokenIdList.push(...tokenIds.split(',').map(id => id.trim()))
+      const parts = tokenIds.split(',').map(id => id.trim()).filter(id => id)
+
+      for (const part of parts) {
+        if (part.includes('-')) {
+          // Parse range (e.g., "1-100")
+          const [start, end] = part.split('-').map(n => parseInt(n.trim()))
+          if (!isNaN(start) && !isNaN(end) && start <= end) {
+            for (let i = start; i <= end; i++) {
+              tokenIdList.push(i.toString())
+            }
+            console.log(`📊 Expanded range ${start}-${end} to ${end - start + 1} tokens`)
+          } else {
+            console.warn(`⚠️ Invalid range: ${part}`)
+          }
+        } else {
+          tokenIdList.push(part)
+        }
+      }
     }
 
     console.log(`🎯 Token filtering: ${tokenIdList.length > 0 ? `${tokenIdList.length} tokens, exactMatch=${exactMatch}` : 'all tokens'}`)
@@ -177,37 +194,78 @@ export async function GET(
       if (tokenIdList.length > 0) {
         // Calculate balances for specific tokens only
         const placeholders = tokenIdList.map(() => '?').join(', ')
-        balanceQuery = `
-          SELECT
-            holder_address,
-            SUM(balance) as balance
-          FROM (
-            SELECT
-              to_address as holder_address,
-              COUNT(*) as balance
-            FROM events
-            WHERE contract_address = ? COLLATE NOCASE
-            AND block_number <= ?
-            AND token_id IN (${placeholders})
-            AND to_address != '0x0000000000000000000000000000000000000000'
-            GROUP BY to_address
 
-            UNION ALL
-
+        if (exactMatch) {
+          // Exact match: holder must own ALL requested tokens and ONLY those tokens
+          balanceQuery = `
             SELECT
-              from_address as holder_address,
-              -COUNT(*) as balance
-            FROM events
-            WHERE contract_address = ? COLLATE NOCASE
-            AND block_number <= ?
-            AND token_id IN (${placeholders})
-            AND from_address != '0x0000000000000000000000000000000000000000'
-            GROUP BY from_address
-          )
-          GROUP BY holder_address
-          HAVING SUM(balance) > 0
-          ORDER BY SUM(balance) DESC
-        `
+              holder_address,
+              SUM(balance) as balance,
+              COUNT(DISTINCT token_id) as owned_tokens
+            FROM (
+              SELECT
+                to_address as holder_address,
+                token_id,
+                COUNT(*) as balance
+              FROM events
+              WHERE contract_address = ? COLLATE NOCASE
+              AND block_number <= ?
+              AND token_id IN (${placeholders})
+              AND to_address != '0x0000000000000000000000000000000000000000'
+              GROUP BY to_address, token_id
+
+              UNION ALL
+
+              SELECT
+                from_address as holder_address,
+                token_id,
+                -COUNT(*) as balance
+              FROM events
+              WHERE contract_address = ? COLLATE NOCASE
+              AND block_number <= ?
+              AND token_id IN (${placeholders})
+              AND from_address != '0x0000000000000000000000000000000000000000'
+              GROUP BY from_address, token_id
+            )
+            GROUP BY holder_address
+            HAVING SUM(balance) > 0 AND COUNT(DISTINCT token_id) = ${tokenIdList.length}
+            ORDER BY SUM(balance) DESC
+          `
+        } else {
+          // Any match: holder can own ANY of the requested tokens
+          balanceQuery = `
+            SELECT
+              holder_address,
+              SUM(balance) as balance
+            FROM (
+              SELECT
+                to_address as holder_address,
+                COUNT(*) as balance
+              FROM events
+              WHERE contract_address = ? COLLATE NOCASE
+              AND block_number <= ?
+              AND token_id IN (${placeholders})
+              AND to_address != '0x0000000000000000000000000000000000000000'
+              GROUP BY to_address
+
+              UNION ALL
+
+              SELECT
+                from_address as holder_address,
+                -COUNT(*) as balance
+              FROM events
+              WHERE contract_address = ? COLLATE NOCASE
+              AND block_number <= ?
+              AND token_id IN (${placeholders})
+              AND from_address != '0x0000000000000000000000000000000000000000'
+              GROUP BY from_address
+            )
+            GROUP BY holder_address
+            HAVING SUM(balance) > 0
+            ORDER BY SUM(balance) DESC
+          `
+        }
+
         balanceParams = [
           address.toLowerCase(),
           targetBlock,
@@ -255,7 +313,7 @@ export async function GET(
         ]
       }
 
-      const holderBalances = db.prepare(balanceQuery).all(...balanceParams) as any
+      const holderBalances = await db.prepare(balanceQuery).all(...balanceParams) as any
 
       if (holderBalances && holderBalances.length > 0) {
         hasRealData = true
@@ -268,17 +326,13 @@ export async function GET(
           rank: 0 // Will set after sorting
         }))
 
-        // Apply exact match filtering if requested
-        if (exactMatch && tokenIdList.length > 0) {
-          // Filter holders to only those who have EXACTLY the requested tokens (no more, no less)
-          holders = holders.filter(holder => {
-            const balance = parseInt(holder.balance)
-            return balance === tokenIdList.length
-          })
-          console.log(`✅ Exact match: ${holders.length} holders with exactly ${tokenIdList.length} tokens`)
-        } else if (!exactMatch && tokenIdList.length > 0) {
-          // For non-exact match, include anyone with at least 1 of the requested tokens (already filtered by query)
-          console.log(`✅ Any match: ${holders.length} holders with at least one of the ${tokenIdList.length} tokens`)
+        // Log filtering results
+        if (tokenIdList.length > 0) {
+          if (exactMatch) {
+            console.log(`✅ Exact match: ${holders.length} holders with exactly ${tokenIdList.length} distinct tokens`)
+          } else {
+            console.log(`✅ Any match: ${holders.length} holders with at least one of the ${tokenIdList.length} tokens`)
+          }
         }
 
         // Sort by balance descending and calculate percentages
@@ -459,35 +513,35 @@ async function generateSnapshotAtBlock(db: any, address: string, blockNumber: nu
     AND to_address != '0x0000000000000000000000000000000000000000'
   `
   
-  const holderAddresses = db.prepare(eventsQuery).all(address.toLowerCase(), blockNumber) as any
+  const holderAddresses = await db.prepare(eventsQuery).all(address.toLowerCase(), blockNumber) as any
   const holders = []
-  
+
   // Calculate balance for each holder at the specified block
   for (const holderData of holderAddresses) {
     const holderAddress = holderData.holder_address
-    
+
     // Count tokens received minus tokens sent up to the block number
     const balanceQuery = `
-      SELECT 
+      SELECT
         COALESCE(received.count, 0) - COALESCE(sent.count, 0) as balance
       FROM (
-        SELECT COUNT(*) as count 
-        FROM events 
-        WHERE contract_address = ? COLLATE NOCASE 
+        SELECT COUNT(*) as count
+        FROM events
+        WHERE contract_address = ? COLLATE NOCASE
         AND to_address = ? COLLATE NOCASE
         AND block_number <= ?
       ) received
       LEFT JOIN (
-        SELECT COUNT(*) as count 
-        FROM events 
-        WHERE contract_address = ? COLLATE NOCASE 
+        SELECT COUNT(*) as count
+        FROM events
+        WHERE contract_address = ? COLLATE NOCASE
         AND from_address = ? COLLATE NOCASE
         AND from_address != '0x0000000000000000000000000000000000000000'
         AND block_number <= ?
       ) sent ON 1=1
     `
-    
-    const balance = db.prepare(balanceQuery).get(
+
+    const balance = await db.prepare(balanceQuery).get(
       address.toLowerCase(),
       holderAddress,
       blockNumber,
