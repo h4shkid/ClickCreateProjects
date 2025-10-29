@@ -216,10 +216,7 @@ export default function CollectionSnapshotPage() {
       }
       
       if (snapshotType === 'historical') {
-        if (startDate && endDate) {
-          params.startDate = startDate
-          params.endDate = endDate
-        } else if (snapshotDate) {
+        if (snapshotDate) {
           params.date = snapshotDate
         }
       }
@@ -885,99 +882,22 @@ export default function CollectionSnapshotPage() {
 
             {/* Date Options (for historical) */}
             {snapshotType === 'historical' && (
-              <div className="space-y-3">
-                {/* Date Mode Toggle */}
-                <div className="flex items-center gap-3 text-xs">
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="dateMode"
-                      checked={dateMode === 'single'}
-                      onChange={() => {
-                        setDateMode('single')
-                        setStartDate('')
-                        setEndDate('')
-                      }}
-                      className="text-primary focus:ring-primary"
-                    />
-                    <span className="font-medium">Single Date</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="dateMode"
-                      checked={dateMode === 'range'}
-                      onChange={() => {
-                        setDateMode('range')
-                        setSnapshotDate('')
-                        if (!startDate) setStartDate('')
-                        if (!endDate) setEndDate('')
-                      }}
-                      className="text-primary focus:ring-primary"
-                    />
-                    <span className="font-medium">Date Range</span>
-                  </label>
-                </div>
-
-                {/* Single Date Input */}
-                {dateMode === 'single' && (
-                  <div>
-                    <label className="block text-xs font-medium mb-1.5">
-                      Snapshot Date
-                    </label>
-                    <input
-                      type="date"
-                      value={snapshotDate}
-                      min={dateRange?.minDate}
-                      max={dateRange?.maxDate}
-                      onChange={(e) => setSnapshotDate(e.target.value)}
-                      className="w-full input-glass text-sm"
-                    />
-                    {dateRange && (
-                      <p className="text-[10px] text-muted-foreground mt-1">
-                        Available: {dateRange.minDate} to {dateRange.maxDate}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* Date Range Inputs */}
-                {dateMode === 'range' && (
-                  <>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-xs font-medium mb-1.5">
-                          Start Date
-                        </label>
-                        <input
-                          type="date"
-                          value={startDate}
-                          min={dateRange?.minDate}
-                          max={dateRange?.maxDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                          className="w-full input-glass text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1.5">
-                          End Date
-                        </label>
-                        <input
-                          type="date"
-                          value={endDate}
-                          min={startDate || dateRange?.minDate}
-                          max={dateRange?.maxDate}
-                          onChange={(e) => setEndDate(e.target.value)}
-                          className="w-full input-glass text-sm"
-                        />
-                      </div>
-                    </div>
-                    {dateRange && (
-                      <p className="text-[10px] text-muted-foreground">
-                        Available: {dateRange.minDate} to {dateRange.maxDate}
-                      </p>
-                    )}
-                  </>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Snapshot Date
+                </label>
+                <input
+                  type="date"
+                  value={snapshotDate}
+                  min={dateRange?.minDate}
+                  max={dateRange?.maxDate}
+                  onChange={(e) => setSnapshotDate(e.target.value)}
+                  className="w-full input-glass text-sm"
+                />
+                {dateRange && (
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Available: {dateRange.minDate} to {dateRange.maxDate}
+                  </p>
                 )}
               </div>
             )}
