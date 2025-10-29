@@ -80,9 +80,36 @@ export async function GET(request: NextRequest) {
         // Extract holders from the response
         holders = result.data.snapshot || result.data.holders || [];
 
-        // Determine if we should include number_of_sets column
-        // ONLY for full season mode - not for regular snapshots
-        const includeNumberOfSets = fullSeasonMode && seasonName;
+        // Parse requested token IDs for number_of_sets calculation
+        let requestedTokenIds: string[] = []
+        if (fullSeasonMode && seasonName) {
+          // Get season token IDs
+          const { getSeasonGroup } = await import('@/lib/constants/season-tokens')
+          const seasonGroup = getSeasonGroup(seasonName)
+          if (seasonGroup) {
+            requestedTokenIds = seasonGroup.tokenIds.map((id: number) => id.toString())
+          }
+        } else if (tokenIds) {
+          // Parse token range (e.g., "51-55" → ["51", "52", "53", "54", "55"])
+          const parts = tokenIds.split(',').map(id => id.trim()).filter(id => id)
+          for (const part of parts) {
+            if (part.includes('-')) {
+              const [start, end] = part.split('-').map(n => parseInt(n.trim()))
+              if (!isNaN(start) && !isNaN(end) && start <= end) {
+                for (let i = start; i <= end; i++) {
+                  requestedTokenIds.push(i.toString())
+                }
+              }
+            } else {
+              requestedTokenIds.push(part)
+            }
+          }
+        } else if (tokenId) {
+          requestedTokenIds = [tokenId]
+        }
+
+        // Include number_of_sets column if specific tokens requested
+        const includeNumberOfSets = requestedTokenIds.length > 0;
 
         // Define headers based on mode
         const csvHeaders = includeNumberOfSets
@@ -93,32 +120,113 @@ export async function GET(request: NextRequest) {
           // Return empty CSV with headers only
           csvData = csvHeaders.join(',');
         } else {
+          // Initialize database adapter for token breakdown queries
+          const { createDatabaseAdapter } = await import('@/lib/database/adapter')
+          const db = createDatabaseAdapter()
+
           const timestamp = result.data.metadata?.timestamp || new Date().toISOString();
           const tokenIdListStr = result.data.metadata?.tokenIdList?.join(';') ||
                                 result.data.metadata?.queryTokens?.join(';') ||
                                 tokenIds || tokenId || 'all';
 
-          const csvRows = holders.map((holder: any) => {
+          const csvRows = await Promise.all(holders.map(async (holder: any) => {
+            const holderAddress = holder.holderAddress || holder.address
             const totalTokensHeld = holder.totalTokensHeld || holder.balance || 0;
 
             const row: any = {
-              wallet_id: holder.holderAddress || holder.address,
+              wallet_id: holderAddress,
               total_tokens_held: totalTokensHeld,
               token_ids_held: holder.tokensOwned ? holder.tokensOwned.join(';') : holder.tokenIds?.join(';') || '',
               snapshot_time: timestamp,
               token_id_list: tokenIdListStr
             };
 
-            // Calculate number_of_sets ONLY for full season mode
-            if (includeNumberOfSets) {
-              // For full season mode, holder owns complete set(s) of a season
-              // number_of_sets = how many complete season sets they own
-              // This is already calculated in the snapshot API response
-              row.number_of_sets = holder.numberOfSets || 1;
+            // Calculate number_of_sets if specific tokens requested
+            if (includeNumberOfSets && requestedTokenIds.length > 0) {
+              try {
+                // Query how many of each requested token the holder owns
+                const placeholders = requestedTokenIds.map(() => '?').join(',')
+                const isPostgres = !!process.env.POSTGRES_URL
+                const balanceCast = isPostgres ? 'balance::numeric' : 'CAST(balance AS INTEGER)'
+
+                let tokenBreakdown: any[]
+                if (blockNumber) {
+                  // Historical snapshot - reconstruct from events
+                  tokenBreakdown = await db.prepare(`
+                    SELECT
+                      token_id,
+                      SUM(balance) as balance
+                    FROM (
+                      SELECT
+                        token_id,
+                        COUNT(*) as balance
+                      FROM events
+                      WHERE contract_address = ?
+                      AND to_address = ?
+                      AND token_id IN (${placeholders})
+                      AND block_number <= ?
+                      GROUP BY token_id
+
+                      UNION ALL
+
+                      SELECT
+                        token_id,
+                        -COUNT(*) as balance
+                      FROM events
+                      WHERE contract_address = ?
+                      AND from_address = ?
+                      AND token_id IN (${placeholders})
+                      AND block_number <= ?
+                      GROUP BY token_id
+                    )
+                    GROUP BY token_id
+                    HAVING SUM(balance) > 0
+                  `).all(
+                    contractAddress.toLowerCase(),
+                    holderAddress.toLowerCase(),
+                    ...requestedTokenIds,
+                    parseInt(blockNumber),
+                    contractAddress.toLowerCase(),
+                    holderAddress.toLowerCase(),
+                    ...requestedTokenIds,
+                    parseInt(blockNumber)
+                  ) as any
+                } else {
+                  // Current snapshot - use current_state table
+                  tokenBreakdown = await db.prepare(`
+                    SELECT token_id, ${balanceCast} as balance
+                    FROM current_state
+                    WHERE contract_address = ?
+                    AND address = ?
+                    AND token_id IN (${placeholders})
+                    AND ${balanceCast} > 0
+                  `).all(
+                    contractAddress.toLowerCase(),
+                    holderAddress.toLowerCase(),
+                    ...requestedTokenIds
+                  ) as any
+                }
+
+                // Calculate number_of_sets = minimum balance across all requested tokens
+                // If any token is missing (balance = 0), number_of_sets = 0
+                if (tokenBreakdown.length < requestedTokenIds.length) {
+                  // Missing some tokens
+                  row.number_of_sets = 0
+                } else {
+                  // Find minimum balance across all tokens
+                  const minBalance = Math.min(
+                    ...tokenBreakdown.map((t: any) => parseInt(t.balance) || 0)
+                  )
+                  row.number_of_sets = minBalance
+                }
+              } catch (error) {
+                console.error(`Error calculating number_of_sets for ${holderAddress}:`, error)
+                row.number_of_sets = 0
+              }
             }
 
             return row;
-          });
+          }));
 
           csvData = convertToCSV(csvRows, csvHeaders);
         }
