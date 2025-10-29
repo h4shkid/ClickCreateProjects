@@ -467,7 +467,9 @@ return new NextResponse(csvData, {
 
 ### Exact Match Modes
 
-#### Exact Match = YES (All Tokens)
+#### Exact Match = YES (Complete Set Holders)
+
+**UI Label**: "YES - Complete Set" / "Must own ALL tokens (51-55)"
 
 **Query Logic**:
 ```sql
@@ -479,11 +481,17 @@ GROUP BY address
 HAVING COUNT(DISTINCT token_id) = 5  -- Must own ALL 5 tokens
 ```
 
-**Result**: Only holders who own **every** token in the list
+**Result**: Only holders who own **every** token in the list (complete set)
 
-**Use Case**: Find complete set collectors (e.g., holders of full monthly drop)
+**Example**: For tokens 51-55, returns ~127 holders who have 51 AND 52 AND 53 AND 54 AND 55
 
-#### Exact Match = NO (Any Token)
+**Use Case**: Find complete set collectors (e.g., holders of full monthly drop who can claim rewards)
+
+---
+
+#### Exact Match = NO (Partial Holders OK)
+
+**UI Label**: "NO - Partial OK" / "Can own ANY token (51-55)"
 
 **Query Logic**:
 ```sql
@@ -492,12 +500,15 @@ FROM current_state
 WHERE contract_address = ?
 AND token_id IN (51, 52, 53, 54, 55)
 GROUP BY address
--- No HAVING clause - returns anyone owning at least one
+HAVING SUM(balance) > 0
+-- No COUNT restriction - returns anyone owning at least one
 ```
 
-**Result**: All holders who own **at least one** token in the list
+**Result**: All holders who own **at least one** token in the list (partial ownership OK)
 
-**Use Case**: Find all participants in a drop (even partial holders)
+**Example**: For tokens 51-55, returns ~800+ holders who have 51 OR 52 OR 53 OR 54 OR 55 (any combination)
+
+**Use Case**: Find all participants in a drop (even partial holders who missed some tokens)
 
 ---
 
@@ -770,7 +781,50 @@ if (fullSeasonMode && selectedSeason) {
 
 ---
 
-### Issue 2: Missing `number_of_sets` Column
+### Issue 2: Exact Match YES/NO Returns Same Results
+
+**Symptom**: Both "Complete Set" (YES) and "Partial OK" (NO) return identical holder counts
+
+**Root Cause 1**: UI confusion - old labels were misleading
+- ❌ OLD: "YES - Exact Match" / "Only EXACTLY these tokens"
+- ✅ NEW: "YES - Complete Set" / "Must own ALL tokens"
+
+**Root Cause 2**: `exactMatch` parameter not being passed to API
+
+**Root Cause 3**: Database has insufficient variation (e.g., all holders happen to own complete sets)
+
+**Fix**:
+1. Check browser console for: `📡 Calling API with params:` - should show `exactMatch: 'true'` or `'false'`
+2. Check Vercel logs for snapshot API:
+   ```
+   ✅ EXACT MATCH MODE: Must own ALL 5 tokens
+   SQL: HAVING COUNT(DISTINCT token_id) = 5
+   📊 Query returned 127 holders
+   ```
+   vs.
+   ```
+   ❌ ANY MATCH MODE: Can own ANY of 5 tokens
+   SQL: No COUNT restriction (partial ownership OK)
+   📊 Query returned 856 holders
+   ```
+
+**Expected Behavior**:
+- **YES (exactMatch=true)**: Returns ~127 holders (only complete set owners)
+- **NO (exactMatch=false)**: Returns ~800+ holders (anyone with at least 1 token)
+
+**Verification Test**:
+```bash
+# Test with tokens 51-55
+# Complete Set (YES): Should return fewer holders
+curl "/api/contracts/0x300.../snapshot/current?tokenIds=51-55&exactMatch=true"
+
+# Partial OK (NO): Should return more holders
+curl "/api/contracts/0x300.../snapshot/current?tokenIds=51-55&exactMatch=false"
+```
+
+---
+
+### Issue 3: Missing `number_of_sets` Column
 
 **Symptom**: CSV has only 5 columns instead of 6 (no `number_of_sets`)
 
@@ -793,7 +847,7 @@ params.contract = INTERNAL_COLLECTION_ADDRESS // For internal page
 
 ---
 
-### Issue 3: Wrong Number of Holders in CSV
+### Issue 4: Wrong Number of Holders in CSV
 
 **Symptom**: Snapshot shows 127 holders, but CSV has 1900+ rows
 
@@ -812,7 +866,7 @@ params.contract = INTERNAL_COLLECTION_ADDRESS // For internal page
 
 ---
 
-### Issue 4: Incorrect `number_of_sets` Values
+### Issue 5: Incorrect `number_of_sets` Values
 
 **Symptom**: `number_of_sets` shows wrong values (e.g., all 0s or incorrect minimum)
 
