@@ -16,10 +16,21 @@ export async function GET(
     
     const tokenId = searchParams.get('tokenId')
     const tokenIds = searchParams.get('tokenIds')
-    const exactMatch = searchParams.get('exactMatch') === 'true'
+    const exactMatchParam = searchParams.get('exactMatch')
+    const exactMatch = exactMatchParam === 'true'
     const fullSeason = searchParams.get('fullSeason') === 'true'
     const season = searchParams.get('season')
     const limit = parseInt(searchParams.get('limit') || '50') // Default to 50 for UI, but allow unlimited for exports
+
+    console.log('🔍 Snapshot API Parameters:', {
+      tokenId,
+      tokenIds,
+      exactMatchParam,
+      exactMatch,
+      fullSeason,
+      season,
+      limit
+    })
 
     if (!address) {
       return NextResponse.json({
@@ -146,7 +157,8 @@ export async function GET(
             ORDER BY balance DESC
             ${limit > 0 ? `LIMIT ${limit}` : ''}
           `
-          console.log(`🎯 Exact match mode: must own all ${tokenParams.length} tokens`)
+          console.log(`✅ EXACT MATCH MODE: Must own ALL ${tokenParams.length} tokens`)
+          console.log(`   SQL: HAVING COUNT(DISTINCT token_id) = ${tokenParams.length}`)
         } else {
           // No exact match: holder can own ANY of the specified tokens
           query = `
@@ -161,7 +173,8 @@ export async function GET(
             ORDER BY balance DESC
             ${limit > 0 ? `LIMIT ${limit}` : ''}
           `
-          console.log(`🎯 No exact match mode: can own any of ${tokenParams.length} tokens`)
+          console.log(`❌ ANY MATCH MODE: Can own ANY of ${tokenParams.length} tokens`)
+          console.log(`   SQL: No COUNT restriction (partial ownership OK)`)
         }
       }
       
@@ -183,6 +196,7 @@ export async function GET(
         } else {
           // Regular query
           realHolders = await db.prepare(query).all(address.toLowerCase(), ...tokenParams) as any
+          console.log(`📊 Query returned ${realHolders ? realHolders.length : 0} holders`)
         }
       } catch (sqlError: any) {
         console.error('🚫 SQL Error:', (sqlError as any)?.message || sqlError)
