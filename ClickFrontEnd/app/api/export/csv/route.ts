@@ -82,6 +82,14 @@ export async function GET(request: NextRequest) {
 
         // Parse requested token IDs for number_of_sets calculation
         let requestedTokenIds: string[] = []
+        console.log('🔍 CSV Export Debug:', {
+          tokenId,
+          tokenIds,
+          fullSeasonMode,
+          seasonName,
+          contractAddress
+        })
+
         if (fullSeasonMode && seasonName) {
           // Get season token IDs
           const { getSeasonGroup } = await import('@/lib/constants/season-tokens')
@@ -108,8 +116,14 @@ export async function GET(request: NextRequest) {
           requestedTokenIds = [tokenId]
         }
 
+        console.log('📊 Parsed requestedTokenIds:', {
+          count: requestedTokenIds.length,
+          tokens: requestedTokenIds.slice(0, 10).join(', ') + (requestedTokenIds.length > 10 ? '...' : '')
+        })
+
         // Include number_of_sets column if specific tokens requested
         const includeNumberOfSets = requestedTokenIds.length > 0;
+        console.log('✅ includeNumberOfSets:', includeNumberOfSets)
 
         // Define headers based on mode
         const csvHeaders = includeNumberOfSets
@@ -128,6 +142,13 @@ export async function GET(request: NextRequest) {
           const tokenIdListStr = result.data.metadata?.tokenIdList?.join(';') ||
                                 result.data.metadata?.queryTokens?.join(';') ||
                                 tokenIds || tokenId || 'all';
+
+          console.log('📋 Token ID List String:', {
+            fromMetadata: result.data.metadata?.tokenIdList,
+            fromQueryTokens: result.data.metadata?.queryTokens,
+            fromParams: tokenIds || tokenId,
+            final: tokenIdListStr
+          })
 
           const csvRows = await Promise.all(holders.map(async (holder: any) => {
             const holderAddress = holder.holderAddress || holder.address
