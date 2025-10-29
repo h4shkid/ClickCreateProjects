@@ -121,12 +121,17 @@ export async function GET(
         if (seasonGroup) {
           const expectedTokenCount = seasonGroup.tokenIds.length
           const placeholders = seasonGroup.tokenIds.map(() => '?').join(',')
-          
+
+          // Use GROUP_CONCAT (SQLite) or STRING_AGG (PostgreSQL) for token list
+          const aggregateFunc = isPostgres ? 'STRING_AGG' : 'GROUP_CONCAT'
+          const orderClause = isPostgres ? "ORDER BY token_id" : ""
+
           query = `
             SELECT
               address as holder_address,
               SUM(${balanceCast}) as balance,
-              COUNT(DISTINCT token_id) as owned_tokens
+              COUNT(DISTINCT token_id) as owned_tokens,
+              ${aggregateFunc}(token_id, ',' ${orderClause}) as tokens_owned
             FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
             AND token_id IN (${placeholders})
@@ -136,18 +141,23 @@ export async function GET(
             ORDER BY balance DESC
             ${limit > 0 ? `LIMIT ${limit}` : ''}
           `
-          
+
           console.log(`🎯 Complete season query: must own all ${expectedTokenCount} tokens`)
         }
       } else {
         // Regular query for partial or complete ownership
         if (exactMatch && tokenParams.length > 0) {
           // Exact match: holder must own ALL specified tokens
+          // Use GROUP_CONCAT (SQLite) or STRING_AGG (PostgreSQL) for token list
+          const aggregateFunc = isPostgres ? 'STRING_AGG' : 'GROUP_CONCAT'
+          const orderClause = isPostgres ? "ORDER BY token_id" : ""
+
           query = `
             SELECT
               address as holder_address,
               SUM(${balanceCast}) as balance,
-              COUNT(DISTINCT token_id) as owned_tokens
+              COUNT(DISTINCT token_id) as owned_tokens,
+              ${aggregateFunc}(token_id, ',' ${orderClause}) as tokens_owned
             FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
             ${tokenFilter}
@@ -161,10 +171,15 @@ export async function GET(
           console.log(`   SQL: HAVING COUNT(DISTINCT token_id) = ${tokenParams.length}`)
         } else {
           // No exact match: holder can own ANY of the specified tokens
+          // Use GROUP_CONCAT (SQLite) or STRING_AGG (PostgreSQL) for token list
+          const aggregateFunc = isPostgres ? 'STRING_AGG' : 'GROUP_CONCAT'
+          const orderClause = isPostgres ? "ORDER BY token_id" : ""
+
           query = `
             SELECT
               address as holder_address,
-              SUM(${balanceCast}) as balance
+              SUM(${balanceCast}) as balance,
+              ${aggregateFunc}(token_id, ',' ${orderClause}) as tokens_owned
             FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
             ${tokenFilter}
@@ -285,7 +300,9 @@ export async function GET(
             holderAddress: holder.holder_address,
             balance: holder.balance,
             percentage: totalSupply > 0 ? (parseInt(holder.balance) / totalSupply) * 100 : 0,
-            rank: index + 1
+            rank: index + 1,
+            // Include token list if available (from GROUP_CONCAT/STRING_AGG)
+            ...(holder.tokens_owned && { tokensOwned: holder.tokens_owned.split(',') })
           }))
         }
       }
