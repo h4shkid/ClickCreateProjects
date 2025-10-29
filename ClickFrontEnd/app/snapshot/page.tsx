@@ -791,9 +791,9 @@ export default function SnapshotPage() {
                         className="mt-0.5 text-primary focus:ring-primary"
                       />
                       <div>
-                        <div className="text-sm font-medium">YES - Complete Set Holders</div>
+                        <div className="text-sm font-medium">YES</div>
                         <div className="text-xs text-muted-foreground">
-                          Only wallets that own ALL queried tokens (e.g., must have 51 AND 52 AND 53 AND 54 AND 55)
+                          Only wallets that own ALL specified tokens
                         </div>
                       </div>
                     </label>
@@ -808,9 +808,9 @@ export default function SnapshotPage() {
                         className="mt-0.5 text-primary focus:ring-primary"
                       />
                       <div>
-                        <div className="text-sm font-medium">NO - Partial Holders OK</div>
+                        <div className="text-sm font-medium">NO</div>
                         <div className="text-xs text-muted-foreground">
-                          Wallets holding at least ONE token from the list (e.g., can have only 51, or only 55, or any combination)
+                          Wallets holding at least ONE token from the list
                         </div>
                       </div>
                     </label>

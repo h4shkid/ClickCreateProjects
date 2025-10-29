@@ -849,9 +849,9 @@ export default function CollectionSnapshotPage() {
                         className="text-primary focus:ring-primary"
                       />
                       <div className="text-xs">
-                        <div className="font-medium">YES - Complete Set</div>
+                        <div className="font-medium">YES</div>
                         <div className="text-muted-foreground text-[10px]">
-                          Must own ALL tokens (51-55)
+                          Must own ALL specified tokens
                         </div>
                       </div>
                     </label>
@@ -866,9 +866,9 @@ export default function CollectionSnapshotPage() {
                         className="text-primary focus:ring-primary"
                       />
                       <div className="text-xs">
-                        <div className="font-medium">NO - Partial OK</div>
+                        <div className="font-medium">NO</div>
                         <div className="text-muted-foreground text-[10px]">
-                          Can own ANY token (51-55)
+                          Can own ANY specified token
                         </div>
                       </div>
                     </label>
