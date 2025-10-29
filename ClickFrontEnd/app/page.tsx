@@ -24,7 +24,7 @@ const features = [
   },
   {
     title: 'Advanced Token Filtering',
-    description: 'Filter by token IDs, ranges (51-55), exact match modes to find complete or partial holders.',
+    description: 'Filter by token IDs, ranges, exact match modes to find complete or partial holders.',
     icon: Sliders,
     gradient: 'from-orange-600 to-primary',
   },
@@ -52,7 +52,6 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false)
   const [stats, setStats] = useState([
     { label: 'Tracked Collections', value: '0', trend: '+0%' },
-    { label: 'Total Users', value: '0', trend: '+0%' },
     { label: 'Snapshots Generated', value: '0', trend: '+0%' },
   ])
 
@@ -68,42 +67,36 @@ export default function HomePage() {
       const response = await axios.get('/api/dashboard/stats')
       
       if (response.data.success) {
-        const { totalContracts, totalUsers, totalSnapshots } = response.data.data
-        
+        const { totalContracts, totalSnapshots } = response.data.data
+
         // Format the numbers for display
         const formatNumber = (num: number) => {
           if (num === 0) return '0'
           if (num >= 1000) return `${(num / 1000).toFixed(1)}k`
           return num.toString()
         }
-        
+
         setStats([
-          { 
-            label: 'Tracked Collections', 
-            value: totalContracts > 0 ? formatNumber(totalContracts) : '0', 
-            trend: totalContracts > 0 ? 'Active' : 'Getting started' 
+          {
+            label: 'Tracked Collections',
+            value: totalContracts > 0 ? formatNumber(totalContracts) : '0',
+            trend: totalContracts > 0 ? 'Active' : 'Getting started'
           },
-          { 
-            label: 'Total Users', 
-            value: totalUsers > 0 ? formatNumber(totalUsers) : '0', 
-            trend: totalUsers > 0 ? 'Growing' : 'New platform' 
-          },
-          { 
-            label: 'Snapshots Generated', 
-            value: totalSnapshots > 0 ? formatNumber(totalSnapshots) : '0', 
-            trend: totalSnapshots > 0 ? 'Analytics ready' : 'Ready to use' 
+          {
+            label: 'Snapshots Generated',
+            value: totalSnapshots > 0 ? formatNumber(totalSnapshots) : '0',
+            trend: totalSnapshots > 0 ? 'Analytics ready' : 'Ready to use'
           },
         ])
-        
-        console.log('✅ Dashboard stats updated:', { totalContracts, totalUsers, totalSnapshots })
+
+        console.log('✅ Dashboard stats updated:', { totalContracts, totalSnapshots })
       }
     } catch (error) {
       console.error('❌ Failed to fetch dashboard stats:', error)
-      
+
       // Fallback to basic display if API fails
       setStats([
         { label: 'Tracked Collections', value: '0', trend: 'Starting up' },
-        { label: 'Total Users', value: '0', trend: 'New platform' },
         { label: 'Snapshots Generated', value: '0', trend: 'Ready to use' },
       ])
     }
