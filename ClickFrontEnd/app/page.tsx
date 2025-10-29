@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import axios from 'axios'
-import { Camera, Zap, BarChart3, Palette, Download, GitBranch } from 'lucide-react'
+import { Database, Camera, Sliders, Download, User, Globe } from 'lucide-react'
 import HeroSection from '@/components/ui/HeroSection'
 import FeatureCard from '@/components/ui/FeatureCard'
 import StatsCard from '@/components/ui/StatsCard'
@@ -11,39 +11,39 @@ import CTASection from '@/components/ui/CTASection'
 
 const features = [
   {
-    title: 'Instant Snapshots',
-    description: 'Generate current or historical holder snapshots with 100% on-chain accuracy in seconds.',
-    icon: Camera,
+    title: 'Multi-Contract Support',
+    description: 'Analyze any ERC-721 or ERC-1155 contract across blockchains with automatic detection and validation.',
+    icon: Database,
     gradient: 'from-primary to-orange-600',
   },
   {
-    title: 'Real-time Monitoring',
-    description: 'Track transfers and holder changes as they happen with WebSocket connectivity.',
-    icon: Zap,
+    title: 'Current & Historical Snapshots',
+    description: 'Generate instant snapshots for any date with 100% on-chain accuracy from blockchain events.',
+    icon: Camera,
     gradient: 'from-accent to-yellow-600',
   },
   {
-    title: 'Advanced Analytics',
-    description: 'Deep insights with distribution charts, whale tracking, and Gini coefficient analysis.',
-    icon: BarChart3,
+    title: 'Advanced Token Filtering',
+    description: 'Filter by token IDs, ranges (51-55), exact match modes to find complete or partial holders.',
+    icon: Sliders,
     gradient: 'from-orange-600 to-primary',
   },
   {
-    title: 'NFT Gallery',
-    description: 'Beautiful gallery view with metadata, images, and rarity rankings.',
-    icon: Palette,
+    title: 'CSV/JSON Export',
+    description: 'Download holder lists with token details ready for airdrops, allowlists, and analytics.',
+    icon: Download,
     gradient: 'from-primary to-accent',
   },
   {
-    title: 'Export Ready',
-    description: 'Download CSV or JSON for airdrops, allowlists, and custom integrations.',
-    icon: Download,
+    title: 'User Profiles & Collections',
+    description: 'Save your collections, track blockchain sync status, and manage multiple contracts in one place.',
+    icon: User,
     gradient: 'from-yellow-600 to-accent',
   },
   {
-    title: 'Merkle Trees',
-    description: 'Generate merkle proofs for efficient on-chain verification and airdrops.',
-    icon: GitBranch,
+    title: 'OpenSea Integration',
+    description: 'Automatic collection metadata, images, descriptions, and ENS name resolution.',
+    icon: Globe,
     gradient: 'from-accent to-primary',
   },
 ]
@@ -178,9 +178,9 @@ export default function HomePage() {
                   <span className="text-xl font-bold text-background">1</span>
                 </div>
                 <div className="pt-4">
-                  <h3 className="text-xl font-semibold mb-2">Add Your Collection</h3>
+                  <h3 className="text-xl font-semibold mb-2">Add Any Collection</h3>
                   <p className="text-muted-foreground">
-                    Enter your ERC-721 or ERC-1155 contract address. The system automatically detects and validates your collection.
+                    Enter any ERC-721 or ERC-1155 contract address. Automatic detection and OpenSea metadata integration.
                   </p>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export default function HomePage() {
                 <div className="pt-4">
                   <h3 className="text-xl font-semibold mb-2">Generate Snapshot</h3>
                   <p className="text-muted-foreground">
-                    Create current or historical holder snapshots with custom token filtering and exact match options.
+                    Create current or historical snapshots with optional token filtering and exact match modes.
                   </p>
                 </div>
               </div>
@@ -210,7 +210,7 @@ export default function HomePage() {
                 <div className="pt-4">
                   <h3 className="text-xl font-semibold mb-2">Export Your Data</h3>
                   <p className="text-muted-foreground">
-                    Download CSV or JSON files ready for airdrops, allowlists, analytics, or any other purpose.
+                    Download CSV or JSON with holder addresses, balances, and token lists ready for any use.
                   </p>
                 </div>
               </div>

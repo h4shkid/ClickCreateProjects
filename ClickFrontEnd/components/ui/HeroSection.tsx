@@ -90,8 +90,8 @@ export default function HeroSection() {
               <div className="text-sm text-muted-foreground mt-1">Snapshot Generation</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text">24/7</div>
-              <div className="text-sm text-muted-foreground mt-1">Real-time Monitoring</div>
+              <div className="text-3xl md:text-4xl font-bold gradient-text">Any</div>
+              <div className="text-sm text-muted-foreground mt-1">ERC-721/1155</div>
             </div>
           </div>
         </div>
