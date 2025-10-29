@@ -334,12 +334,34 @@ export default function CollectionSnapshotPage() {
         contract: address // Pass contract address for proper CSV formatting
       }
 
+      // Add token filtering parameters (CRITICAL: Must match snapshot generation params)
+      if (fullSeasonMode && selectedSeason) {
+        params.fullSeason = 'true'
+        params.season = selectedSeason
+      } else if (tokenIds) {
+        // Send tokenIds as-is (API will handle range expansion)
+        const tokenIdList = tokenIds.split(',').map(id => id.trim())
+        const hasRange = tokenIdList.some(id => id.includes('-'))
+
+        if (tokenIdList.length === 1 && !hasRange) {
+          params.tokenId = tokenIdList[0]
+        } else {
+          params.tokenIds = tokenIds
+        }
+
+        if (exactMatch !== null) {
+          params.exactMatch = exactMatch ? 'true' : 'false'
+        }
+      }
+
       // Only add block number for historical snapshots
       // For current snapshots, don't pass blockNumber - use current_state table instead
       if (snapshotType === 'historical' && snapshotData.blockNumber) {
         params.blockNumber = snapshotData.blockNumber
       }
-      
+
+      console.log('📤 Exporting with params:', params)
+
       const response = await axios.get(`/api/export/${format}`, {
         params,
         responseType: format === 'csv' ? 'text' : 'json'
