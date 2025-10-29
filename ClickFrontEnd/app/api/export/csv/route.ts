@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
           const { getSeasonGroup } = await import('@/lib/constants/season-tokens')
           const seasonGroup = getSeasonGroup(seasonName)
           if (seasonGroup) {
-            requestedTokenIds = seasonGroup.tokenIds.map((id: number) => id.toString())
+            requestedTokenIds = seasonGroup.tokenIds.map((id: string | number) => id.toString())
           }
         } else if (tokenIds) {
           // Parse token range (e.g., "51-55" → ["51", "52", "53", "54", "55"])
