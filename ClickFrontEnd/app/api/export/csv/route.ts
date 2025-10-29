@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
             };
 
             // Calculate number_of_sets if specific tokens requested
-            if (includeNumberOfSets && requestedTokenIds.length > 0) {
+            if (includeNumberOfSets && requestedTokenIds.length > 0 && contractAddress) {
               try {
                 // Query how many of each requested token the holder owns
                 const placeholders = requestedTokenIds.map(() => '?').join(',')
