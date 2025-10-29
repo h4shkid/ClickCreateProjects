@@ -240,20 +240,39 @@ export async function GET(
             totalStatsParams = [address.toLowerCase(), ...seasonGroup.tokenIds, expectedTokenCount]
           }
         } else {
-          // Regular stats query
-          totalStatsQuery = `
-            SELECT
-              COUNT(DISTINCT address) as total_holders,
-              SUM(balance_sum) as total_supply
-            FROM (
-              SELECT address, SUM(${balanceCast}) as balance_sum
-              FROM current_state
-              WHERE contract_address = ? COLLATE NOCASE
-              ${tokenFilter || ''}
-              GROUP BY address
-              HAVING SUM(${balanceCast}) > 0
-            ) AS subquery
-          `
+          // Regular stats query - MUST respect exactMatch parameter
+          if (exactMatch && tokenParams.length > 0) {
+            // Exact match mode: count only holders with ALL specified tokens
+            totalStatsQuery = `
+              SELECT
+                COUNT(DISTINCT address) as total_holders,
+                SUM(balance_sum) as total_supply
+              FROM (
+                SELECT address, SUM(${balanceCast}) as balance_sum
+                FROM current_state
+                WHERE contract_address = ? COLLATE NOCASE
+                ${tokenFilter || ''}
+                AND ${balanceCast} > 0
+                GROUP BY address
+                HAVING COUNT(DISTINCT token_id) = ${tokenParams.length}
+              ) AS subquery
+            `
+          } else {
+            // Any match mode: count all holders with at least one specified token
+            totalStatsQuery = `
+              SELECT
+                COUNT(DISTINCT address) as total_holders,
+                SUM(balance_sum) as total_supply
+              FROM (
+                SELECT address, SUM(${balanceCast}) as balance_sum
+                FROM current_state
+                WHERE contract_address = ? COLLATE NOCASE
+                ${tokenFilter || ''}
+                GROUP BY address
+                HAVING SUM(${balanceCast}) > 0
+              ) AS subquery
+            `
+          }
           totalStatsParams = [address.toLowerCase(), ...tokenParams]
         }
         
@@ -318,20 +337,41 @@ export async function GET(
           totalStatsParams = [address.toLowerCase(), ...seasonGroup.tokenIds, expectedTokenCount]
         }
       } else {
-        // Regular stats query
-        totalStatsQuery = `
-          SELECT
-            COUNT(DISTINCT address) as total_holders,
-            SUM(balance_sum) as total_supply
-          FROM (
-            SELECT address, SUM(${balanceCast}) as balance_sum
-            FROM current_state
-            WHERE contract_address = ? COLLATE NOCASE
-            ${tokenFilter}
-            GROUP BY address
-            HAVING SUM(${balanceCast}) > 0
-          ) AS subquery
-        `
+        // Regular stats query - MUST respect exactMatch parameter
+        if (exactMatch && tokenParams.length > 0) {
+          // Exact match mode: count only holders with ALL specified tokens
+          totalStatsQuery = `
+            SELECT
+              COUNT(DISTINCT address) as total_holders,
+              SUM(balance_sum) as total_supply
+            FROM (
+              SELECT address, SUM(${balanceCast}) as balance_sum
+              FROM current_state
+              WHERE contract_address = ? COLLATE NOCASE
+              ${tokenFilter}
+              AND ${balanceCast} > 0
+              GROUP BY address
+              HAVING COUNT(DISTINCT token_id) = ${tokenParams.length}
+            ) AS subquery
+          `
+          console.log(`📊 Total stats query (EXACT MATCH): counting holders with all ${tokenParams.length} tokens`)
+        } else {
+          // Any match mode: count all holders with at least one specified token
+          totalStatsQuery = `
+            SELECT
+              COUNT(DISTINCT address) as total_holders,
+              SUM(balance_sum) as total_supply
+            FROM (
+              SELECT address, SUM(${balanceCast}) as balance_sum
+              FROM current_state
+              WHERE contract_address = ? COLLATE NOCASE
+              ${tokenFilter}
+              GROUP BY address
+              HAVING SUM(${balanceCast}) > 0
+            ) AS subquery
+          `
+          console.log(`📊 Total stats query (ANY MATCH): counting all holders with any token`)
+        }
         totalStatsParams = [address.toLowerCase(), ...tokenParams]
       }
 
