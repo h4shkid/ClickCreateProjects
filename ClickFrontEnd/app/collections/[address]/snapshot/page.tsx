@@ -849,9 +849,9 @@ export default function CollectionSnapshotPage() {
                         className="text-primary focus:ring-primary"
                       />
                       <div className="text-xs">
-                        <div className="font-medium">YES - Exact Match</div>
+                        <div className="font-medium">YES - Complete Set</div>
                         <div className="text-muted-foreground text-[10px]">
-                          Only EXACTLY these tokens
+                          Must own ALL tokens (51-55)
                         </div>
                       </div>
                     </label>
@@ -866,9 +866,9 @@ export default function CollectionSnapshotPage() {
                         className="text-primary focus:ring-primary"
                       />
                       <div className="text-xs">
-                        <div className="font-medium">NO - Any Match</div>
+                        <div className="font-medium">NO - Partial OK</div>
                         <div className="text-muted-foreground text-[10px]">
-                          ANY of these tokens
+                          Can own ANY token (51-55)
                         </div>
                       </div>
                     </label>
