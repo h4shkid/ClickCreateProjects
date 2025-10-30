@@ -30,15 +30,13 @@ async function runMigration() {
           wallet_address TEXT NOT NULL,
           contract_address TEXT NOT NULL,
           sync_started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          sync_completed_at TIMESTAMP,
-          is_active BOOLEAN DEFAULT true,
-          UNIQUE(wallet_address, contract_address)
+          sync_completed_at TIMESTAMP
         )
       `).run()
 
       await db.prepare(`
-        CREATE INDEX IF NOT EXISTS idx_wallet_syncs
-        ON wallet_new_syncs(wallet_address, is_active)
+        CREATE INDEX IF NOT EXISTS idx_wallet_syncs_date
+        ON wallet_new_syncs(wallet_address, DATE(sync_started_at))
       `).run()
 
       await db.prepare(`
@@ -53,15 +51,13 @@ async function runMigration() {
           wallet_address TEXT NOT NULL,
           contract_address TEXT NOT NULL,
           sync_started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-          sync_completed_at DATETIME,
-          is_active BOOLEAN DEFAULT 1,
-          UNIQUE(wallet_address, contract_address)
+          sync_completed_at DATETIME
         )
       `).run()
 
       await db.prepare(`
-        CREATE INDEX IF NOT EXISTS idx_wallet_syncs
-        ON wallet_new_syncs(wallet_address, is_active)
+        CREATE INDEX IF NOT EXISTS idx_wallet_syncs_date
+        ON wallet_new_syncs(wallet_address, DATE(sync_started_at))
       `).run()
 
       await db.prepare(`
@@ -187,13 +183,12 @@ async function runMigration() {
           try {
             await db.prepare(`
               INSERT INTO wallet_new_syncs
-              (wallet_address, contract_address, sync_started_at, is_active)
-              VALUES (?, ?, ?, ?)
+              (wallet_address, contract_address, sync_started_at)
+              VALUES (?, ?, ?)
             `).run(
               user.wallet_address.toLowerCase(),
               contract.address.toLowerCase(),
-              contract.created_at,
-              1 // active
+              contract.created_at
             )
 
             // Update contracts table
@@ -239,7 +234,8 @@ async function runMigration() {
     console.log('  ✅ contracts table updated')
     console.log(`  ✅ ${migratedCount} existing contracts migrated`)
     console.log('\nNew Features:')
-    console.log('  • Users can sync max 2 NEW collections')
+    console.log('  • Users can sync max 2 NEW collections PER DAY')
+    console.log('  • Daily limit resets at 00:00 UTC')
     console.log('  • Existing collections can be added without limit')
     console.log('  • 1 wallet per IP address enforcement')
     console.log('  • Snapshots/exports remain unlimited\n')

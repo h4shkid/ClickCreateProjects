@@ -83,15 +83,24 @@ export async function GET(request: NextRequest) {
         totalUsers: c.total_users || 0
       }))
 
+    // Calculate reset time (tomorrow at 00:00 UTC)
+    const now = new Date()
+    const tomorrow = new Date(now)
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+    tomorrow.setUTCHours(0, 0, 0, 0)
+    const hoursUntilReset = Math.floor((tomorrow.getTime() - now.getTime()) / (1000 * 60 * 60))
+
     return NextResponse.json({
       success: true,
       data: {
         walletAddress,
-        newSyncsCount: limitStatus.currentCount,
-        maxNewSyncs: limitStatus.maxCount,
-        availableSlots: limitStatus.maxCount - limitStatus.currentCount,
+        dailySyncsToday: limitStatus.currentCount,
+        maxDailySyncs: limitStatus.maxCount,
+        availableToday: limitStatus.maxCount - limitStatus.currentCount,
         canAddMore: limitStatus.canAddNewSync,
-        activeSyncs,
+        resetTime: tomorrow.toISOString(),
+        hoursUntilReset,
+        todaysSyncs: activeSyncs,
         accessibleCollections,
         totalAccessibleCollections: allCollections.length
       }

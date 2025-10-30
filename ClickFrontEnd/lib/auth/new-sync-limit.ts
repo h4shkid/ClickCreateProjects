@@ -36,33 +36,71 @@ const MAX_NEW_SYNCS = 2
 const IP_BINDING_DURATION_HOURS = 24
 
 /**
- * Check if user has reached their new sync limit
+ * Get today's date in YYYY-MM-DD format (UTC)
+ */
+function getTodayDate(): string {
+  const now = new Date()
+  return now.toISOString().split('T')[0] // YYYY-MM-DD
+}
+
+/**
+ * Check if user has reached their DAILY new sync limit
+ * Limit resets every day at 00:00 UTC
  */
 export async function checkNewSyncLimit(walletAddress: string): Promise<NewSyncLimitResult> {
   const db = createDatabaseAdapter()
+  const isPostgres = !!process.env.POSTGRES_URL
 
   try {
-    // Get count of active new syncs
-    const countResult = await db.prepare(`
-      SELECT COUNT(*) as count
-      FROM wallet_new_syncs
-      WHERE LOWER(wallet_address) = LOWER(?) AND is_active = 1
-    `).get(walletAddress) as { count: number }
+    const today = getTodayDate()
+
+    // Get count of new syncs started TODAY
+    let countResult: any
+    if (isPostgres) {
+      countResult = await db.prepare(`
+        SELECT COUNT(*) as count
+        FROM wallet_new_syncs
+        WHERE LOWER(wallet_address) = LOWER($1)
+        AND DATE(sync_started_at) = $2
+      `).get(walletAddress, today)
+    } else {
+      countResult = await db.prepare(`
+        SELECT COUNT(*) as count
+        FROM wallet_new_syncs
+        WHERE LOWER(wallet_address) = LOWER(?)
+        AND DATE(sync_started_at) = ?
+      `).get(walletAddress, today)
+    }
 
     const currentCount = countResult?.count || 0
 
-    // Get details of active syncs
-    const activeSyncs = await db.prepare(`
-      SELECT
-        wns.contract_address,
-        wns.sync_started_at,
-        wns.is_active,
-        c.name as contract_name
-      FROM wallet_new_syncs wns
-      LEFT JOIN contracts c ON LOWER(c.address) = LOWER(wns.contract_address)
-      WHERE LOWER(wns.wallet_address) = LOWER(?) AND wns.is_active = 1
-      ORDER BY wns.sync_started_at DESC
-    `).all(walletAddress) as any[]
+    // Get details of today's syncs
+    let activeSyncs: any[]
+    if (isPostgres) {
+      activeSyncs = await db.prepare(`
+        SELECT
+          wns.contract_address,
+          wns.sync_started_at,
+          c.name as contract_name
+        FROM wallet_new_syncs wns
+        LEFT JOIN contracts c ON LOWER(c.address) = LOWER(wns.contract_address)
+        WHERE LOWER(wns.wallet_address) = LOWER($1)
+        AND DATE(wns.sync_started_at) = $2
+        ORDER BY wns.sync_started_at DESC
+      `).all(walletAddress, today) as any[]
+    } else {
+      activeSyncs = await db.prepare(`
+        SELECT
+          wns.contract_address,
+          wns.sync_started_at,
+          c.name as contract_name
+        FROM wallet_new_syncs wns
+        LEFT JOIN contracts c ON LOWER(c.address) = LOWER(wns.contract_address)
+        WHERE LOWER(wns.wallet_address) = LOWER(?)
+        AND DATE(wns.sync_started_at) = ?
+        ORDER BY wns.sync_started_at DESC
+      `).all(walletAddress, today) as any[]
+    }
 
     return {
       canAddNewSync: currentCount < MAX_NEW_SYNCS,
@@ -72,7 +110,7 @@ export async function checkNewSyncLimit(walletAddress: string): Promise<NewSyncL
         contractAddress: sync.contract_address,
         contractName: sync.contract_name,
         syncStartedAt: sync.sync_started_at,
-        isActive: sync.is_active
+        isActive: true
       }))
     }
   } catch (error: any) {
@@ -100,7 +138,7 @@ export async function isExistingCollection(contractAddress: string): Promise<boo
 }
 
 /**
- * Add a new sync for a wallet
+ * Add a new sync for a wallet (daily limit)
  */
 export async function addNewSync(
   walletAddress: string,
@@ -109,29 +147,26 @@ export async function addNewSync(
   const db = createDatabaseAdapter()
 
   try {
-    // Check limit first
+    // Check daily limit first
     const limit = await checkNewSyncLimit(walletAddress)
     if (!limit.canAddNewSync) {
       return {
         success: false,
-        error: `New sync limit reached (${limit.currentCount}/${limit.maxCount})`
+        error: `Daily sync limit reached (${limit.currentCount}/${limit.maxCount}). Resets at 00:00 UTC.`
       }
     }
 
-    // Add to wallet_new_syncs
+    // Add to wallet_new_syncs (always insert new record, no conflict resolution)
     const isPostgres = !!process.env.POSTGRES_URL
     if (isPostgres) {
       await db.prepare(`
-        INSERT INTO wallet_new_syncs (wallet_address, contract_address, is_active)
-        VALUES (LOWER($1), LOWER($2), true)
-        ON CONFLICT (wallet_address, contract_address) DO UPDATE
-        SET is_active = true, sync_started_at = CURRENT_TIMESTAMP
+        INSERT INTO wallet_new_syncs (wallet_address, contract_address)
+        VALUES (LOWER($1), LOWER($2))
       `).run(walletAddress, contractAddress)
     } else {
       await db.prepare(`
-        INSERT OR REPLACE INTO wallet_new_syncs
-        (wallet_address, contract_address, is_active, sync_started_at)
-        VALUES (LOWER(?), LOWER(?), 1, CURRENT_TIMESTAMP)
+        INSERT INTO wallet_new_syncs (wallet_address, contract_address)
+        VALUES (LOWER(?), LOWER(?))
       `).run(walletAddress, contractAddress)
     }
 
@@ -143,43 +178,10 @@ export async function addNewSync(
 }
 
 /**
- * Remove a sync (soft delete - frees up slot)
+ * Note: removeSync() function removed
+ * With daily limits, there's no need to manually remove syncs
+ * Limits automatically reset at 00:00 UTC each day
  */
-export async function removeSync(
-  walletAddress: string,
-  contractAddress: string
-): Promise<{ success: boolean; error?: string }> {
-  const db = createDatabaseAdapter()
-
-  try {
-    const isPostgres = !!process.env.POSTGRES_URL
-    if (isPostgres) {
-      await db.prepare(`
-        UPDATE wallet_new_syncs
-        SET is_active = false
-        WHERE LOWER(wallet_address) = LOWER($1) AND LOWER(contract_address) = LOWER($2)
-      `).run(walletAddress, contractAddress)
-    } else {
-      await db.prepare(`
-        UPDATE wallet_new_syncs
-        SET is_active = 0
-        WHERE LOWER(wallet_address) = LOWER(?) AND LOWER(contract_address) = LOWER(?)
-      `).run(walletAddress, contractAddress)
-    }
-
-    // Decrement total_users in contracts table
-    await db.prepare(`
-      UPDATE contracts
-      SET total_users = GREATEST(0, total_users - 1)
-      WHERE LOWER(address) = LOWER(?)
-    `).run(contractAddress)
-
-    return { success: true }
-  } catch (error: any) {
-    console.error('❌ Error removing sync:', error)
-    return { success: false, error: error.message }
-  }
-}
 
 /**
  * Get client IP address from request
