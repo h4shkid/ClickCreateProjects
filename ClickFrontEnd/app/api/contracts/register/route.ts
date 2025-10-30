@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireWalletAuth, isValidEthereumAddress, sanitizeInput, checkRateLimit } from '@/lib/auth/middleware'
 import { ContractDetector } from '@/lib/contracts/detector'
 import { createDatabaseAdapter } from '@/lib/database/adapter'
+import {
+  checkNewSyncLimit,
+  isExistingCollection,
+  addNewSync,
+  incrementContractUsers,
+  checkIPWalletBinding,
+  getClientIP
+} from '@/lib/auth/new-sync-limit'
 
 const detector = new ContractDetector()
 
@@ -18,7 +26,20 @@ export async function POST(request: NextRequest) {
         error: 'Valid wallet address is required'
       }, { status: 401 })
     }
-    
+
+    // IP-Wallet binding check: 1 wallet per IP
+    const clientIP = getClientIP(request)
+    const ipCheck = await checkIPWalletBinding(clientIP, walletAddress)
+
+    if (!ipCheck.allowed) {
+      return NextResponse.json({
+        success: false,
+        error: ipCheck.reason || 'IP address is bound to another wallet',
+        boundWallet: ipCheck.boundWallet,
+        expiresAt: ipCheck.expiresAt
+      }, { status: 403 })
+    }
+
     // Rate limiting: 10 contract registrations per hour per user
     if (!checkRateLimit(walletAddress.toLowerCase(), 10, 60 * 60 * 1000)) {
       return NextResponse.json({
@@ -180,15 +201,64 @@ export async function POST(request: NextRequest) {
       // Continue without OpenSea data
     }
 
-    // Step 2: Check if contract already exists
-    const existingContract = await db.prepare('SELECT id, address, name FROM contracts WHERE LOWER(address) = LOWER(?)').get(contractAddress.toLowerCase()) as { id: number; address: string; name?: string } | undefined
+    // Step 2: Check if contract already exists (EXISTING vs NEW collection logic)
+    const contractExists = await isExistingCollection(contractAddress)
 
-    if (existingContract) {
+    if (contractExists) {
+      // EXISTING COLLECTION - Can be added without limit check
+      console.log(`✅ Contract ${contractAddress} already exists, adding user access instantly`)
+
+      // Increment total_users counter
+      await incrementContractUsers(contractAddress)
+
+      // Get contract info
+      const existingContract = await db.prepare(`
+        SELECT id, address, name, symbol, contract_type, image_url
+        FROM contracts
+        WHERE LOWER(address) = LOWER(?)
+      `).get(contractAddress.toLowerCase()) as any
+
+      return NextResponse.json({
+        success: true,
+        isExisting: true,
+        countsAsNewSync: false,
+        message: 'Collection already exists and was added instantly (no limit applied)',
+        data: {
+          contract: {
+            id: existingContract.id.toString(),
+            address: existingContract.address,
+            name: existingContract.name,
+            symbol: existingContract.symbol,
+            contractType: existingContract.contract_type,
+            imageUrl: existingContract.image_url,
+            addedBy: walletAddress.toLowerCase(),
+            addedAt: new Date().toISOString()
+          }
+        }
+      })
+    }
+
+    // NEW COLLECTION - Check limit before proceeding
+    console.log(`🆕 New collection detected: ${contractAddress}, checking sync limit...`)
+
+    const limitStatus = await checkNewSyncLimit(walletAddress)
+
+    if (!limitStatus.canAddNewSync) {
       return NextResponse.json({
         success: false,
-        error: `Contract ${existingContract.name || contractAddress} is already registered`
-      }, { status: 409 })
+        error: `You can only sync ${limitStatus.maxCount} new collections at a time`,
+        currentCount: limitStatus.currentCount,
+        maxCount: limitStatus.maxCount,
+        activeNewSyncs: limitStatus.activeNewSyncs.map(s => ({
+          address: s.contractAddress,
+          name: s.contractName
+        })),
+        suggestion: 'Remove one of your active collections to add a new one, or add an existing collection from the browse page'
+      }, { status: 429 })
     }
+
+    console.log(`✅ Sync limit check passed (${limitStatus.currentCount}/${limitStatus.maxCount})`)
+
 
     // Step 3: Get or create user profile
     let userProfile = await db.prepare('SELECT id FROM user_profiles WHERE LOWER(wallet_address) = LOWER(?)').get(walletAddress.toLowerCase()) as any
@@ -217,14 +287,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 4: Insert contract into database
+    const isPostgres = !!process.env.POSTGRES_URL
     const insertContract = db.prepare(`
       INSERT INTO contracts (
         address, name, symbol, contract_type, chain_id,
         deployment_block, total_supply, is_verified, is_active,
         description, website_url, twitter_url, discord_url,
         image_url, banner_image_url,
+        first_synced_by_wallet, first_synced_at, total_users,
         metadata_json, added_by_user_id, usage_count, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${isPostgres ? 'CURRENT_TIMESTAMP' : "datetime('now')"}, ${isPostgres ? 'CURRENT_TIMESTAMP' : "datetime('now')"})
       RETURNING id
     `)
 
@@ -234,6 +306,8 @@ export async function POST(request: NextRequest) {
     const finalWebsiteUrl = openSeaData?.external_url || metadata.websiteUrl || ''
     const finalTwitterUrl = openSeaData?.twitter_username ? `https://twitter.com/${openSeaData.twitter_username}` : metadata.twitterUrl || ''
     const finalDiscordUrl = openSeaData?.discord_url || metadata.discordUrl || ''
+
+    const currentTimestamp = new Date().toISOString()
 
     const contractResult = await insertContract.run(
       contractAddress.toLowerCase(),
@@ -251,18 +325,30 @@ export async function POST(request: NextRequest) {
       finalDiscordUrl,
       openSeaData?.image_url || null,
       openSeaData?.banner_image_url || null,
+      walletAddress.toLowerCase(), // first_synced_by_wallet
+      currentTimestamp, // first_synced_at
+      1, // total_users (this user)
       JSON.stringify({
         features: contractInfo.features,
         openSeaData: openSeaData,
         detectionData: {
           confidence: 100, // From our detector
-          detectedAt: new Date().toISOString(),
+          detectedAt: currentTimestamp,
           chainId: chainId
         }
       }),
       userProfile.id,
       0 // usage_count starts at 0
     )
+
+    // Step 4.5: Add to wallet_new_syncs (NEW COLLECTION)
+    console.log(`📝 Adding to wallet_new_syncs for ${walletAddress}`)
+    const addSyncResult = await addNewSync(walletAddress, contractAddress)
+
+    if (!addSyncResult.success) {
+      console.error(`❌ Failed to add to wallet_new_syncs: ${addSyncResult.error}`)
+      // Contract was created but sync tracking failed - log warning but continue
+    }
 
     // Step 5: Log user activity
     const insertActivity = db.prepare(`
@@ -306,11 +392,22 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ Contract ${contractInfo.name || contractAddress} registered successfully`)
 
+    // Get updated limit status
+    const updatedLimitStatus = await checkNewSyncLimit(walletAddress)
+
     return NextResponse.json({
       success: true,
+      isExisting: false,
+      countsAsNewSync: true,
+      message: `New collection registered and added to your sync slots (${updatedLimitStatus.currentCount}/${updatedLimitStatus.maxCount})`,
       data: {
         contract: registeredContract,
-        warnings: []
+        warnings: [],
+        syncStatus: {
+          currentCount: updatedLimitStatus.currentCount,
+          maxCount: updatedLimitStatus.maxCount,
+          availableSlots: updatedLimitStatus.maxCount - updatedLimitStatus.currentCount
+        }
       }
     })
 
