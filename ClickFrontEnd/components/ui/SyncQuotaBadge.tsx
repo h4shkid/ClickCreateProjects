@@ -57,10 +57,16 @@ export default function SyncQuotaBadge() {
       console.log('📊 Sync quota response:', response.data)
 
       if (response.data.success) {
-        setQuota(response.data.data)
-        console.log('✅ Quota set:', response.data.data)
+        const quotaData = response.data.data
+        setQuota(quotaData)
+        console.log('✅ Quota set successfully!')
+        console.log(`   Daily Syncs Today: ${quotaData.dailySyncsToday}`)
+        console.log(`   Max Daily Syncs: ${quotaData.maxDailySyncs}`)
+        console.log(`   Available Today: ${quotaData.availableToday}`)
+        console.log(`   Badge should show: ⚡ ${quotaData.availableToday}/${quotaData.maxDailySyncs}`)
       } else {
         console.warn('⚠️ API returned success: false')
+        console.warn('   Response:', response.data)
         // Set default quota on API failure
         setQuota({
           dailySyncsToday: 0,
@@ -71,8 +77,11 @@ export default function SyncQuotaBadge() {
         })
       }
     } catch (error: any) {
-      console.error('❌ Failed to fetch sync quota:', error)
-      console.error('Error details:', error.response?.data)
+      console.error('❌ Failed to fetch sync quota')
+      console.error('   Error message:', error.message)
+      console.error('   Response status:', error.response?.status)
+      console.error('   Response data:', error.response?.data)
+      console.error('   Full error:', error)
 
       // Set default quota on error (assume full quota available)
       setQuota({
