@@ -50,6 +50,22 @@ export default function QuickAddCollection({ isOpen, onClose, onSuccess }: Quick
 
       const data = await response.json()
 
+      // Handle quota limit error (429)
+      if (response.status === 429) {
+        let quotaMessage = data.error || 'Daily sync limit reached (2/2 used today)'
+
+        // Add details about active syncs if available
+        if (data.activeNewSyncs && data.activeNewSyncs.length > 0) {
+          quotaMessage += `\n\nYour syncs today:\n${data.activeNewSyncs.map((s: any) => `• ${s.name || s.address}`).join('\n')}`
+          quotaMessage += '\n\nLimit resets at 00:00 UTC. You can still add existing collections from the browse page.'
+        }
+
+        setError(quotaMessage)
+        setStep('input')
+        setLoading(false)
+        return
+      }
+
       if (data.success && data.data && data.data.contract) {
         setDetectedInfo(data.data.contract)
         setStep('success')
