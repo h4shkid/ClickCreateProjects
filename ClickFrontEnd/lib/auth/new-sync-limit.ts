@@ -205,8 +205,8 @@ export function getClientIP(request: NextRequest): string {
     return cfConnectingIP
   }
 
-  // Fallback to generic IP (should not happen in production)
-  return request.ip || 'unknown'
+  // Fallback to unknown (headers should exist in production with Vercel)
+  return 'unknown'
 }
 
 /**
