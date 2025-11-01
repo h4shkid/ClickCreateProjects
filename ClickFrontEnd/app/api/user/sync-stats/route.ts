@@ -36,6 +36,10 @@ export async function GET(request: NextRequest) {
 
     // Get all accessible collections (existing collections in database)
     const db = createDatabaseAdapter()
+    const isPostgres = !!process.env.POSTGRES_URL
+
+    // Use TRUE for PostgreSQL (boolean), 1 for SQLite (integer)
+    const activeValue = isPostgres ? 'TRUE' : '1'
     const allCollections = await db.prepare(`
       SELECT
         address,
@@ -46,7 +50,7 @@ export async function GET(request: NextRequest) {
         first_synced_at,
         total_users
       FROM contracts
-      WHERE is_active = 1
+      WHERE is_active = ${activeValue}
       ORDER BY first_synced_at DESC
     `).all() as any[]
 
@@ -107,11 +111,15 @@ export async function GET(request: NextRequest) {
     })
   } catch (error: any) {
     console.error('❌ User sync stats error:', error)
+    console.error('Error stack:', error.stack)
+    console.error('Error details:', error)
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch sync statistics',
-        details: error.message
+        details: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
     )
