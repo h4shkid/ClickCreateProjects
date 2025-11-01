@@ -35,23 +35,68 @@ export default function SyncQuotaBadge() {
 
     try {
       setLoading(true)
+      console.log('🔍 Fetching sync quota for:', address)
+
       const response = await axios.get('/api/user/sync-stats', {
         headers: {
           'x-wallet-address': address
         }
       })
 
+      console.log('📊 Sync quota response:', response.data)
+
       if (response.data.success) {
         setQuota(response.data.data)
+        console.log('✅ Quota set:', response.data.data)
+      } else {
+        console.warn('⚠️ API returned success: false')
+        // Set default quota on API failure
+        setQuota({
+          dailySyncsToday: 0,
+          maxDailySyncs: 2,
+          availableToday: 2,
+          resetTime: new Date().toISOString(),
+          hoursUntilReset: 24
+        })
       }
-    } catch (error) {
-      console.error('Failed to fetch sync quota:', error)
+    } catch (error: any) {
+      console.error('❌ Failed to fetch sync quota:', error)
+      console.error('Error details:', error.response?.data)
+
+      // Set default quota on error (assume full quota available)
+      setQuota({
+        dailySyncsToday: 0,
+        maxDailySyncs: 2,
+        availableToday: 2,
+        resetTime: new Date().toISOString(),
+        hoursUntilReset: 24
+      })
     } finally {
       setLoading(false)
     }
   }
 
-  if (!isConnected || !quota) {
+  if (!isConnected) {
+    return null
+  }
+
+  // Show loading state while fetching
+  if (!quota && loading) {
+    return (
+      <div className="px-3 py-1.5 rounded-full border border-border/30 bg-card/50">
+        <div className="flex items-center space-x-1.5">
+          <svg className="w-3.5 h-3.5 animate-spin text-muted-foreground" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span className="text-xs text-muted-foreground">...</span>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render if no quota data after loading
+  if (!quota) {
     return null
   }
 
