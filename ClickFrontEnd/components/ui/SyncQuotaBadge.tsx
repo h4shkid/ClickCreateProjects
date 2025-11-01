@@ -25,10 +25,21 @@ export default function SyncQuotaBadge() {
     }
 
     fetchQuota()
-    // Refresh every 5 minutes
-    const interval = setInterval(fetchQuota, 5 * 60 * 1000)
+    // Refresh every 30 seconds (for testing) - can increase to 5 min later
+    const interval = setInterval(fetchQuota, 30 * 1000)
     return () => clearInterval(interval)
   }, [isConnected, address])
+
+  // Also listen for custom event to refresh quota immediately
+  useEffect(() => {
+    const handleRefreshQuota = () => {
+      console.log('🔄 Refreshing quota on demand...')
+      fetchQuota()
+    }
+
+    window.addEventListener('refreshSyncQuota', handleRefreshQuota)
+    return () => window.removeEventListener('refreshSyncQuota', handleRefreshQuota)
+  }, [address])
 
   const fetchQuota = async () => {
     if (!address) return

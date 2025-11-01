@@ -53,7 +53,13 @@ export default function QuickAddCollection({ isOpen, onClose, onSuccess }: Quick
       if (data.success && data.data && data.data.contract) {
         setDetectedInfo(data.data.contract)
         setStep('success')
-        
+
+        // Dispatch event to refresh sync quota badge
+        if (data.countsAsNewSync) {
+          console.log('🔄 New collection added, refreshing quota badge...')
+          window.dispatchEvent(new Event('refreshSyncQuota'))
+        }
+
         // Auto-close after 2 seconds and call success callback
         setTimeout(() => {
           onSuccess(data.data.contract)
