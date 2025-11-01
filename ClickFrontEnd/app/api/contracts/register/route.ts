@@ -295,8 +295,8 @@ export async function POST(request: NextRequest) {
         description, website_url, twitter_url, discord_url,
         image_url, banner_image_url,
         first_synced_by_wallet, first_synced_at, total_users,
-        metadata_json, added_by_user_id, usage_count, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${isPostgres ? 'CURRENT_TIMESTAMP' : "datetime('now')"}, ${isPostgres ? 'CURRENT_TIMESTAMP' : "datetime('now')"})
+        metadata_json, added_by_user_id, usage_count
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       RETURNING id
     `)
 
