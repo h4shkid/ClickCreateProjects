@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useAccount } from 'wagmi'
+import SyncQuotaBadge from '@/components/ui/SyncQuotaBadge'
 
 // Authorized wallet address for Snapshot page access
 const AUTHORIZED_SNAPSHOT_WALLET = '0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC'
@@ -85,7 +86,11 @@ export default function Navigation() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
+            {/* Sync Quota Badge */}
+            <SyncQuotaBadge />
+
+            {/* Connect Button */}
             <ConnectButton
               accountStatus={{
                 smallScreen: 'avatar',
@@ -149,7 +154,13 @@ export default function Navigation() {
                     {item.label}
                   </Link>
                 ))}
-              <div className="pt-4 space-y-2">
+              <div className="pt-4 space-y-3">
+                {/* Mobile Sync Quota Badge */}
+                <div className="flex justify-center">
+                  <SyncQuotaBadge />
+                </div>
+
+                {/* Mobile Connect Button */}
                 <div className="flex justify-center">
                   <ConnectButton
                     accountStatus="address"
