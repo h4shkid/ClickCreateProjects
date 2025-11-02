@@ -1099,7 +1099,7 @@ export default function CollectionSnapshotPage() {
             })()}
 
             {/* Export Buttons - Prominent Orange */}
-            <div className="flex gap-3 mb-6 flex-wrap">
+            <div className="flex gap-3 mb-6 flex-wrap justify-end">
               <button
                 onClick={() => exportData('csv')}
                 className="btn-primary flex items-center gap-2 px-6 py-3 text-sm font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
