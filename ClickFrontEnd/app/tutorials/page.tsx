@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Play Circle, CheckCircle, Clock, BookOpen, Image as ImageIcon, FileText, ArrowRight } from 'lucide-react'
+import { PlayCircle, CheckCircle, Clock, BookOpen, Image as ImageIcon, FileText, ArrowRight } from 'lucide-react'
 
 export default function TutorialsPage() {
   const tutorials = [
