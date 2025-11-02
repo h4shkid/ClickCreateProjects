@@ -125,7 +125,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="relative py-20 px-6 lg:px-8">
+      <section id="features" className="relative py-20 px-6 lg:px-8">
         <div className="container mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
