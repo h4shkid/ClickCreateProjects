@@ -1105,14 +1105,14 @@ export default function CollectionSnapshotPage() {
                 className="btn-primary flex items-center gap-2 px-6 py-3 text-sm font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               >
                 <Download className="w-4 h-4" />
-                Download CSV
+                Download Snapshot as CSV
               </button>
               <button
                 onClick={() => exportData('json')}
                 className="btn-primary flex items-center gap-2 px-6 py-3 text-sm font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               >
                 <Download className="w-4 h-4" />
-                Download JSON
+                Download Snapshot as JSON
               </button>
             </div>
 
