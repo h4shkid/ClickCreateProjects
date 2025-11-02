@@ -178,11 +178,83 @@ export default function CollectionSnapshotPage() {
       setError('Please select Exact Match option (YES or NO)')
       return
     }
-    
+
+    // Check if blockchain needs syncing first
+    if (!syncInfo?.isSynced) {
+      setLoading(true)
+      setError('')
+      console.log('🔄 Blockchain not synced, starting sync first...')
+
+      // Start sync
+      setSyncStatus({ syncing: true, progress: 0, eta: '' })
+
+      try {
+        // Start blockchain sync
+        const response = await axios.post(`/api/contracts/${address}/sync`, {})
+
+        if (response.data.success) {
+          console.log('🚀 Sync started:', response.data.message)
+
+          // Poll for sync status
+          await new Promise<void>((resolve, reject) => {
+            const pollInterval = setInterval(async () => {
+              try {
+                const statusRes = await axios.get(`/api/contracts/${address}/sync`)
+                const syncData = statusRes.data.data
+
+                if (syncData.status === 'completed') {
+                  clearInterval(pollInterval)
+                  setSyncStatus({ syncing: false, progress: 100, eta: '' })
+
+                  // Update sync info
+                  const updatedLastSynced = syncData.currentBlockNumber || syncData.endBlock || syncData.lastSyncedBlock
+                  setSyncInfo({
+                    ...syncData,
+                    lastSyncedBlock: updatedLastSynced,
+                    isSynced: true,
+                    status: 'completed'
+                  })
+
+                  console.log('✅ Sync completed, proceeding to snapshot generation...')
+                  resolve()
+                } else if (syncData.status === 'processing') {
+                  const progress = syncData.progressPercentage || 0
+                  const eta = syncData.workerProgress?.etaSeconds ? formatETA(syncData.workerProgress.etaSeconds) : ''
+                  setSyncStatus({ syncing: true, progress, eta })
+                  console.log(`🔄 Sync progress: ${progress}%`)
+                } else if (syncData.status === 'failed') {
+                  clearInterval(pollInterval)
+                  setSyncStatus({ syncing: false, progress: 0, eta: '' })
+                  reject(new Error('Sync failed'))
+                }
+              } catch (err) {
+                console.error('Status poll error:', err)
+              }
+            }, 2000)
+
+            // Timeout after 15 minutes
+            setTimeout(() => {
+              clearInterval(pollInterval)
+              reject(new Error('Sync timeout'))
+            }, 900000)
+          })
+        } else {
+          throw new Error('Failed to start sync')
+        }
+      } catch (syncErr: any) {
+        console.error('Sync error:', syncErr)
+        setError('Failed to sync blockchain data. Please try again.')
+        setLoading(false)
+        setSyncStatus({ syncing: false, progress: 0, eta: '' })
+        return
+      }
+    }
+
+    // Now proceed with snapshot generation
     setLoading(true)
     setError('')
     console.log('🎯 Starting snapshot generation...')
-    
+
     try {
       const endpoint = snapshotType === 'current' 
         ? `/api/contracts/${address}/snapshot/current`
@@ -630,7 +702,7 @@ export default function CollectionSnapshotPage() {
                     </p>
                     <div className="flex items-center gap-2 text-xs text-blue-200/60">
                       <RefreshCw className="w-3 h-3" />
-                      <span>Click &quot;Sync Blockchain&quot; below to get started</span>
+                      <span>Click &quot;Generate Snapshot&quot; below to sync and create your snapshot</span>
                     </div>
                   </div>
                 )}
@@ -640,7 +712,7 @@ export default function CollectionSnapshotPage() {
                   <div className="mt-3 pt-3 border-t border-orange-500/30">
                     <p className="text-xs text-orange-300 flex items-start gap-2">
                       <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                      <span>Data is {blocksBehind} blocks behind. Click &quot;Sync Blockchain&quot; to fetch the latest blocks for accurate snapshots.</span>
+                      <span>Data is {blocksBehind} blocks behind. Click &quot;Generate Snapshot&quot; to sync the latest blocks and create your snapshot.</span>
                     </p>
                   </div>
                 )}
@@ -902,37 +974,30 @@ export default function CollectionSnapshotPage() {
               </div>
             )}
 
-            {/* Smart Action Button */}
+            {/* Smart Action Button - Always shows Generate Snapshot */}
             <div className="flex gap-2 pt-2">
-              {/* Show Sync button if not synced, otherwise show Generate Snapshot button */}
-              {!syncInfo?.isSynced ? (
-                <button
-                  onClick={syncBlockchain}
-                  disabled={syncStatus.syncing}
-                  className="btn-primary flex items-center justify-center gap-2 w-full"
-                >
-                  <RefreshCw className={`w-4 h-4 ${syncStatus.syncing ? 'animate-spin' : ''}`} />
-                  {syncStatus.syncing ? `Syncing ${syncStatus.progress}%${syncStatus.eta ? ` (${syncStatus.eta})` : ''}` : 'Sync Blockchain'}
-                </button>
-              ) : (
-                <button
-                  onClick={generateSnapshot}
-                  disabled={loading}
-                  className="btn-primary flex items-center justify-center gap-2 w-full"
-                >
-                  {loading ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Search className="w-4 h-4" />
-                      Generate Snapshot
-                    </>
-                  )}
-                </button>
-              )}
+              <button
+                onClick={generateSnapshot}
+                disabled={loading || syncStatus.syncing}
+                className="btn-primary flex items-center justify-center gap-2 w-full"
+              >
+                {syncStatus.syncing ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    {syncStatus.progress > 0 ? `Preparing Snapshot... ${syncStatus.progress}%${syncStatus.eta ? ` (${syncStatus.eta})` : ''}` : 'Preparing Snapshot...'}
+                  </>
+                ) : loading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-4 h-4" />
+                    Generate Snapshot
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
