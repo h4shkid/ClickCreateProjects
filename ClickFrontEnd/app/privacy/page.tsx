@@ -237,9 +237,9 @@ export default function PrivacyPage() {
               </p>
               <div className="rounded-lg border border-border bg-card p-6">
                 <div className="space-y-2 text-sm">
-                  <p><strong>Email:</strong> privacy@clickcreate.xyz</p>
+                  <p><strong>Email:</strong> privacy@clickcreate.io</p>
                   <p><strong>Discord:</strong> Join our community server</p>
-                  <p><strong>Twitter:</strong> @ClickCreate</p>
+                  <p><strong>X (Twitter):</strong> @ClickCreate</p>
                 </div>
               </div>
             </div>

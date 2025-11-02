@@ -97,7 +97,7 @@ export default function CollectionsPage() {
               className="btn-primary flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
-              Add Collection
+              Generate Snapshot
             </button>
           </div>
 

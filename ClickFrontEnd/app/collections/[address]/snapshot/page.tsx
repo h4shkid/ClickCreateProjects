@@ -902,33 +902,37 @@ export default function CollectionSnapshotPage() {
               </div>
             )}
 
-            {/* Action Buttons */}
+            {/* Smart Action Button */}
             <div className="flex gap-2 pt-2">
-              <button
-                onClick={syncBlockchain}
-                disabled={syncStatus.syncing}
-                className="btn-secondary flex items-center justify-center gap-2 flex-1"
-              >
-                <RefreshCw className={`w-4 h-4 ${syncStatus.syncing ? 'animate-spin' : ''}`} />
-                {syncStatus.syncing ? `Syncing ${syncStatus.progress}%${syncStatus.eta ? ` (${syncStatus.eta})` : ''}` : 'Sync Blockchain'}
-              </button>
-              <button
-                onClick={generateSnapshot}
-                disabled={loading}
-                className="btn-primary flex items-center justify-center gap-2 flex-1"
-              >
-                {loading ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Search className="w-4 h-4" />
-                    Generate Snapshot
-                  </>
-                )}
-              </button>
+              {/* Show Sync button if not synced, otherwise show Generate Snapshot button */}
+              {!syncInfo?.isSynced ? (
+                <button
+                  onClick={syncBlockchain}
+                  disabled={syncStatus.syncing}
+                  className="btn-primary flex items-center justify-center gap-2 w-full"
+                >
+                  <RefreshCw className={`w-4 h-4 ${syncStatus.syncing ? 'animate-spin' : ''}`} />
+                  {syncStatus.syncing ? `Syncing ${syncStatus.progress}%${syncStatus.eta ? ` (${syncStatus.eta})` : ''}` : 'Sync Blockchain'}
+                </button>
+              ) : (
+                <button
+                  onClick={generateSnapshot}
+                  disabled={loading}
+                  className="btn-primary flex items-center justify-center gap-2 w-full"
+                >
+                  {loading ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Search className="w-4 h-4" />
+                      Generate Snapshot
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
 

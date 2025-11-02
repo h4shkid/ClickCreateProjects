@@ -247,8 +247,8 @@ export default function TermsPage() {
                 </p>
                 <div className="rounded-lg border border-border bg-card p-6 not-prose">
                   <div className="space-y-2 text-sm">
-                    <p><strong>Email:</strong> legal@clickcreate.xyz</p>
-                    <p><strong>Website:</strong> <Link href="/" className="text-primary hover:underline">clickcreate.xyz</Link></p>
+                    <p><strong>Email:</strong> legal@clickcreate.io</p>
+                    <p><strong>Website:</strong> <Link href="/" className="text-primary hover:underline">snapshot.clickcreate.io</Link></p>
                     <p><strong>Support:</strong> <Link href="/contact" className="text-primary hover:underline">Contact Page</Link></p>
                   </div>
                 </div>

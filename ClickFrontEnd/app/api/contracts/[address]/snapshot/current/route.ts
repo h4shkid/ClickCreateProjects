@@ -131,6 +131,7 @@ export async function GET(
               address as holder_address,
               SUM(${balanceCast}) as balance,
               COUNT(DISTINCT token_id) as owned_tokens,
+              MIN(${balanceCast}) as number_of_sets,
               ${aggregateFunc}(token_id, ',' ${orderClause}) as tokens_owned
             FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
@@ -138,7 +139,7 @@ export async function GET(
             AND ${balanceCast} > 0
             GROUP BY address
             HAVING COUNT(DISTINCT token_id) = ?
-            ORDER BY balance DESC
+            ORDER BY MIN(${balanceCast}) DESC, SUM(${balanceCast}) DESC
             ${limit > 0 ? `LIMIT ${limit}` : ''}
           `
 
@@ -157,6 +158,7 @@ export async function GET(
               address as holder_address,
               SUM(${balanceCast}) as balance,
               COUNT(DISTINCT token_id) as owned_tokens,
+              MIN(${balanceCast}) as number_of_sets,
               ${aggregateFunc}(token_id, ',' ${orderClause}) as tokens_owned
             FROM current_state
             WHERE contract_address = ? COLLATE NOCASE
@@ -164,7 +166,7 @@ export async function GET(
             AND ${balanceCast} > 0
             GROUP BY address
             HAVING COUNT(DISTINCT token_id) = ${tokenParams.length}
-            ORDER BY balance DESC
+            ORDER BY MIN(${balanceCast}) DESC, SUM(${balanceCast}) DESC
             ${limit > 0 ? `LIMIT ${limit}` : ''}
           `
           console.log(`✅ EXACT MATCH MODE: Must own ALL ${tokenParams.length} tokens`)
@@ -301,6 +303,8 @@ export async function GET(
             balance: holder.balance,
             percentage: totalSupply > 0 ? (parseInt(holder.balance) / totalSupply) * 100 : 0,
             rank: index + 1,
+            // Include number_of_sets if available (from exact match or full season mode)
+            ...(holder.number_of_sets !== undefined && { numberOfSets: holder.number_of_sets }),
             // Include token list if available (from GROUP_CONCAT/STRING_AGG)
             ...(holder.tokens_owned && { tokensOwned: holder.tokens_owned.split(',') })
           }))

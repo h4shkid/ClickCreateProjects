@@ -17,7 +17,7 @@ const contactMethods = [
   },
   {
     icon: Twitter,
-    title: 'Twitter',
+    title: 'X (Twitter)',
     description: 'Follow us for updates, tips, and announcements',
     action: '@ClickCreate',
     href: '#',
@@ -27,8 +27,8 @@ const contactMethods = [
     icon: Mail,
     title: 'Email',
     description: 'For business inquiries and partnership opportunities',
-    action: 'hello@clickcreate.xyz',
-    href: 'mailto:hello@clickcreate.xyz',
+    action: 'hello@clickcreate.io',
+    href: 'mailto:hello@clickcreate.io',
     primary: false,
   },
 ]
@@ -205,7 +205,7 @@ export default function ContactPage() {
             <div className="mt-8 rounded-lg border border-border bg-card p-6">
               <h3 className="mb-2 font-semibold">Looking for Help?</h3>
               <p className="mb-4 text-sm text-muted-foreground">
-                Check out our documentation and tutorials for answers to common questions.
+                Check out our documentation for answers to common questions.
               </p>
               <div className="flex gap-3">
                 <a
@@ -213,20 +213,6 @@ export default function ContactPage() {
                   className="text-sm text-primary hover:underline"
                 >
                   Documentation
-                </a>
-                <span className="text-muted-foreground">•</span>
-                <a
-                  href="/tutorials"
-                  className="text-sm text-primary hover:underline"
-                >
-                  Tutorials
-                </a>
-                <span className="text-muted-foreground">•</span>
-                <a
-                  href="/api-reference"
-                  className="text-sm text-primary hover:underline"
-                >
-                  API Reference
                 </a>
               </div>
             </div>
@@ -240,10 +226,10 @@ export default function ContactPage() {
             Interested in partnering with ClickCreate or integrating our analytics into your platform? We'd love to explore opportunities together.
           </p>
           <a
-            href="mailto:partnerships@clickcreate.xyz"
+            href="mailto:partnerships@clickcreate.io"
             className="inline-flex items-center justify-center rounded-md border border-primary bg-background px-6 py-3 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
           >
-            partnerships@clickcreate.xyz
+            partnerships@clickcreate.io
           </a>
         </div>
       </div>

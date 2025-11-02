@@ -29,13 +29,6 @@ const values = [
   },
 ]
 
-const stats = [
-  { label: 'Collections Tracked', value: '150+' },
-  { label: 'Snapshots Generated', value: '1,000+' },
-  { label: 'Active Users', value: '500+' },
-  { label: 'Uptime', value: '99.9%' },
-]
-
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background">
@@ -119,82 +112,6 @@ export default function AboutPage() {
                 </div>
               )
             })}
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="mb-24 rounded-lg border border-border bg-gradient-to-br from-primary/10 to-accent/10 p-12">
-          <div className="grid gap-8 md:grid-cols-4">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="mb-2 text-4xl font-bold text-primary">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Technology */}
-        <div className="mb-24 max-w-4xl mx-auto">
-          <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold">Built on Solid Foundations</h2>
-            <p className="text-muted-foreground">
-              We use industry-leading technologies to ensure reliability, speed, and accuracy.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="rounded-lg border border-border bg-card p-6">
-              <h3 className="mb-3 text-lg font-semibold">Blockchain Infrastructure</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Direct RPC connections to Ethereum via Alchemy and QuickNode ensure real-time, accurate data without intermediaries.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">Alchemy</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">QuickNode</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">ethers.js</span>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-border bg-card p-6">
-              <h3 className="mb-3 text-lg font-semibold">Modern Web Stack</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Built with Next.js 15, React 19, and TypeScript for a fast, reliable, and type-safe user experience.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">Next.js 15</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">React 19</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">TypeScript</span>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-border bg-card p-6">
-              <h3 className="mb-3 text-lg font-semibold">Wallet Integration</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Secure wallet connections using RainbowKit and wagmi for seamless Web3 authentication.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">RainbowKit</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">wagmi</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">viem</span>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-border bg-card p-6">
-              <h3 className="mb-3 text-lg font-semibold">Data Storage</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                PostgreSQL for production reliability with intelligent caching for lightning-fast queries.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">PostgreSQL</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">SQLite</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">Vercel</span>
-              </div>
-            </div>
           </div>
         </div>
 

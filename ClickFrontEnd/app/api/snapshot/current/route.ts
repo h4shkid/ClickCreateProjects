@@ -48,8 +48,18 @@ export async function GET(request: NextRequest) {
         firstCompleteHolder: completeHolders[0]
       });
 
+      // Sort by numberOfSets first (descending), then by totalTokensHeld (descending)
+      const sortedHolders = completeHolders.sort((a: any, b: any) => {
+        // First priority: number of complete sets (higher is better)
+        if (b.numberOfCompleteSets !== a.numberOfCompleteSets) {
+          return b.numberOfCompleteSets - a.numberOfCompleteSets;
+        }
+        // Second priority: total tokens held (higher is better)
+        return b.totalTokensHeld - a.totalTokensHeld;
+      });
+
       // Format response with the new format: [WalletID] || [Number of Sets] || [Number of tokens held] || [Token IDs Held]
-      const formattedHolders = completeHolders.map((holder: any, index: number) => ({
+      const formattedHolders = sortedHolders.map((holder: any, index: number) => ({
         holderAddress: holder.address,
         numberOfSets: holder.numberOfCompleteSets,
         totalTokensHeld: holder.totalTokensHeld,
@@ -105,9 +115,19 @@ export async function GET(request: NextRequest) {
           : await detector.findAnyMatchHolders(tokenIdList);
         
         const stats = await detector.getMatchStatistics(tokenIdList);
-        
+
+        // Sort by numberOfSets first (descending), then by totalBalance (descending)
+        const sortedHolders = holders.sort((a: any, b: any) => {
+          // First priority: number of complete sets (higher is better)
+          if (b.numberOfCompleteSets !== a.numberOfCompleteSets) {
+            return b.numberOfCompleteSets - a.numberOfCompleteSets;
+          }
+          // Second priority: total balance (higher is better)
+          return b.totalBalance - a.totalBalance;
+        });
+
         // Format response with the new format
-        const formattedHolders = holders.map((holder: any, index: number) => ({
+        const formattedHolders = sortedHolders.map((holder: any, index: number) => ({
           holderAddress: holder.address,
           numberOfSets: holder.numberOfCompleteSets,
           totalTokensHeld: holder.totalBalance,
