@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Download, Search, RefreshCw, Calendar, Users, Hash, TrendingUp, Copy, ArrowLeft, AlertCircle, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -70,6 +70,9 @@ export default function CollectionSnapshotPage() {
   const [selectedSeason, setSelectedSeason] = useState<string>('')
   const [exactMatch, setExactMatch] = useState<boolean | null>(null)
   const holdersPerPage = 50
+
+  // Ref for snapshot results section
+  const resultsRef = useRef<HTMLDivElement>(null)
 
   // Function to refresh date range
   const refreshDateRange = async () => {
@@ -377,9 +380,14 @@ export default function CollectionSnapshotPage() {
       if (formattedData.holders && formattedData.holders.length > 0) {
         console.log('✅ Snapshot data received:', formattedData)
         setSnapshotData(formattedData)
-        
+
         // Refresh date range after successful snapshot (in case new data was processed)
         await refreshDateRange()
+
+        // Scroll to results section after a short delay (to allow render)
+        setTimeout(() => {
+          resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 300)
       } else {
         console.warn('⚠️ No holders found in response')
         setError('No holders found. Please ensure blockchain data is synced.')
@@ -1011,7 +1019,7 @@ export default function CollectionSnapshotPage() {
 
         {/* Results */}
         {snapshotData && (
-          <>
+          <div ref={resultsRef}>
             {/* Statistics */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
               <div className="card-glass bg-primary/5">
@@ -1090,21 +1098,21 @@ export default function CollectionSnapshotPage() {
               return null
             })()}
 
-            {/* Export and Validation Buttons */}
-            <div className="flex gap-2 mb-6 flex-wrap">
+            {/* Export Buttons - Prominent */}
+            <div className="flex gap-3 mb-6 flex-wrap">
               <button
                 onClick={() => exportData('csv')}
-                className="btn-secondary flex items-center gap-2 text-sm"
+                className="btn-primary flex items-center gap-2 px-6 py-3 text-sm font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               >
-                <Download className="w-3.5 h-3.5" />
-                CSV
+                <Download className="w-4 h-4" />
+                Download CSV
               </button>
               <button
                 onClick={() => exportData('json')}
-                className="btn-secondary flex items-center gap-2 text-sm"
+                className="btn-secondary flex items-center gap-2 px-6 py-3 text-sm font-medium border-2 hover:border-primary/50 transition-all"
               >
-                <Download className="w-3.5 h-3.5" />
-                JSON
+                <Download className="w-4 h-4" />
+                Download JSON
               </button>
             </div>
 
@@ -1192,7 +1200,7 @@ export default function CollectionSnapshotPage() {
                 </div>
               )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
