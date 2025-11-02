@@ -8,16 +8,16 @@ const footerLinks = {
     { label: 'Gallery', href: '/gallery' },
   ],
   Resources: [
-    { label: 'Documentation', href: '#' },
-    { label: 'API Reference', href: '#' },
-    { label: 'Tutorials', href: '#' },
-    { label: 'Blog', href: '#' },
+    { label: 'Documentation', href: '/docs' },
+    { label: 'API Reference', href: '/api-reference' },
+    { label: 'Tutorials', href: '/tutorials' },
+    { label: 'Blog', href: '/blog' },
   ],
   Company: [
-    { label: 'About', href: '#' },
-    { label: 'Contact', href: '#' },
-    { label: 'Privacy', href: '#' },
-    { label: 'Terms', href: '#' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Privacy', href: '/privacy' },
+    { label: 'Terms', href: '/terms' },
   ],
 }
 
@@ -93,10 +93,10 @@ export default function Footer() {
             © {new Date().getFullYear()} ClickCreate. All rights reserved.
           </p>
           <div className="flex space-x-6">
-            <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Terms of Service
             </Link>
           </div>
