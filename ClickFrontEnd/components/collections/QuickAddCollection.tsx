@@ -76,10 +76,11 @@ export default function QuickAddCollection({ isOpen, onClose, onSuccess }: Quick
           window.dispatchEvent(new Event('refreshSyncQuota'))
         }
 
-        // Auto-close after 2 seconds and call success callback
+        // Redirect to snapshot page after 2 seconds
         setTimeout(() => {
           onSuccess(data.data.contract)
-          handleClose()
+          // Redirect to collection's snapshot page
+          window.location.href = `/collections/${data.data.contract.address}/snapshot`
         }, 2000)
       } else {
         setError(data.error || 'Failed to add collection')
@@ -142,6 +143,13 @@ export default function QuickAddCollection({ isOpen, onClose, onSuccess }: Quick
             </div>
           ) : step === 'input' && (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Instructions */}
+              <div className="bg-primary/10 border border-primary/20 rounded-md p-3 mb-4">
+                <p className="text-sm text-primary/90">
+                  Add your collection address and you'll be redirected to the snapshot page to generate your first snapshot.
+                </p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Contract Address *
