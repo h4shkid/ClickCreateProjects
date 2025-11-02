@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { Mail, MessageCircle, Github, Twitter, Send } from 'lucide-react'
+import { Mail, MessageCircle, Twitter, Send } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Contact Us - ClickCreate',
@@ -20,14 +20,6 @@ const contactMethods = [
     title: 'Twitter',
     description: 'Follow us for updates, tips, and announcements',
     action: '@ClickCreate',
-    href: '#',
-    primary: false,
-  },
-  {
-    icon: Github,
-    title: 'GitHub',
-    description: 'Report bugs, request features, or contribute to the project',
-    action: 'View Repository',
     href: '#',
     primary: false,
   },
