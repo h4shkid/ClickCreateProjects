@@ -1098,7 +1098,7 @@ export default function CollectionSnapshotPage() {
               return null
             })()}
 
-            {/* Export Buttons - Prominent */}
+            {/* Export Buttons - Prominent Orange */}
             <div className="flex gap-3 mb-6 flex-wrap">
               <button
                 onClick={() => exportData('csv')}
@@ -1109,7 +1109,7 @@ export default function CollectionSnapshotPage() {
               </button>
               <button
                 onClick={() => exportData('json')}
-                className="btn-secondary flex items-center gap-2 px-6 py-3 text-sm font-medium border-2 hover:border-primary/50 transition-all"
+                className="btn-primary flex items-center gap-2 px-6 py-3 text-sm font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               >
                 <Download className="w-4 h-4" />
                 Download JSON
