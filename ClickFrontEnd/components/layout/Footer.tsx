@@ -9,9 +9,7 @@ const footerLinks = {
   ],
   Resources: [
     { label: 'Documentation', href: '/docs' },
-    { label: 'API Reference', href: '/api-reference' },
     { label: 'Tutorials', href: '/tutorials' },
-    { label: 'Blog', href: '/blog' },
   ],
   Company: [
     { label: 'About', href: '/about' },
