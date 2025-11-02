@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const posts = [
   {
     title: 'Introducing ClickCreate: Advanced NFT Analytics for Everyone',
-    excerpt: 'Today we're excited to launch ClickCreate, a comprehensive NFT analytics platform designed to make holder tracking and snapshot generation accessible to all creators and communities.',
+    excerpt: 'Today we are excited to launch ClickCreate, a comprehensive NFT analytics platform designed to make holder tracking and snapshot generation accessible to all creators and communities.',
     date: 'November 1, 2025',
     readTime: '4 min read',
     category: 'Announcement',
@@ -42,7 +42,7 @@ const posts = [
   },
   {
     title: 'Multi-Chain Support Coming Soon',
-    excerpt: 'We're expanding beyond Ethereum! Get a preview of our upcoming support for Polygon, Arbitrum, Base, and more.',
+    excerpt: 'We are expanding beyond Ethereum! Get a preview of our upcoming support for Polygon, Arbitrum, Base, and more.',
     date: 'October 20, 2025',
     readTime: '5 min read',
     category: 'Roadmap',
