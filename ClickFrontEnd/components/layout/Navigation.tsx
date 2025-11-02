@@ -14,7 +14,7 @@ const AUTHORIZED_SNAPSHOT_WALLET = '0x4Ae8B436e50f762Fa8fad29Fd548b375fEe968AC'
 const navItems = [
   { href: '/', label: 'Home' },
   { href: '/snapshot', label: 'Snapshot' },
-  { href: '/collections', label: 'Collections' },
+  { href: '/collections', label: 'My Snapshots' },
   { href: '/profile', label: 'Profile' },
 ]
 
