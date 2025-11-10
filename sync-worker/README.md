@@ -1,8 +1,8 @@
-# NFT Snapshot Sync Worker
+# CCSnapshotWorker
 
 Production-ready blockchain sync worker for the NFT Snapshot Tool. Handles continuous event syncing from Ethereum mainnet to PostgreSQL database.
 
-**Main Repository:** [clickcreate/nft-snapshot-tool](https://github.com/clickcreate/nft-snapshot-tool)
+**Main Repository:** [clickcreate/CCSnapshotApp](https://github.com/clickcreate/CCSnapshotApp)
 
 ---
 
@@ -64,8 +64,8 @@ This service runs independently from the frontend, continuously monitoring and s
 
 ```bash
 # Clone and navigate
-git clone https://github.com/clickcreate/nft-snapshot-sync-worker.git
-cd nft-snapshot-sync-worker
+git clone https://github.com/clickcreate/CCSnapshotWorker.git
+cd CCSnapshotWorker
 
 # Install dependencies
 npm install
@@ -107,12 +107,12 @@ PORT=3001
 
 1. **Create New Web Service**
    - Dashboard → New → Web Service
-   - Connect GitHub: `clickcreate/nft-snapshot-sync-worker`
+   - Connect GitHub: `clickcreate/CCSnapshotWorker`
    - Branch: `main`
 
 2. **Configure Service**
    ```
-   Name: nft-snapshot-sync-worker
+   Name: CCSnapshotWorker
    Environment: Node
    Build Command: npm install
    Start Command: npm start
@@ -126,7 +126,7 @@ PORT=3001
 4. **Deploy**
    - Click "Create Web Service"
    - Wait for build to complete
-   - Service URL: `https://nft-snapshot-sync-worker-xxxx.onrender.com`
+   - Service URL: `https://CCSnapshotWorker-xxxx.onrender.com`
 
 5. **Verify Health**
    ```bash
@@ -146,7 +146,7 @@ PORT=3001
 
 1. **Create New Project**
    - New Project → Deploy from GitHub
-   - Select `clickcreate/nft-snapshot-sync-worker`
+   - Select `clickcreate/CCSnapshotWorker`
 
 2. **Add Environment Variables**
    - Settings → Variables
@@ -177,11 +177,11 @@ CMD ["npm", "start"]
 
 Build and run:
 ```bash
-docker build -t nft-snapshot-sync-worker .
+docker build -t CCSnapshotWorker .
 docker run -p 3001:3001 \
   -e POSTGRES_URL="your_connection_string" \
   -e NEXT_PUBLIC_ALCHEMY_API_KEY="your_key" \
-  nft-snapshot-sync-worker
+  CCSnapshotWorker
 ```
 
 ---
@@ -269,7 +269,7 @@ Status codes:
 
 **Startup Logs:**
 ```
-🚀 NFT Snapshot Sync Worker starting...
+🚀 CCSnapshotWorker starting...
 ✅ Database connected successfully
 🔄 Starting sync loop (interval: 30s)
 📡 Service ready on port 3001
@@ -534,9 +534,9 @@ This software is private and confidential. Unauthorized copying, distribution, o
 
 ### Documentation
 
-- **Main Project:** [nft-snapshot-tool README](https://github.com/clickcreate/nft-snapshot-tool)
-- **Deployment Guide:** [DEPLOYMENT_GUIDE.md](https://github.com/clickcreate/nft-snapshot-tool/blob/main/DEPLOYMENT_GUIDE.md)
-- **Environment Variables:** [ENV_VARIABLES.md](https://github.com/clickcreate/nft-snapshot-tool/blob/main/ENV_VARIABLES.md)
+- **Main Project:** [CCSnapshotApp README](https://github.com/clickcreate/CCSnapshotApp)
+- **Deployment Guide:** [DEPLOYMENT_GUIDE.md](https://github.com/clickcreate/CCSnapshotApp/blob/main/DEPLOYMENT_GUIDE.md)
+- **Environment Variables:** [ENV_VARIABLES.md](https://github.com/clickcreate/CCSnapshotApp/blob/main/ENV_VARIABLES.md)
 
 ### Service Status
 

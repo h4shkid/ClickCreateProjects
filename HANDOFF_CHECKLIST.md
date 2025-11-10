@@ -8,8 +8,8 @@ Complete checklist for deploying the NFT Snapshot Tool to production.
 
 ### Code Repositories
 
-- [x] Frontend code pushed to `clickcreate/nft-snapshot-tool`
-- [x] Sync worker code pushed to `clickcreate/nft-snapshot-sync-worker`
+- [x] Frontend code pushed to `clickcreate/CCSnapshotApp`
+- [x] Sync worker code pushed to `clickcreate/CCSnapshotWorker`
 - [x] All documentation files included (DEPLOYMENT_GUIDE.md, ENV_VARIABLES.md)
 - [ ] Repository access verified for deployment team
 - [ ] GitHub Actions workflows (if any) reviewed
@@ -106,12 +106,12 @@ Choose one provider (recommended: Neon or Supabase):
 - [ ] Vercel account created/logged in at https://vercel.com
 - [ ] Team account created (if needed)
 - [ ] GitHub integration connected
-- [ ] Repository access granted: `clickcreate/nft-snapshot-tool`
+- [ ] Repository access granted: `clickcreate/CCSnapshotApp`
 
 ### Project Creation
 
 - [ ] New project created in Vercel
-- [ ] GitHub repository connected: `clickcreate/nft-snapshot-tool`
+- [ ] GitHub repository connected: `clickcreate/CCSnapshotApp`
 - [ ] Build settings confirmed:
   - Framework: Next.js
   - Build Command: `npm run build`
@@ -163,9 +163,9 @@ Navigate to: Project Settings → Environment Variables
 ### Service Creation
 
 - [ ] New Web Service created
-- [ ] GitHub repository connected: `clickcreate/nft-snapshot-sync-worker`
+- [ ] GitHub repository connected: `clickcreate/CCSnapshotWorker`
 - [ ] Service configuration:
-  - Name: `nft-snapshot-sync-worker`
+  - Name: `CCSnapshotWorker`
   - Environment: Node
   - Build Command: `npm install`
   - Start Command: `npm start`
@@ -185,7 +185,7 @@ Navigate to: Service → Environment
 - [ ] Initial deployment triggered
 - [ ] Build logs reviewed (no errors)
 - [ ] Service status: Running (green)
-- [ ] Service URL noted: `https://nft-snapshot-sync-worker-xxxx.onrender.com`
+- [ ] Service URL noted: `https://CCSnapshotWorker-xxxx.onrender.com`
 
 ### Health Check Verification
 

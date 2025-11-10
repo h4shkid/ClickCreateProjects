@@ -1,6 +1,6 @@
-# NFT Snapshot Tool
+# CCSnapshotApp
 
-Professional NFT holder snapshot tool with multi-contract support, historical snapshots, and advanced filtering capabilities. Built for creators, project owners, and developers who need accurate on-chain data for airdrops, allowlists, and analytics.
+Professional NFT holder snapshot tool for ClickCreate with multi-contract support, historical snapshots, and advanced filtering capabilities. Built for creators, project owners, and developers who need accurate on-chain data for airdrops, allowlists, and analytics.
 
 **Live Production:** https://snapshot.clickcreate.io
 
@@ -52,7 +52,7 @@ Professional NFT holder snapshot tool with multi-contract support, historical sn
 ### Project Structure
 
 ```
-nft-snapshot-tool/
+CCSnapshotApp/
 ├── ClickFrontEnd/              # Main Next.js application
 │   ├── app/                    # Next.js 15 App Router
 │   │   ├── api/               # API routes (backend endpoints)
@@ -100,8 +100,8 @@ nft-snapshot-tool/
 
 ```bash
 # Clone repository
-git clone https://github.com/clickcreate/nft-snapshot-tool.git
-cd nft-snapshot-tool/ClickFrontEnd
+git clone https://github.com/clickcreate/CCSnapshotApp.git
+cd CCSnapshotApp/ClickFrontEnd
 
 # Install dependencies
 npm install
@@ -174,7 +174,7 @@ Quick overview:
    - Deploy with custom domain
 
 3. **Sync Worker Deployment** (Render)
-   - Deploy from `clickcreate/nft-snapshot-sync-worker`
+   - Deploy from `clickcreate/CCSnapshotWorker`
    - Configure same database connection
    - Verify health endpoint
 

@@ -13,13 +13,13 @@
 Both repositories have been successfully pushed to the ClickCreate organization:
 
 1. **Main Frontend Application**
-   - Repository: `clickcreate/nft-snapshot-tool` (PRIVATE)
-   - URL: https://github.com/clickcreate/nft-snapshot-tool
+   - Repository: `clickcreate/CCSnapshotApp` (PRIVATE)
+   - URL: https://github.com/clickcreate/CCSnapshotApp
    - Latest commit: `5f64e7b` - "docs: Add comprehensive deployment and environment variable guides"
 
 2. **Sync Worker Service**
-   - Repository: `clickcreate/nft-snapshot-sync-worker` (PRIVATE)
-   - URL: https://github.com/clickcreate/nft-snapshot-sync-worker
+   - Repository: `clickcreate/CCSnapshotWorker` (PRIVATE)
+   - URL: https://github.com/clickcreate/CCSnapshotWorker
    - Latest commit: `8707ae8` - "docs: Add comprehensive deployment and operations guide"
 
 ### Documentation Files
@@ -220,7 +220,7 @@ Complete reference including:
 - Troubleshooting
 - Monitoring
 
-**Sync worker:** [sync-worker/README.md](https://github.com/clickcreate/nft-snapshot-sync-worker/blob/main/README.md)
+**Sync worker:** [sync-worker/README.md](https://github.com/clickcreate/CCSnapshotWorker/blob/main/README.md)
 
 Operations guide covering:
 - Service deployment
@@ -253,13 +253,13 @@ Operations guide covering:
    - Generate JWT secret: `openssl rand -base64 32`
 
 4. **Deploy Frontend (Vercel)**
-   - Connect GitHub: `clickcreate/nft-snapshot-tool`
+   - Connect GitHub: `clickcreate/CCSnapshotApp`
    - Add environment variables
    - Deploy
    - Configure domain: `snapshot.clickcreate.io`
 
 5. **Deploy Sync Worker (Render)**
-   - Connect GitHub: `clickcreate/nft-snapshot-sync-worker`
+   - Connect GitHub: `clickcreate/CCSnapshotWorker`
    - Add environment variables (same database URL)
    - Deploy
    - Verify health endpoint

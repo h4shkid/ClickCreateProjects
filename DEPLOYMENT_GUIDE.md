@@ -90,7 +90,7 @@ npx tsx scripts/validate-data.ts --verbose
 ### 2.1 Connect GitHub to Vercel
 
 1. Go to https://vercel.com
-2. Import Project → Select `clickcreate/nft-snapshot-tool`
+2. Import Project → Select `clickcreate/CCSnapshotApp`
 3. Framework: **Next.js**
 4. Root Directory: **ClickFrontEnd**
 
@@ -159,12 +159,12 @@ Click "Deploy" and wait for build to complete (~2-3 minutes).
 
 1. Go to https://render.com/dashboard
 2. New → Web Service
-3. Connect repository: `clickcreate/nft-snapshot-sync-worker`
+3. Connect repository: `clickcreate/CCSnapshotWorker`
 
 ### 3.2 Configure Service
 
 ```
-Name: nft-snapshot-sync-worker
+Name: CCSnapshotWorker
 Environment: Node
 Region: Choose closest to your database
 Branch: main
