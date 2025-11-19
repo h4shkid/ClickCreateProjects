@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ContractRegistry } from '@/lib/contracts/registry'
 
-const registry = new ContractRegistry()
-
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -39,8 +37,9 @@ export async function GET(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Search contracts
-    const result = registry.searchContracts({
+    // Search contracts - instantiate registry inside handler to prevent build-time DB access
+    const registry = new ContractRegistry()
+    const result = await registry.searchContracts({
       query: query.trim(),
       contractType: contractType || undefined,
       isVerified,

@@ -205,7 +205,7 @@ class Phase3TestSuite {
         // If it fails due to already registered, try to get the existing one
         if (result.error?.includes('already registered')) {
           console.log('   ⚠️ Contract already registered, checking existing registration')
-          const existing = this.registry.getContractByAddress(testAddress)
+          const existing = await this.registry.getContractByAddress(testAddress)
           if (!existing) {
             throw new Error('Contract should exist if already registered')
           }
@@ -230,41 +230,41 @@ class Phase3TestSuite {
     }
     
     // Verify contract can be retrieved (either newly registered or existing)
-    const retrieved = this.registry.getContractByAddress(testAddress)
+    const retrieved = await this.registry.getContractByAddress(testAddress)
     if (!retrieved) {
       throw new Error('Failed to retrieve contract after registration')
     }
   }
 
   async testContractSearch(): Promise<void> {
-    const searchResult = this.registry.searchContracts({
+    const searchResult = await this.registry.searchContracts({
       query: 'ClickCreate',
       limit: 10,
       offset: 0,
       sortBy: 'name',
       sortOrder: 'asc'
     })
-    
+
     if (searchResult.contracts.length === 0) {
       throw new Error('Search returned no results')
     }
-    
-    const found = searchResult.contracts.find(c => 
+
+    const found = searchResult.contracts.find(c =>
       c.address.toLowerCase() === TEST_CONTRACTS.CLICKCREATE.address.toLowerCase()
     )
-    
+
     if (!found) {
       throw new Error('Did not find expected contract in search results')
     }
   }
 
   async testContractUpdates(): Promise<void> {
-    const contract = this.registry.getContractByAddress(TEST_CONTRACTS.CLICKCREATE.address)
+    const contract = await this.registry.getContractByAddress(TEST_CONTRACTS.CLICKCREATE.address)
     if (!contract) {
       throw new Error('Contract not found for update test')
     }
 
-    const updateResult = this.registry.updateContract(contract.id, {
+    const updateResult = await this.registry.updateContract(contract.id, {
       description: 'Updated description for ClickCreate'
     })
     
@@ -273,7 +273,7 @@ class Phase3TestSuite {
     }
 
     // Verify update
-    const updated = this.registry.getContractByAddress(TEST_CONTRACTS.CLICKCREATE.address)
+    const updated = await this.registry.getContractByAddress(TEST_CONTRACTS.CLICKCREATE.address)
     if (!updated || updated.description !== 'Updated description for ClickCreate') {
       throw new Error('Contract update was not persisted')
     }
@@ -284,7 +284,7 @@ class Phase3TestSuite {
     // For testing purposes, we'll skip this call
     // this.registry.incrementUsage(TEST_CONTRACTS.CLICKCREATE.address)
 
-    const trending = this.registry.getTrendingContracts(10)
+    const trending = await this.registry.getTrendingContracts(10)
     
     if (trending.length === 0) {
       throw new Error('No trending contracts returned')
@@ -461,14 +461,14 @@ class Phase3TestSuite {
     }
     
     // 3. Test search functionality
-    const searchResult = this.registry.searchContracts({
+    const searchResult = await this.registry.searchContracts({
       query: 'ClickCreate',
       limit: 10,
       offset: 0,
       sortBy: 'created',
       sortOrder: 'desc'
     })
-    
+
     // Should find at least the ClickCreate contract that was migrated
     if (searchResult.contracts.length === 0) {
       throw new Error('Could not find any contracts in search')
@@ -477,7 +477,7 @@ class Phase3TestSuite {
 
   async testMultiContractAnalytics(): Promise<void> {
     // Test that multiple contracts can be managed simultaneously
-    const contracts = this.registry.getAllContracts()
+    const contracts = await this.registry.getAllContracts()
     
     if (contracts.length === 0) {
       throw new Error('No contracts found for analytics test')
@@ -491,9 +491,9 @@ class Phase3TestSuite {
       // Test usage increment - incrementUsage expects contractId (number), not address
       const beforeUsage = contract.usageCount
       if (contract.id) {
-        this.registry.incrementUsage(contract.id)
+        await this.registry.incrementUsage(contract.id)
 
-        const updated = this.registry.getContractByAddress(contract.address)
+        const updated = await this.registry.getContractByAddress(contract.address)
         if (!updated || updated.usageCount <= beforeUsage) {
           throw new Error(`Usage count not incremented for ${contract.address}`)
         }

@@ -3,12 +3,18 @@
  * Manages the database of contracts, metadata, and user associations
  */
 
-import Database from 'better-sqlite3'
-import path from 'path'
+import { createDatabaseAdapter, DatabaseAdapter } from '@/lib/database/adapter'
 import { ContractDetector, ContractInfo } from './detector'
 
-const db = new Database(path.join(process.cwd(), 'data', 'nft-snapshot.db'))
-db.pragma('journal_mode = WAL')
+// Lazy-load database adapter to prevent initialization during build
+let dbInstance: DatabaseAdapter | null = null
+
+function getDb(): DatabaseAdapter {
+  if (!dbInstance) {
+    dbInstance = createDatabaseAdapter()
+  }
+  return dbInstance
+}
 
 export interface RegisteredContract {
   id: number
@@ -73,7 +79,7 @@ export class ContractRegistry {
       const normalizedAddress = address.toLowerCase()
 
       // Check if contract already exists
-      const existing = this.getContractByAddress(normalizedAddress)
+      const existing = await this.getContractByAddress(normalizedAddress)
       if (existing) {
         return {
           success: false,
@@ -93,16 +99,16 @@ export class ContractRegistry {
       }
 
       // Insert into database
-      const insertContract = db.prepare(`
+      const insertContract = getDb().prepare(`
         INSERT INTO contracts (
           address, name, symbol, contract_type, creator_address, deployment_block,
-          total_supply, is_verified, description, website_url, twitter_url, 
+          total_supply, is_verified, description, website_url, twitter_url,
           discord_url, metadata_json, added_by_user_id, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         RETURNING id
       `)
 
-      const result = insertContract.get(
+      const result = await insertContract.get(
         normalizedAddress,
         contractInfo.name,
         contractInfo.symbol,
@@ -126,26 +132,26 @@ export class ContractRegistry {
       const contractId = result.id
 
       // Initialize sync status
-      const insertSyncStatus = db.prepare(`
+      const insertSyncStatus = getDb().prepare(`
         INSERT INTO contract_sync_status (
           contract_id, sync_type, start_block, end_block, current_block, status
         ) VALUES (?, 'initial', ?, ?, ?, 'pending')
       `)
 
       const currentBlock = contractInfo.deploymentBlock || 0
-      insertSyncStatus.run(contractId, currentBlock, currentBlock, currentBlock)
+      await insertSyncStatus.run(contractId, currentBlock, currentBlock, currentBlock)
 
       // Log user activity if user provided
       if (userId) {
-        const logActivity = db.prepare(`
+        const logActivity = getDb().prepare(`
           INSERT INTO user_activity (user_id, activity_type, contract_id, metadata)
           VALUES (?, 'contract_added', ?, ?)
         `)
 
-        logActivity.run(
-          userId, 
-          contractId, 
-          JSON.stringify({ 
+        await logActivity.run(
+          userId,
+          contractId,
+          JSON.stringify({
             contractAddress: normalizedAddress,
             contractType: contractInfo.contractType
           })
@@ -153,7 +159,7 @@ export class ContractRegistry {
       }
 
       // Get the complete registered contract
-      const registeredContract = this.getContractById(contractId)
+      const registeredContract = await this.getContractById(contractId)
       
       const warnings: string[] = []
       if (!contractInfo.features.supportsMetadata) {
@@ -181,31 +187,31 @@ export class ContractRegistry {
   /**
    * Get contract by address
    */
-  getContractByAddress(address: string): RegisteredContract | null {
-    const query = db.prepare(`
+  async getContractByAddress(address: string): Promise<RegisteredContract | null> {
+    const query = getDb().prepare(`
       SELECT * FROM contracts WHERE address = ? AND is_active = 1
     `)
 
-    const result = query.get(address.toLowerCase()) as RegisteredContract | undefined
+    const result = await query.get(address.toLowerCase()) as RegisteredContract | undefined
     return result || null
   }
 
   /**
    * Get contract by ID
    */
-  getContractById(id: number): RegisteredContract | null {
-    const query = db.prepare(`
+  async getContractById(id: number): Promise<RegisteredContract | null> {
+    const query = getDb().prepare(`
       SELECT * FROM contracts WHERE id = ? AND is_active = 1
     `)
 
-    const result = query.get(id) as RegisteredContract | undefined
+    const result = await query.get(id) as RegisteredContract | undefined
     return result || null
   }
 
   /**
    * Search contracts with filters and pagination
    */
-  searchContracts(params: {
+  async searchContracts(params: {
     query?: string
     contractType?: 'ERC721' | 'ERC1155'
     isVerified?: boolean
@@ -213,7 +219,7 @@ export class ContractRegistry {
     sortOrder?: 'asc' | 'desc'
     limit?: number
     offset?: number
-  } = {}): ContractSearchResult {
+  } = {}): Promise<ContractSearchResult> {
     const {
       query = '',
       contractType,
@@ -267,8 +273,8 @@ export class ContractRegistry {
     }
 
     // Main query with analytics data
-    const searchQuery = db.prepare(`
-      SELECT 
+    const searchQuery = getDb().prepare(`
+      SELECT
         c.*,
         ca.total_holders,
         ca.total_supply as analytics_total_supply,
@@ -279,10 +285,10 @@ export class ContractRegistry {
         COUNT(DISTINCT us.user_id) as unique_users,
         COUNT(us.id) as total_snapshots
       FROM contracts c
-      LEFT JOIN contract_analytics ca ON c.id = ca.contract_id 
+      LEFT JOIN contract_analytics ca ON c.id = ca.contract_id
         AND ca.analysis_date = (
-          SELECT MAX(analysis_date) 
-          FROM contract_analytics 
+          SELECT MAX(analysis_date)
+          FROM contract_analytics
           WHERE contract_id = c.id
         )
       LEFT JOIN user_snapshots us ON c.id = us.contract_id
@@ -293,17 +299,17 @@ export class ContractRegistry {
     `)
 
     queryParams.push(limit, offset)
-    const contracts = searchQuery.all(...queryParams)
+    const contracts = await searchQuery.all(...queryParams)
 
     // Count total matching contracts
-    const countQuery = db.prepare(`
+    const countQuery = getDb().prepare(`
       SELECT COUNT(DISTINCT c.id) as total
       FROM contracts c
       ${whereClause}
     `)
 
     const countParams = queryParams.slice(0, -2) // Remove limit and offset
-    const { total: totalCount } = countQuery.get(...countParams) as { total: number }
+    const { total: totalCount } = await countQuery.get(...countParams) as { total: number }
 
     return {
       contracts: contracts.map(this.formatContract),
@@ -315,8 +321,8 @@ export class ContractRegistry {
   /**
    * Get trending contracts based on recent activity
    */
-  getTrendingContracts(limit: number = 10): RegisteredContract[] {
-    const query = db.prepare(`
+  async getTrendingContracts(limit: number = 10): Promise<RegisteredContract[]> {
+    const query = getDb().prepare(`
       SELECT 
         c.*,
         COUNT(us.id) as recent_snapshots,
@@ -330,15 +336,15 @@ export class ContractRegistry {
       LIMIT ?
     `)
 
-    const results = query.all(limit)
+    const results = await query.all(limit)
     return results.map(this.formatContract)
   }
 
   /**
    * Get user's favorite contracts
    */
-  getUserFavoriteContracts(userId: number): RegisteredContract[] {
-    const query = db.prepare(`
+  async getUserFavoriteContracts(userId: number): Promise<RegisteredContract[]> {
+    const query = getDb().prepare(`
       SELECT c.*
       FROM contracts c
       INNER JOIN user_favorites uf ON c.id = uf.contract_id
@@ -346,14 +352,14 @@ export class ContractRegistry {
       ORDER BY uf.created_at DESC
     `)
 
-    const results = query.all(userId)
+    const results = await query.all(userId)
     return results.map(this.formatContract)
   }
 
   /**
    * Update contract metadata
    */
-  updateContract(
+  async updateContract(
     contractId: number, 
     updates: {
       name?: string
@@ -364,7 +370,7 @@ export class ContractRegistry {
       discordUrl?: string
       isVerified?: boolean
     }
-  ): boolean {
+  ): Promise<boolean> {
     const allowedFields = [
       'name', 'symbol', 'description', 'website_url', 
       'twitter_url', 'discord_url', 'is_verified'
@@ -389,36 +395,36 @@ export class ContractRegistry {
       return false
     }
 
-    const updateQuery = db.prepare(`
-      UPDATE contracts 
+    const updateQuery = getDb().prepare(`
+      UPDATE contracts
       SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `)
 
     updateValues.push(contractId)
-    const result = updateQuery.run(...updateValues)
-    
+    const result = await updateQuery.run(...updateValues)
+
     return result.changes > 0
   }
 
   /**
    * Increment contract usage count
    */
-  incrementUsage(contractId: number): void {
-    const query = db.prepare(`
-      UPDATE contracts 
+  async incrementUsage(contractId: number): Promise<void> {
+    const query = getDb().prepare(`
+      UPDATE contracts
       SET usage_count = usage_count + 1, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `)
 
-    query.run(contractId)
+    await query.run(contractId)
   }
 
   /**
    * Get contract analytics summary
    */
-  getContractAnalytics(contractId: number): any {
-    const query = db.prepare(`
+  async getContractAnalytics(contractId: number): Promise<any> {
+    const query = getDb().prepare(`
       SELECT 
         ca.*,
         c.name,
@@ -431,14 +437,14 @@ export class ContractRegistry {
       LIMIT 1
     `)
 
-    return query.get(contractId)
+    return await query.get(contractId)
   }
 
   /**
    * Get contracts requiring sync
    */
-  getContractsRequiringSync(): RegisteredContract[] {
-    const query = db.prepare(`
+  async getContractsRequiringSync(): Promise<RegisteredContract[]> {
+    const query = getDb().prepare(`
       SELECT c.*
       FROM contracts c
       LEFT JOIN contract_sync_status css ON c.id = css.contract_id
@@ -452,20 +458,20 @@ export class ContractRegistry {
       ORDER BY c.usage_count DESC, c.created_at ASC
     `)
 
-    const results = query.all()
+    const results = await query.all()
     return results.map(this.formatContract)
   }
 
   /**
    * Get all contracts
    */
-  getAllContracts(): RegisteredContract[] {
-    const query = db.prepare(`
-      SELECT * FROM contracts 
+  async getAllContracts(): Promise<RegisteredContract[]> {
+    const query = getDb().prepare(`
+      SELECT * FROM contracts
       ORDER BY created_at DESC
     `)
 
-    const results = query.all()
+    const results = await query.all()
     return results.map(this.formatContract)
   }
 
