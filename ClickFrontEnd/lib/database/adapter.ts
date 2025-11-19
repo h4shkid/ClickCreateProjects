@@ -173,8 +173,14 @@ export function createDatabaseAdapter(): DatabaseAdapter {
     console.error('[DatabaseAdapter] ERROR: DATABASE_TYPE is postgres but POSTGRES_URL is missing!')
     throw new Error('POSTGRES_URL environment variable is required for Postgres')
   } else {
-    // SQLite for local development
-    console.log('[DatabaseAdapter] Using SQLite adapter')
+    // SQLite for local development only
+    // In production (Vercel), this should never be reached if POSTGRES_URL is set
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+      console.error('[DatabaseAdapter] ERROR: Running in production without POSTGRES_URL!')
+      throw new Error('POSTGRES_URL environment variable is required in production. Please set it in Vercel dashboard.')
+    }
+
+    console.log('[DatabaseAdapter] Using SQLite adapter (local development only)')
     const dbPath = path.join(process.cwd(), 'data', 'nft-snapshot.db')
     return new SQLiteAdapter(dbPath)
   }
